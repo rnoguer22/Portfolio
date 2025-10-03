@@ -3,7 +3,7 @@ import bs4
 from langchain_ollama import ChatOllama, OllamaEmbeddings
 from langchain import hub
 from langchain_core.output_parsers import StrOutputParser
-from langchain_core.runnables import RunnablePassthrough
+from langchain_core.runnables import RunnablePassthrough, RunnableParallel
 from langchain_community.vectorstores import Chroma
 from langchain_experimental.text_splitter import SemanticChunker
 
@@ -48,14 +48,20 @@ rag_prompt = hub.pull('jclemens24/rag-prompt')
 
 llm = ChatOllama(model='qwen3:8b', temperature=0)
 
-rag_chain = (
-    {'context': retriever | format_docs,
-     'question': RunnablePassthrough()}
+rag_chain_from_docs = (
+    RunnablePassthrough.assign(context=(
+        lambda x: format_docs(x['context'])
+    ))
         | rag_prompt
         | llm
         | StrOutputParser()
 )
 
-response = rag_chain.invoke('What are the advantajes of using RAG?')
+rag_chain_with_source = RunnableParallel(
+    {'context': retriever,
+    'question': RunnablePassthrough()}
+).assign(answer=rag_chain_from_docs)
+
+response = rag_chain_with_source.invoke('What are the advantajes of using RAG?')
 
 print(response)

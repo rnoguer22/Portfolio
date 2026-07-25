@@ -1,0 +1,8 @@
+numpy 
+sentence_transformers
+PyPDF2
+langchain
+langchain-community
+chromadb
+langchain-chroma
+langchain-huggingface

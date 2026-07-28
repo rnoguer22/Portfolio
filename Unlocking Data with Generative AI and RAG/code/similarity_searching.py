@@ -7,11 +7,34 @@ import chromadb
 from langchain_chroma import Chroma 
 from langchain_core.runnables import RunnableParallel, RunnablePassthrough
 from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_ollama import ChatOllama
+from langchain_core.prompts import ChatPromptTemplate
 
 
 
 
 
+# En una busqueda densa se usan vectores que buscan por significado y contexto los chunks que contienen la informacion
+# Ventaja: Relaciona conceptos equivalentes y sinonimos aunque no sea la misma palabra (vehiculo - coche)
+def dense_search(query, k=10, dense_weight=0.5):
+    dense_docs = dense_retriever.invoke(query)[:k]
+    dense_docs_ids = [doc.metadata['id'] for doc in dense_docs]
+    print('Dense IDs: ', dense_docs_ids)
+    return dense_docs
+
+
+# La busqueda dispersa busca coincidencias exactas con las palabras clave de la query (eliminando articulos, preposiciones, etc.)
+# Ventaja: Muy util para nombre propios, codigos, siglas, aspectos tecnicos, etc.
+def sparse_search(query, k=10, sparse_weight=0.5):
+    sparse_docs = sparse_retriever.invoke(query)[:k]
+    sparse_docs_ids = [doc.metadata['id'] for doc in sparse_docs]
+    print('Sparse IDs: ', sparse_docs_ids)
+    return sparse_docs
+
+
+# La busqueda hibrida combina ambas busquedas (densa y dispersa) aplicando RRF (Reciprocal Rank Fusion) para combinar los resultados
+# (se usa RRF para saber cual es mas importante, ya que el 4 denso puede ser mas importante que el 1 disperso)
+# Elimina chunks duplicados y los reordena dandoles una puntuacion en funcion de su importancia 
 def hybrid_search(query, k=10, dense_weight=0.5, sparse_weight=0.5):
     # Devolvemos los top-k documentos mas importantes de la busqueda
     dense_docs = dense_retriever.invoke(query)[:k]
@@ -120,36 +143,36 @@ sparse_retriever = BM25Retriever.from_documents(
     k=10
 )
 
-# Esto para ejecutar cuando use un modelo local con Ollama, de momento solo voy a ver la respuesta del retriever en si 
 '''
-from langchain_ollama import ChatOllama
-from langchain_core.prompts import ChatPromptTemplate
-# 1. Definimos el LLM (asegúrate de tener Ollama corriendo con el modelo instalado)
-llm = ChatOllama(model="llama3")
-# 2. Creamos un prompt sencillo para el RAG
+# Usamos mi modelo local de ollama para generar la respuesta
+# Importante tener ollama corriendo en local con: ollama serve
+llm = ChatOllama(model="qwen3")
+# Necesitamos un prompt para el RAG. De momento vamos a dejar algo simple 
 prompt = ChatPromptTemplate.from_messages([
     ("system", "Responde a la pregunta basándote únicamente en el siguiente contexto:\n\n{context}"),
     ("human", "{question}")
 ])
-# 3. Definimos el rag_chain_from_docs que faltaba
+# La primera cadena se encarga de recibir el contexto y el prompt del usuario y pasarselo al llm 
+# No da la respuesta del modelo, pero sirve para establecer la estructura 
 rag_chain_from_docs = prompt | llm | str_output_parser
-# Finalmente creamos la rag_chain con los chunks devueltos por el retriever 
+# Finalmente creamos la segunda cadena con los chunks devueltos por el retriever 
+# Esta ya si le pasa los datos al llm y genera la respuesta siguiendo la estructura de la primera cadena 
+# prompt -> llm -> str_output_parser(string de texto)
 rag_chain_with_source = RunnableParallel(
     {
     'context': hybrid_search,
-    'question': RunnablePassthrough
+    'question': RunnablePassthrough()
     }).assign(answer=rag_chain_from_docs)
 
 user_query = "What are Google's environmental initiatives?"
 result = rag_chain_with_source.invoke(user_query)
-relevance_score = result['answer']['relevance_score']
-final_answer = result['answer']['final_answer']
+print('\n', result, '\n')
+final_answer = result['answer']
 retrieved_docs = result['context']
 
 print(f"\nOriginal question: {user_query}")
-print(f"Relevance score: {relevance_score}")
-print(f"Final answer: {final_answer}")
-print('Retrieved Documents:')
+print(f"Final answer: \n{final_answer}")
+print('\nRetrieved Documents:')
 for i, doc in enumerate(retrieved_docs, start=1):
     doc_id = doc.metadata['id']
     doc_score = doc.metadata.get('score', 'N/A')
@@ -157,12 +180,13 @@ for i, doc in enumerate(retrieved_docs, start=1):
     doc_retriever = doc.metadata.get('retriever', 'N/A')
     print(f"Document {i}: Document ID: {doc_id} Score: {doc_score} Rank: {doc_rank} Retriever: {doc_retriever}\n")
     print(f"Content: \n{doc.page_content}\n")
-
 '''
 
 user_query = "What are Google's environmental initiatives?"
 # Ejecutamos la búsqueda híbrida directamente, sin pasar por ninguna chain 
 retrieved_docs = hybrid_search(user_query)
+# retrieved_docs = dense_search(user_query)
+# retrieved_docs = sparse_search(user_query)
 
 print(f"\nOriginal question: {user_query}")
 print('Retrieved Documents:')
@@ -173,4 +197,3 @@ for i, doc in enumerate(retrieved_docs, start=1):
     doc_retriever = doc.metadata.get('retriever', 'N/A')
     print(f"Document {i}: Document ID: {doc_id} Score: {doc_score} Rank: {doc_rank} Retriever: {doc_retriever}\n")
     print(f"Content: \n{doc.page_content}\n")
-

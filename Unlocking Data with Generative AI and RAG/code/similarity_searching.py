@@ -143,7 +143,6 @@ sparse_retriever = BM25Retriever.from_documents(
     k=10
 )
 
-'''
 # Usamos mi modelo local de ollama para generar la respuesta
 # Importante tener ollama corriendo en local con: ollama serve
 llm = ChatOllama(model="qwen3")
@@ -180,8 +179,8 @@ for i, doc in enumerate(retrieved_docs, start=1):
     doc_retriever = doc.metadata.get('retriever', 'N/A')
     print(f"Document {i}: Document ID: {doc_id} Score: {doc_score} Rank: {doc_rank} Retriever: {doc_retriever}\n")
     print(f"Content: \n{doc.page_content}\n")
-'''
 
+'''
 user_query = "What are Google's environmental initiatives?"
 # Ejecutamos la búsqueda híbrida directamente, sin pasar por ninguna chain 
 retrieved_docs = hybrid_search(user_query)
@@ -197,3 +196,4 @@ for i, doc in enumerate(retrieved_docs, start=1):
     doc_retriever = doc.metadata.get('retriever', 'N/A')
     print(f"Document {i}: Document ID: {doc_id} Score: {doc_score} Rank: {doc_rank} Retriever: {doc_retriever}\n")
     print(f"Content: \n{doc.page_content}\n")
+'''

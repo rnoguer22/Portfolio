@@ -1,3 +1,5 @@
+from indexing import Indexing
+from config import PDF_PATH, COLLECTION_NAME, K  
 
 
 
@@ -6,38 +8,34 @@
 # (esto se puede hacer por similitud, BM25, busqueda hibrida, etc.)
 class Retrieval:
 
+    def __init__(self, dense_retriever, sparse_retriever):
+        self.dense_retriever = dense_retriever
+        self.sparse_retriever = sparse_retriever
+
+
     # En una busqueda densa se usan vectores que buscan por significado y contexto los chunks que contienen la informacion
     # Ventaja: Relaciona conceptos equivalentes y sinonimos aunque no sea la misma palabra (vehiculo - coche)
-    def dense_search(self, query, k=10, dense_weight=0.5):
-        dense_docs = dense_retriever.invoke(query)[:k]
+    def dense_search(self, query):
+        dense_docs = self.dense_retriever.invoke(query)[:K]
         dense_docs_ids = [doc.metadata['id'] for doc in dense_docs]
-        print('Dense IDs: ', dense_docs_ids)
-        return dense_docs
+        return dense_docs, dense_docs_ids
 
 
     # La busqueda dispersa busca coincidencias exactas con las palabras clave de la query (eliminando articulos, preposiciones, etc.)
     # Ventaja: Muy util para nombre propios, codigos, siglas, aspectos tecnicos, etc.
-    def sparse_search(self, query, k=10, sparse_weight=0.5):
-        sparse_docs = sparse_retriever.invoke(query)[:k]
+    def sparse_search(self, query):
+        sparse_docs = self.sparse_retriever.invoke(query)[:K]
         sparse_docs_ids = [doc.metadata['id'] for doc in sparse_docs]
-        print('Sparse IDs: ', sparse_docs_ids)
-        return sparse_docs
+        return sparse_docs, sparse_docs_ids
 
 
     # La busqueda hibrida combina ambas busquedas (densa y dispersa) aplicando RRF (Reciprocal Rank Fusion) para combinar los resultados
     # (se usa RRF para saber cual es mas importante, ya que el 4 denso puede ser mas importante que el 1 disperso)
     # Elimina chunks duplicados y los reordena dandoles una puntuacion en funcion de su importancia 
-    def hybrid_search(self, query, k=10, dense_weight=0.5, sparse_weight=0.5):
+    def hybrid_search(self, query, dense_weight=0.5, sparse_weight=0.5):
         # Devolvemos los top-k documentos mas importantes de la busqueda
-        dense_docs = dense_retriever.invoke(query)[:k]
-        dense_docs_ids = [doc.metadata['id'] for doc in dense_docs]
-        print('\nCompare IDs:')
-        print('dense IDs: ', dense_docs_ids)
-
-        # Hacemos los mismo pero con sparse_retriever
-        sparse_docs = sparse_retriever.invoke(query)[:k]
-        sparse_docs_ids = [doc.metadata['id'] for doc in sparse_docs]
-        print('sparse IDs: ', sparse_docs_ids)
+        dense_docs, dense_docs_ids = self.dense_search(query)
+        sparse_docs, sparse_docs_ids = self.sparse_search(query)
 
         # Combinamos ambos 
         all_doc_ids = list(set(dense_docs_ids + sparse_docs_ids))
@@ -84,4 +82,41 @@ class Retrieval:
                     doc.metadata['retriever'] = 'sparse'
                 sorted_docs.append(doc)
 
-        return sorted_docs[:k]
+        return sorted_docs[:K]
+
+
+
+if __name__ == '__main__':
+
+    # Necesitamos hacer la fase de Indexing
+    pdf_path = PDF_PATH
+    collection_name = COLLECTION_NAME
+
+    indexing = Indexing(pdf_path, collection_name)
+    indexing.extract_text()
+    docs = indexing.get_documents()
+    vectorstore = indexing.get_vectorstore(docs)
+    dense_retriever = indexing.get_dense_retriever(vectorstore)
+    sparse_retriever = indexing.get_sparse_retriever(docs)
+
+
+    # Retrieval 
+    user_query = "What are Google's environmental initiatives?"
+    retrieval = Retrieval(dense_retriever, sparse_retriever)
+    dense_docs, dense_docs_ids = retrieval.dense_search(user_query)
+    print('Dense IDs: ', dense_docs_ids)
+    sparse_docs, sparse_docs_ids = retrieval.sparse_search(user_query)
+    print('Sparse IDs: ', sparse_docs_ids)
+    
+    # (version sin usar modelo llm, ya que no hemos llegado a la fase todavia)
+    # Con esto simplemente estamos mostrando los distintos chunks de la busqueda hibrida (RRF)
+    hybrid_docs = retrieval.hybrid_search(user_query)
+    print(f"\nOriginal question: {user_query}")
+    print('Retrieved Documents:')
+    for i, doc in enumerate(dense_docs, start=1):
+        doc_id = doc.metadata['id']
+        doc_score = doc.metadata.get('score', 'N/A')
+        doc_rank = doc.metadata.get('rank', 'N/A')
+        doc_retriever = doc.metadata.get('retriever', 'N/A')
+        print(f"Document {i}: Document ID: {doc_id} Score: {doc_score} Rank: {doc_rank} Retriever: {doc_retriever}\n")
+        print(f"Content: \n{doc.page_content}\n")

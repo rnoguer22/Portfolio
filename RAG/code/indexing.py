@@ -59,7 +59,7 @@ class Indexing:
             documents=docs, 
             embedding=self.embedding_function,
             collection_name=self.collection_name,
-            persist_directory=self.dir_path
+            persist_directory=CHROMADB_PATH
         )
         return vectorstore
 
@@ -68,10 +68,11 @@ class Indexing:
     # Necesitamos el modelo que genera los embeddings para las nuevas queries del usuario 
     def load_vectorstore(self):
         # De esta manera obtenemos los chunks en forma de embeddings (vectores)
+        print('Cargando base de datos...')
         vectorstore = Chroma(
             collection_name=self.collection_name, 
             embedding_function=self.embedding_function,
-            persist_directory=self.dir_path
+            persist_directory=CHROMADB_PATH
         )
         return vectorstore
 

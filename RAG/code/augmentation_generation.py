@@ -4,7 +4,7 @@ from langchain_ollama import ChatOllama
 from langchain_core.output_parsers import StrOutputParser 
 from langchain_core.runnables import RunnableParallel, RunnablePassthrough
 from langchain_core.prompts import ChatPromptTemplate
-from config import PDF_PATH, COLLECTION_NAME
+from config import DIR_PATH, COLLECTION_NAME
 
 
 
@@ -18,7 +18,7 @@ class AugmentationGeneration:
         self.llm = ChatOllama(model='qwen3')
         # Necesitamos un prompt para el RAG. De momento vamos a dejar algo simple 
         self.prompt = ChatPromptTemplate.from_messages([
-            ("system", "Responde a la pregunta basándote únicamente en el siguiente contexto:\n\n{context}"),
+            ("system", "Responde en español, intentando ser lo más breve posible pero respondiendo con mucha claridad. Responde únicamente en función del siguiente contexto (si no encuentras la respuesta en el contexto, hazlo saber al usuario):\n\n{context}"),
             ("human", "{question}")
         ])
         self.str_output_parser = StrOutputParser()
@@ -33,6 +33,7 @@ class AugmentationGeneration:
         # Finalmente creamos la segunda cadena con los chunks devueltos por el retriever 
         # Esta ya si le pasa los datos al llm y genera la respuesta siguiendo la estructura de la primera cadena 
         # prompt -> llm -> str_output_parser(string de texto)
+        print('Generando respuesta por parte del llm...')
         rag_chain_with_source = RunnableParallel(
         {
             'context': retrieval_instance.hybrid_search,
@@ -47,15 +48,11 @@ class AugmentationGeneration:
 if __name__ == '__main__':
 
     # Indexing 
-    pdf_path = PDF_PATH
-    collection_name = COLLECTION_NAME
-
-    indexing = Indexing(pdf_path, collection_name)
-    indexing.extract_text()
-    docs = indexing.get_documents()
-    vectorstore = indexing.get_vectorstore(docs)
+    indexing = Indexing(DIR_PATH, COLLECTION_NAME)
+    vectorstore = indexing.load_vectorstore()
+    print('Base de datos cargada correctamente!')
     dense_retriever = indexing.get_dense_retriever(vectorstore)
-    sparse_retriever = indexing.get_sparse_retriever(docs)
+    sparse_retriever = indexing.get_sparse_retriever(vectorstore)
 
 
     # Retrieval 
@@ -66,7 +63,7 @@ if __name__ == '__main__':
     augmentation_generation = AugmentationGeneration()
     rag_chain_with_source = augmentation_generation.define_chain(retrieval)
 
-    user_query = "What are Google's environmental initiatives?"
+    user_query = 'Como puedo cambiar la configuración de input de mi teclado?'
     result = rag_chain_with_source.invoke(user_query)
     final_answer = result['answer']
     retrieved_docs = result['context']

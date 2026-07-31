@@ -1,5 +1,6 @@
 from indexing import Indexing
-from config import PDF_PATH, COLLECTION_NAME, K  
+from langchain_classic.retrievers import EnsembleRetriever 
+from config import DIR_PATH, COLLECTION_NAME, K  
 
 
 
@@ -32,10 +33,20 @@ class Retrieval:
     # La busqueda hibrida combina ambas busquedas (densa y dispersa) aplicando RRF (Reciprocal Rank Fusion) para combinar los resultados
     # (se usa RRF para saber cual es mas importante, ya que el 4 denso puede ser mas importante que el 1 disperso)
     # Elimina chunks duplicados y los reordena dandoles una puntuacion en funcion de su importancia 
-    def hybrid_search(self, query, dense_weight=0.5, sparse_weight=0.5):
+    def hybrid_search(self, query, dense_weight=0.5, sparse_weight=0.5, lang_ensemble_retriever=True):
         # Devolvemos los top-k documentos mas importantes de la busqueda
         dense_docs, dense_docs_ids = self.dense_search(query)
         sparse_docs, sparse_docs_ids = self.sparse_search(query)
+
+        if lang_ensemble_retriever:
+            # Usamos una clase de langchain que automatiza todo el procedimiento
+            # Si no queremos usarla, indicamos lang_ensemble_retriever=False al llamar al metodo 
+            print('Usando EnsembleRetriever jeje')
+            ensemble_retriever = EnsembleRetriever(
+                retrievers=[self.dense_retriever, self.sparse_retriever],
+                weights=[dense_weight, sparse_weight]
+            )
+            return ensemble_retriever.invoke(query)[:K]
 
         # Combinamos ambos 
         all_doc_ids = list(set(dense_docs_ids + sparse_docs_ids))
@@ -89,19 +100,14 @@ class Retrieval:
 if __name__ == '__main__':
 
     # Necesitamos hacer la fase de Indexing
-    pdf_path = PDF_PATH
-    collection_name = COLLECTION_NAME
-
-    indexing = Indexing(pdf_path, collection_name)
-    indexing.extract_text()
-    docs = indexing.get_documents()
-    vectorstore = indexing.get_vectorstore(docs)
+    indexing = Indexing(DIR_PATH, COLLECTION_NAME)
+    vectorstore = indexing.load_vectorstore()
+    print('Base de datos cargada correctamente!')
     dense_retriever = indexing.get_dense_retriever(vectorstore)
-    sparse_retriever = indexing.get_sparse_retriever(docs)
-
+    sparse_retriever = indexing.get_sparse_retriever(vectorstore)
 
     # Retrieval 
-    user_query = "What are Google's environmental initiatives?"
+    user_query = 'Where can I find my file hyprland.lua?'
     retrieval = Retrieval(dense_retriever, sparse_retriever)
     dense_docs, dense_docs_ids = retrieval.dense_search(user_query)
     print('Dense IDs: ', dense_docs_ids)

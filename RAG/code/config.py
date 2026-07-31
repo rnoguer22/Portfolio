@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 DIR_PATH = os.getenv('DIR_PATH')
+CONTEXT_FILE_PATH = os.getenv('CONTEXT_FILE_PATH')
 COLLECTION_NAME = os.getenv('COLLECTION_NAME')
 CHROMADB_PATH = os.getenv('CHROMADB_PATH')
 K = 10

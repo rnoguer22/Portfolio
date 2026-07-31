@@ -4,7 +4,7 @@ from langchain_ollama import ChatOllama
 from langchain_core.output_parsers import StrOutputParser 
 from langchain_core.runnables import RunnableParallel, RunnablePassthrough
 from langchain_core.prompts import ChatPromptTemplate
-from config import DIR_PATH, COLLECTION_NAME, OLLAMA_MODEL
+from config import DIR_PATH, CONTEXT_FILE_PATH, COLLECTION_NAME, OLLAMA_MODEL
 
 
 
@@ -18,8 +18,8 @@ class AugmentationGeneration:
         self.llm = ChatOllama(model=OLLAMA_MODEL)
         # Necesitamos un prompt para el RAG. De momento vamos a dejar algo simple 
         self.prompt = ChatPromptTemplate.from_messages([
-            ("system", "Responde en español, intentando ser lo más breve posible pero respondiendo con mucha claridad. Responde únicamente en función del siguiente contexto (si no encuentras la respuesta en el contexto, hazlo saber al usuario):\n\n{context}"),
-            ("human", "{question}")
+            ('system', 'Responde en español, intentando ser lo más breve posible pero respondiendo con mucha claridad. Responde únicamente en función del siguiente contexto (si no encuentras la respuesta en el contexto, hazlo saber al usuario):\n\n{context}'),
+            ('human', '{question}')
         ])
         self.str_output_parser = StrOutputParser()
 
@@ -33,13 +33,45 @@ class AugmentationGeneration:
         # Finalmente creamos la segunda cadena con los chunks devueltos por el retriever 
         # Esta ya si le pasa los datos al llm y genera la respuesta siguiendo la estructura de la primera cadena 
         # prompt -> llm -> str_output_parser(string de texto)
-        print('Generando respuesta por parte del llm...')
+        print(f'Iniciando {OLLAMA_MODEL}...')
         rag_chain_with_source = RunnableParallel(
         {
             'context': retrieval_instance.hybrid_search,
             'question': RunnablePassthrough()
         }).assign(answer=rag_chain_from_docs)
         return rag_chain_with_source
+
+
+    # Metodo para generar la respuesta en el terminal. Devuelve el contexto para la funcion save_context_in_file
+    def generate_response(self, rag_chain_with_source, user_query): 
+        print('\n')
+        context = []
+        # Iteramos sobre cada chunk que el llm va generando, para mostrar el texto poco a poco en el terminal (me gusta mas asi)
+        for chunk in rag_chain_with_source.stream(user_query):
+            # Añadimos el contexto si retrieved_docs esta vacio, para añadir todo el contexto una sola vez 
+            if 'context' in chunk and not context:
+                context = chunk['context']
+            if 'answer' in chunk:
+                # Mostramos la respuesta
+                print(chunk['answer'], end='', flush=True)
+        return context 
+
+
+    # Metodo para volcar el contexto en un fichero, para comprobar que el retriever funciona correctamente 
+    def save_context_in_file(self, context):
+        with open(CONTEXT_FILE_PATH, 'w', encoding='utf-8') as f:
+            for i, doc in enumerate(context, start=1):
+                doc_id = doc.metadata['id']
+                doc_source = doc.metadata['source']
+                # Al usar EnsembleRetriever no tengo control (no genero) estos parametros
+                # doc_score = doc.metadata.get('score', 'N/A')
+                # doc_rank = doc.metadata.get('rank', 'N/A')
+                # doc_retriever = doc.metadata.get('retriever', 'N/A')
+                f.write(f"\n\nDocument {i}: Document ID: {doc_id} Source: {doc_source}\n")
+                f.write('-'*100)
+                f.write(f"\nContent: \n{doc.page_content}\n\n")
+        f.close()
+        print(f"\n\nFichero '{CONTEXT_FILE_PATH}' creado correctamente!")
 
 
 
@@ -62,19 +94,6 @@ if __name__ == '__main__':
     # Augmentation and Generation 
     augmentation_generation = AugmentationGeneration()
     rag_chain_with_source = augmentation_generation.define_chain(retrieval)
-
     user_query = 'Como puedo cambiar la configuración de input de mi teclado?'
-    result = rag_chain_with_source.invoke(user_query)
-    final_answer = result['answer']
-    retrieved_docs = result['context']
-
-    print(f"\nOriginal question: {user_query}")
-    print(f"Final answer: \n{final_answer}")
-    print('\nRetrieved Documents:')
-    for i, doc in enumerate(retrieved_docs, start=1):
-        doc_id = doc.metadata['id']
-        doc_score = doc.metadata.get('score', 'N/A')
-        doc_rank = doc.metadata.get('rank', 'N/A')
-        doc_retriever = doc.metadata.get('retriever', 'N/A')
-        print(f"Document {i}: Document ID: {doc_id} Score: {doc_score} Rank: {doc_rank} Retriever: {doc_retriever}\n")
-        print(f"Content: \n{doc.page_content}\n")
+    context = augmentation_generation.generate_response(rag_chain_with_source, user_query)
+    augmentation_generation.save_context_in_file(context)

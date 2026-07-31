@@ -1,0 +1,291 @@
+
+
+Document 1: Document ID: 328 Source: /home/moyis/dotfiles/install.sh
+----------------------------------------------------------------------------------------------------
+Content: 
+#!/bin/bash
+
+# Directorio donde están tus dotfiles
+DOTFILES_DIR="$HOME/dotfiles"
+
+echo "Iniciando instalación de dotfiles..."
+
+# 1. Actualizar sistema e instalar paquetes base desde repositorios oficiales
+sudo pacman -Syu --noconfirm
+sudo pacman -S --needed --noconfirm neovim kitty zsh firefox chromium python python-pip git wget curl hyprland hyprlock hypridle hyprshot hyprsunset wofi hyprpaper btop ranger waybar otf-font-awesome bottom bluetui ttf-ubuntu-font-family
+
+# 2. Instalar yay si no existe
+if ! command -v yay &>/dev/null; then
+  echo "Instalando yay..."
+  git clone https://aur.archlinux.org/yay.git /tmp/yay
+  cd /tmp/yay && makepkg -si --noconfirm
+fi
+
+# 3. Instalar paquetes de AUR
+yay -S --noconfirm wlogout google-chrome github-cli pokemon-colorscripts-git brave-bin
+
+# 4. Crear directorios de configuración si no existen
+mkdir -p ~/.config
+mkdir -p ~/Pictures
+
+# 5. Crear enlaces simbólicos (ln -sf)
+echo "Creando enlaces simbólicos..."
+
+
+
+Document 2: Document ID: 329 Source: /home/moyis/dotfiles/install.sh
+----------------------------------------------------------------------------------------------------
+Content: 
+# 4. Crear directorios de configuración si no existen
+mkdir -p ~/.config
+mkdir -p ~/Pictures
+
+# 5. Crear enlaces simbólicos (ln -sf)
+echo "Creando enlaces simbólicos..."
+
+ln -sfT $DOTFILES_DIR/nvim ~/.config/nvim
+ln -sfT $DOTFILES_DIR/kitty ~/.config/kitty
+ln -sfT $DOTFILES_DIR/wofi ~/.config/wofi
+ln -sfT $DOTFILES_DIR/hypr ~/.config/hypr
+ln -sfT $DOTFILES_DIR/waybar ~/.config/waybar
+ln -sfT $DOTFILES_DIR/btop ~/.config/btop
+ln -sfT $DOTFILES_DIR/ranger ~/.config/ranger
+ln -sf $DOTFILES_DIR/.zshrc ~/.zshrc
+ln -sfT $DOTFILES_DIR/gtk-3.0 ~/.config/gtk-3.0
+ln -sfT $DOTFILES_DIR/gtk-4.0 ~/.config/gtk-4.0
+ln -sfT $DOTFILES_DIR/wallpapers ~/Pictures/wallpapers
+ln -sfT $DOTFILES_DIR ~/.config
+
+# 6. Configurar Zsh por defecto
+if [[ "$SHELL" != *"zsh"* ]]; then
+  chsh -s $(which zsh)
+fi
+
+echo "¡Configuración aplicada con éxito!"
+
+
+
+Document 3: Document ID: 356 Source: /home/moyis/dotfiles/README.md
+----------------------------------------------------------------------------------------------------
+Content: 
+# dotfiles
+
+--- 
+
+Repositorio para guardar la configuracion de arch
+
+
+
+Document 4: Document ID: 371 Source: /home/moyis/dotfiles/hypr/hyprland.lua
+----------------------------------------------------------------------------------------------------
+Content: 
+-- Laptop multimedia keys for volume and LCD brightness
+hl.bind(
+	"XF86AudioRaiseVolume",
+	hl.dsp.exec_cmd("wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"),
+	{ locked = true, repeating = true }
+)
+hl.bind(
+	"XF86AudioLowerVolume",
+	hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"),
+	{ locked = true, repeating = true }
+)
+hl.bind(
+	"XF86AudioMute",
+	hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"),
+	{ locked = true, repeating = true }
+)
+hl.bind(
+	"XF86AudioMicMute",
+	hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"),
+	{ locked = true, repeating = true }
+)
+hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd("brightnessctl -e4 -n2 set 5%+"), { locked = true, repeating = true })
+hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("brightnessctl -e4 -n2 set 5%-"), { locked = true, repeating = true })
+
+
+
+Document 5: Document ID: 330 Source: /home/moyis/dotfiles/prepare_dotfiles.sh
+----------------------------------------------------------------------------------------------------
+Content: 
+#!/bin/bash
+
+# Fichero para mover mi configuracion inicial a mi repo dotfiles
+
+# Directorio de destino del repositorio
+DEST_DIR="$HOME/dotfiles"
+
+# Carpetas dentro de ~/.config/ que vamos a migrar
+configs=("nvim" "kitty" "wofi" "hypr" "waybar" "btop" "ranger" "gtk-3.0" "gtk-4.0")
+
+for item in "${configs[@]}"; do
+  if [ -d "$HOME/.config/$item" ] || [ -f "$HOME/.config/$item" ]; then
+    echo "Migrando $item..."
+    # Movemos los ficheros a la carpeta ~/dotfiles/
+    mv "$HOME/.config/$item" "$DEST_DIR/"
+    # Y creamos un enlace simbólico de vuelta hacia .config
+    ln -sf "$DEST_DIR/$item" "$HOME/.config/$item"
+  fi
+done
+
+# Migramos .zshrc aparte, ya que no esta dentro de ~/.config/
+if [ -f "$HOME/.zshrc" ]; then
+  mv "$HOME/.zshrc" "$DEST_DIR/"
+  ln -sf "$DEST_DIR/.zshrc" "$HOME/.zshrc"
+fi
+
+
+
+Document 6: Document ID: 366 Source: /home/moyis/dotfiles/hypr/hyprland.lua
+----------------------------------------------------------------------------------------------------
+Content: 
+-- See https://wiki.hypr.land/Configuring/Layouts/Master-Layout/ for more
+hl.config({
+	master = {
+		new_status = "master",
+	},
+})
+
+-- See https://wiki.hypr.land/Configuring/Layouts/Scrolling-Layout/ for more
+hl.config({
+	scrolling = {
+		fullscreen_on_one_column = true,
+	},
+})
+
+----------------
+----  MISC  ----
+----------------
+
+hl.config({
+	misc = {
+		force_default_wallpaper = -1, -- Set to 0 or 1 to disable the anime mascot wallpapers
+		disable_hyprland_logo = false, -- If true disables the random hyprland logo / anime girl background. :(
+	},
+})
+
+---------------
+---- INPUT ----
+---------------
+
+hl.config({
+	input = {
+		kb_layout = "us",
+		kb_variant = "intl",
+		kb_model = "",
+		kb_options = "",
+		kb_rules = "",
+
+		follow_mouse = 1,
+
+		sensitivity = 0, -- -1.0 - 1.0, 0 means no modification.
+
+		touchpad = {
+			natural_scroll = false,
+		},
+	},
+})
+
+hl.gesture({
+	fingers = 3,
+	direction = "horizontal",
+	action = "workspace",
+})
+
+
+
+Document 7: Document ID: 145 Source: /home/moyis/dotfiles/btop/btop.conf
+----------------------------------------------------------------------------------------------------
+Content: 
+#* Define presets for the layout of the boxes. Preset 0 is always all boxes shown with default settings. Max 9 presets.
+#* Format: "box_name:P:G,box_name:P:G" P=(0 or 1) for alternate positions, G=graph symbol to use for box.
+#* Use whitespace " " as separator between different presets.
+#* Example: "cpu:0:default,mem:0:tty,proc:1:default cpu:0:braille,proc:0:tty"
+presets = "cpu:1:default,proc:0:default cpu:0:default,mem:0:default,net:0:default cpu:0:block,net:0:tty"
+
+#* Set to True to enable "h,j,k,l,g,G" keys for directional control in lists.
+#* Conflicting keys for h:"help" and k:"kill" is accessible while holding shift.
+vim_keys = false
+
+#* Disable all mouse events.
+disable_mouse = false
+
+#* Rounded corners on boxes, is ignored if TTY mode is ON.
+rounded_corners = true
+
+#* Use terminal synchronized output sequences to reduce flickering on supported terminals.
+terminal_sync = true
+
+
+
+Document 8: Document ID: 385 Source: /home/moyis/dotfiles/nvim/lua/config/autocmds.lua
+----------------------------------------------------------------------------------------------------
+Content: 
+-- Autocmds are automatically loaded on the VeryLazy event
+-- Default autocmds that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/autocmds.lua
+--
+-- Add any additional autocmds here
+-- with `vim.api.nvim_create_autocmd`
+--
+-- Or remove existing autocmds by their group name (which is prefixed with `lazyvim_` for the defaults)
+-- e.g. vim.api.nvim_del_augroup_by_name("lazyvim_wrap_spell")
+--
+--
+--
+-- Configuracion para que herede la transparencia de kitty
+vim.api.nvim_create_autocmd("ColorScheme", {
+  pattern = "*",
+  callback = function()
+    vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
+    vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
+    vim.api.nvim_set_hl(0, "NeoTreeNormal", { bg = "none" })
+    vim.api.nvim_set_hl(0, "NeoTreeNormalNC", { bg = "none" })
+  end,
+})
+
+
+
+Document 9: Document ID: 296 Source: /home/moyis/dotfiles/kitty/kitty.conf
+----------------------------------------------------------------------------------------------------
+Content: 
+# wayland_enable_ime yes
+
+#: Enable Input Method Extension on Wayland. This is typically used
+#: for inputting text in East Asian languages. However, its
+#: implementation in Wayland is often buggy and introduces latency
+#: into the input loop, so disable this if you know you dont need it.
+#: Changing this option by reloading the config is not supported, it
+#: will not have any effect.
+
+#: }}}
+
+#: Keyboard shortcuts {{{
+
+#: Keys are identified simply by their lowercase Unicode characters.
+#: For example: a for the A key, [ for the left square bracket key,
+#: etc. For functional keys, such as Enter or Escape, the names are
+#: present at Functional key definitions
+#: <https://sw.kovidgoyal.net/kitty/keyboard-protocol/#functional>.
+#: For modifier keys, the names are ctrl (control, ⌃), shift (⇧), alt
+#: (opt, option, ⌥), super (cmd, command, ⌘).
+
+
+
+Document 10: Document ID: 331 Source: /home/moyis/dotfiles/prepare_dotfiles.sh
+----------------------------------------------------------------------------------------------------
+Content: 
+# Migramos .zshrc aparte, ya que no esta dentro de ~/.config/
+if [ -f "$HOME/.zshrc" ]; then
+  mv "$HOME/.zshrc" "$DEST_DIR/"
+  ln -sf "$DEST_DIR/.zshrc" "$HOME/.zshrc"
+fi
+
+# Y lo mismo con los wallpapers
+if [ -d "$HOME/Pictures/wallpapers" ]; then
+  echo "Migrando wallpapers..."
+  mv "$HOME/Pictures/wallpapers" "$DEST_DIR/wallpapers"
+  ln -sf "$DEST_DIR/wallpapers" "$HOME/Pictures/wallpapers"
+fi
+
+echo "Migración completada. Configuraciones guardadas en $DEST_DIR y enlazadas en $HOME/.config/."
+

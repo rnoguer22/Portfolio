@@ -5,7 +5,7 @@ from langchain_core.documents import Document
 from langchain_community.retrievers import BM25Retriever
 from langchain_chroma import Chroma 
 from langchain_huggingface import HuggingFaceEmbeddings
-from config import DIR_PATH, COLLECTION_NAME, CHROMADB_PATH, K
+from config import DIR_PATH, COLLECTION_NAME, CHROMADB_PATH, K, HUGGINGFACE_EMBEDDINGS 
 
 
 
@@ -16,7 +16,7 @@ class Indexing:
     def __init__(self, dir_path, collection_name):
         self.dir_path = dir_path
         self.collection_name = collection_name
-        self.embedding_function = HuggingFaceEmbeddings(model_name='all-MiniLM-L6-v2')
+        self.embedding_function = HuggingFaceEmbeddings(model_name=HUGGINGFACE_EMBEDDINGS)
 
     
     # Metodo para cargar todos los ficheros del directorio en la base de datos

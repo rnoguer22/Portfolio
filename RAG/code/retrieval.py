@@ -41,7 +41,6 @@ class Retrieval:
         if lang_ensemble_retriever:
             # Usamos una clase de langchain que automatiza todo el procedimiento
             # Si no queremos usarla, indicamos lang_ensemble_retriever=False al llamar al metodo 
-            print('Usando EnsembleRetriever jeje')
             ensemble_retriever = EnsembleRetriever(
                 retrievers=[self.dense_retriever, self.sparse_retriever],
                 weights=[dense_weight, sparse_weight]

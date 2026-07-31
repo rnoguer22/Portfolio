@@ -4,7 +4,7 @@ from langchain_ollama import ChatOllama
 from langchain_core.output_parsers import StrOutputParser 
 from langchain_core.runnables import RunnableParallel, RunnablePassthrough
 from langchain_core.prompts import ChatPromptTemplate
-from config import DIR_PATH, COLLECTION_NAME
+from config import DIR_PATH, COLLECTION_NAME, OLLAMA_MODEL
 
 
 
@@ -15,7 +15,7 @@ class AugmentationGeneration:
     def __init__(self):
         # Usamos mi modelo local de ollama para generar la respuesta (de momento)
         # Importante tener ollama corriendo en local con: ollama serve
-        self.llm = ChatOllama(model='qwen3')
+        self.llm = ChatOllama(model=OLLAMA_MODEL)
         # Necesitamos un prompt para el RAG. De momento vamos a dejar algo simple 
         self.prompt = ChatPromptTemplate.from_messages([
             ("system", "Responde en español, intentando ser lo más breve posible pero respondiendo con mucha claridad. Responde únicamente en función del siguiente contexto (si no encuentras la respuesta en el contexto, hazlo saber al usuario):\n\n{context}"),

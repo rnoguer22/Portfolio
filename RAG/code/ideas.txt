@@ -1,3 +1,0 @@
-1) Dar acceso a todos los ficheros de mi sistema, para poder realizar cambios de configuracion mucho mas facil (RAG, en lugar de fine-tunning, por si los ficheros cambian) 
-2) Añadir mediante bs4 la documentacion de una biblioteca reciente de python para hacerle preguntas (mejor fine tunning para esto diria yo)
-3) 

@@ -5,7 +5,7 @@ from langchain_core.documents import Document
 from langchain_community.retrievers import BM25Retriever
 from langchain_chroma import Chroma 
 from langchain_huggingface import HuggingFaceEmbeddings
-from config import DIR_PATH, COLLECTION_NAME, CHROMADB_PATH, K, HUGGINGFACE_EMBEDDINGS 
+from config import DIR_PATH, COLLECTION_NAME, CHROMADB_PATH, K, THRESHOLD, HUGGINGFACE_EMBEDDINGS 
 
 
 
@@ -13,10 +13,23 @@ from config import DIR_PATH, COLLECTION_NAME, CHROMADB_PATH, K, HUGGINGFACE_EMBE
 # Fase donde se cargan los documentos, se dividen en chunks, se generan los embeddings y se almacenan en Chroma 
 class Indexing:
 
-    def __init__(self, dir_path, collection_name):
+    def __init__(self, dir_path, collection_name, cosine=True, knn=True):
         self.dir_path = dir_path
         self.collection_name = collection_name
         self.embedding_function = HuggingFaceEmbeddings(model_name=HUGGINGFACE_EMBEDDINGS)
+
+        self.vectorstore_metadata = {}
+        # Configuracion de la base de datos
+        if cosine:
+            # Podemos asignar similitud de coseno para medir el angulo entre los embeddings
+            self.vectorstore_metadata['hnsw:space'] = 'cosine'
+        else:
+            # O podemos usar la distancia euclidea l2 para medir la distancia entre embeddings (comportamiento por defecto, pero me gusta dejarlo aclarado)
+            self.vectorstore_metadata['hnsw:space'] = 'l2'
+        if knn: 
+            # Con flat implementamos el algoritmo KNN en lugar de ANN 
+            # Esto es util si tenemos pocos chunks 
+            self.vectorstore_metadata['chroma:hnsw_impl'] = 'flat'
 
     
     # Metodo para cargar todos los ficheros del directorio en la base de datos
@@ -54,12 +67,13 @@ class Indexing:
         print('Chunks en total: ', len(docs))
 
         # Por ultimo guardamos los datos en Chroma, convirtiendolos en embeddings previamente
-        print('Creando la base de datos...')
+        print('Creando la base de datos...')        
         vectorstore = Chroma.from_documents(
             documents=docs, 
             embedding=self.embedding_function,
             collection_name=self.collection_name,
-            persist_directory=CHROMADB_PATH
+            persist_directory=CHROMADB_PATH,
+            collection_metadata=self.vectorstore_metadata
         )
         return vectorstore
 
@@ -72,7 +86,8 @@ class Indexing:
         vectorstore = Chroma(
             collection_name=self.collection_name, 
             embedding_function=self.embedding_function,
-            persist_directory=CHROMADB_PATH
+            persist_directory=CHROMADB_PATH,
+            collection_metadata=self.vectorstore_metadata
         )
         return vectorstore
 
@@ -80,9 +95,25 @@ class Indexing:
     # Metodo para obtener el dense retriever 
     # Dense (denso) --> busca los k chunks mas similares en funcion de su significado (las palabras clave no tienen que coincidir exactamente)
     # (de todas formas, no estamos llamando a invoke(), por lo que solo estamos inicializando el retriever y no estamos buscando los k chunks mas proximos)
-    def get_dense_retriever(self, vectorstore):
-        return vectorstore.as_retriever(
-            search_kwargs={'k': K}
+    def get_dense_retriever(self, vectorstore, similarity_score_threshold=False, mmr=False):
+        # Usamos similarity_score_threshold para descartar aquellos chunks cuya puntuacion este por debjo del umbral 
+        if similarity_score_threshold and not mmr:
+            return vectorstore.as_retriever(
+                search_type='similarity_score_threshold',
+                search_kwargs={
+                    'score_threshold': THRESHOLD,
+                    'k': K
+                }
+            )
+        # Tambien podemos usar MMR para descartar chunks similares entre si y evitar redundancia
+        elif mmr and not similarity_score_threshold:
+            return vectorstore.as_retriever(
+                search_type='mmr',
+                search_kwargs={'k': K}
+            )
+        else:
+            return vectorstore.as_retriever(
+                search_kwargs={'k': K}
         )
     
 

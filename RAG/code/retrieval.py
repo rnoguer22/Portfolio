@@ -105,8 +105,18 @@ if __name__ == '__main__':
     dense_retriever = indexing.get_dense_retriever(vectorstore)
     sparse_retriever = indexing.get_sparse_retriever(vectorstore)
 
+
     # Retrieval 
-    user_query = 'Where can I find my file hyprland.lua?'
+    user_query = 'Donde puedo configurar mis monitores?'
+
+    '''
+    # Con este pequeño codigo podemos ver la distancia euclidiana entre los distintos embeddings de la bbdd y la query del usuario 
+    docs_with_scores = vectorstore.similarity_search_with_score(user_query, k=10)
+    for doc, score in docs_with_scores:
+        print(f"ID: {doc.metadata.get('id')} | Score/Distancia: {score}")
+        print(f"Contenido preview: {doc.page_content[:100]}...\n")
+    '''
+
     retrieval = Retrieval(dense_retriever, sparse_retriever)
     dense_docs, dense_docs_ids = retrieval.dense_search(user_query)
     print('Dense IDs: ', dense_docs_ids)

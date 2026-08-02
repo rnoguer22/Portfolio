@@ -116,9 +116,8 @@ class Retrieval:
 if __name__ == '__main__':
 
     # Necesitamos hacer la fase de Indexing
-    indexing = Indexing(DIR_PATH, COLLECTION_NAME)
+    indexing = Indexing(DIR_PATH, COLLECTION_NAME, debug=True)
     vectorstore = indexing.load_vectorstore()
-    print('Base de datos cargada correctamente!')
     dense_retriever = indexing.get_dense_retriever(vectorstore)
     sparse_retriever = indexing.get_sparse_retriever(vectorstore)
 

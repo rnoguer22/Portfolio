@@ -5,6 +5,7 @@ from langchain_core.documents import Document
 from langchain_community.retrievers import BM25Retriever
 from langchain_chroma import Chroma 
 from langchain_huggingface import HuggingFaceEmbeddings
+from rich.console import Console 
 from config import DIR_PATH, COLLECTION_NAME, CHROMADB_PATH, K, THRESHOLD, HUGGINGFACE_EMBEDDINGS 
 
 
@@ -13,10 +14,14 @@ from config import DIR_PATH, COLLECTION_NAME, CHROMADB_PATH, K, THRESHOLD, HUGGI
 # Fase donde se cargan los documentos, se dividen en chunks, se generan los embeddings y se almacenan en Chroma 
 class Indexing:
 
-    def __init__(self, dir_path, collection_name, cosine=True, knn=True):
+    def __init__(self, dir_path, collection_name, cosine=True, knn=True, debug=False, console=Console()):
         self.dir_path = dir_path
         self.collection_name = collection_name
-        self.embedding_function = HuggingFaceEmbeddings(model_name=HUGGINGFACE_EMBEDDINGS)
+
+        with console.status('[bold cyan]Loading embeddings model...\n[/]', spinner='dots'):
+            self.embedding_function = HuggingFaceEmbeddings(model_name=HUGGINGFACE_EMBEDDINGS)
+        self.debug = debug 
+        self.console = console
 
         self.vectorstore_metadata = {}
         # Configuracion de la base de datos
@@ -64,10 +69,12 @@ class Indexing:
         # Asignamos un ID a cada chunk 
         for i, doc in enumerate(docs):
             doc.metadata['id'] = str(i)
-        print('Chunks en total: ', len(docs))
+
+        if self.debug:
+            self.console.print('Total chunks: ', len(docs))
+            self.console.print('Creating database...[/]', spinner='dots')
 
         # Por ultimo guardamos los datos en Chroma, convirtiendolos en embeddings previamente
-        print('Creando la base de datos...')        
         vectorstore = Chroma.from_documents(
             documents=docs, 
             embedding=self.embedding_function,
@@ -75,6 +82,9 @@ class Indexing:
             persist_directory=CHROMADB_PATH,
             collection_metadata=self.vectorstore_metadata
         )
+        if self.debug:
+            self.console.print('Created database in disk!')
+
         return vectorstore
 
 
@@ -82,13 +92,16 @@ class Indexing:
     # Necesitamos el modelo que genera los embeddings para las nuevas queries del usuario 
     def load_vectorstore(self):
         # De esta manera obtenemos los chunks en forma de embeddings (vectores)
-        print('Cargando base de datos...')
+        if self.debug:
+            self.console.print('Loading database...')
         vectorstore = Chroma(
             collection_name=self.collection_name, 
             embedding_function=self.embedding_function,
             persist_directory=CHROMADB_PATH,
             collection_metadata=self.vectorstore_metadata
         )
+        if self.debug:
+            self.console.print('Loaded database!')
         return vectorstore
 
 
@@ -158,10 +171,9 @@ class Indexing:
 
 if __name__ == '__main__':
 
-    indexing = Indexing(DIR_PATH, COLLECTION_NAME)
+    indexing = Indexing(DIR_PATH, COLLECTION_NAME, debug=True)
     vectorstore = indexing.create_vectorstore(CHROMADB_PATH)
     # vectorstore = indexing.load_vectorstore()
-    print('Base de datos creada correctamente en disco')
     dense_retriever = indexing.get_dense_retriever(vectorstore)
     sparse_retriever = indexing.get_sparse_retriever(vectorstore)
 

@@ -4,6 +4,8 @@ from config import DIR_PATH, COLLECTION_NAME, K
 
 
 
+
+
 # Fase de Retrieval 
 # El usuario hace una pregunta y se buscan los chunks mas relevantes
 # (esto se puede hacer por similitud, BM25, busqueda hibrida, etc.)
@@ -94,6 +96,21 @@ class Retrieval:
 
         return sorted_docs[:K]
 
+    
+    # Metodo para mostrar el contexto en el terminal 
+    def show_context_terminal(self, user_query, docs_context):
+        print(f"\nOriginal question: {user_query}")
+        print('Retrieved Documents:')
+        for i, doc in enumerate(docs_context, start=1):
+            doc_id = doc.metadata['id']
+            doc_score = doc.metadata.get('score', 'N/A')
+            doc_rank = doc.metadata.get('rank', 'N/A')
+            doc_retriever = doc.metadata.get('retriever', 'N/A')
+            print(f"Document {i}: Document ID: {doc_id} Score: {doc_score} Rank: {doc_rank} Retriever: {doc_retriever}\n")
+            print(f"Content: \n{doc.page_content}\n\n")
+
+
+
 
 
 if __name__ == '__main__':
@@ -126,12 +143,4 @@ if __name__ == '__main__':
     # (version sin usar modelo llm, ya que no hemos llegado a la fase todavia)
     # Con esto simplemente estamos mostrando los distintos chunks de la busqueda hibrida (RRF)
     hybrid_docs = retrieval.hybrid_search(user_query)
-    print(f"\nOriginal question: {user_query}")
-    print('Retrieved Documents:')
-    for i, doc in enumerate(dense_docs, start=1):
-        doc_id = doc.metadata['id']
-        doc_score = doc.metadata.get('score', 'N/A')
-        doc_rank = doc.metadata.get('rank', 'N/A')
-        doc_retriever = doc.metadata.get('retriever', 'N/A')
-        print(f"Document {i}: Document ID: {doc_id} Score: {doc_score} Rank: {doc_rank} Retriever: {doc_retriever}\n")
-        print(f"Content: \n{doc.page_content}\n")
+    retrieval.show_context_terminal(user_query, hybrid_docs)

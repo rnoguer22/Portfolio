@@ -1,10 +1,13 @@
 from indexing import Indexing 
 from retrieval import Retrieval
 from langchain_ollama import ChatOllama
+from langchain_groq import ChatGroq 
 from langchain_core.output_parsers import StrOutputParser 
 from langchain_core.runnables import RunnableParallel, RunnablePassthrough
 from langchain_core.prompts import ChatPromptTemplate
-from config import DIR_PATH, CONTEXT_FILE_PATH, COLLECTION_NAME, OLLAMA_MODEL
+from config import DIR_PATH, CONTEXT_FILE_PATH, COLLECTION_NAME, OLLAMA_MODEL, GROQ_MODEL, GROQ_API_KEY
+
+
 
 
 
@@ -12,10 +15,20 @@ from config import DIR_PATH, CONTEXT_FILE_PATH, COLLECTION_NAME, OLLAMA_MODEL
 # Generation -> El LLM finalmente genera la respuesta utilizando el contexto que le hemos dado en el prompt 
 class AugmentationGeneration:
 
-    def __init__(self):
-        # Usamos mi modelo local de ollama para generar la respuesta (de momento)
-        # Importante tener ollama corriendo en local con: ollama serve
-        self.llm = ChatOllama(model=OLLAMA_MODEL)
+    def __init__(self, local=False):
+        if local:
+            # Usamos mi modelo local de ollama para generar la respuesta
+            # Importante tener ollama corriendo en local con: ollama serve
+            self.llm = ChatOllama(model=OLLAMA_MODEL)
+            self.model = OLLAMA_MODEL
+        else:
+            # Usamos el modelo definido en config.py para Groq y usamos nuestra API KEY 
+            self.llm = ChatGroq(
+                model=GROQ_MODEL,
+                api_key=GROQ_API_KEY
+            )
+            self.model = GROQ_MODEL
+
         # Necesitamos un prompt para el RAG. De momento vamos a dejar algo simple 
         self.prompt = ChatPromptTemplate.from_messages([
             ('system', 'Responde en español, intentando ser lo más breve posible pero respondiendo con mucha claridad. Responde únicamente en función del siguiente contexto (si no encuentras la respuesta en el contexto, hazlo saber al usuario):\n\n{context}'),
@@ -33,7 +46,7 @@ class AugmentationGeneration:
         # Finalmente creamos la segunda cadena con los chunks devueltos por el retriever 
         # Esta ya si le pasa los datos al llm y genera la respuesta siguiendo la estructura de la primera cadena 
         # prompt -> llm -> str_output_parser(string de texto)
-        print(f'Iniciando {OLLAMA_MODEL}...')
+        print(f'Iniciando {self.model}...')
         rag_chain_with_source = RunnableParallel(
         {
             'context': retrieval_instance.hybrid_search,
@@ -92,7 +105,7 @@ if __name__ == '__main__':
 
 
     # Augmentation and Generation 
-    augmentation_generation = AugmentationGeneration()
+    augmentation_generation = AugmentationGeneration(local=False)
     rag_chain_with_source = augmentation_generation.define_chain(retrieval)
     user_query = 'Como puedo cambiar la configuración de input de mi teclado?'
     context = augmentation_generation.generate_response(rag_chain_with_source, user_query)

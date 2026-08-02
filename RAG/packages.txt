@@ -7,5 +7,6 @@ chromadb
 langchain-chroma
 langchain-huggingface
 langchain-ollama
+langchain-groq 
 unstructured
 python-dotenv

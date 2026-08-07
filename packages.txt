@@ -10,3 +10,9 @@ langchain-ollama
 langchain-groq 
 unstructured
 python-dotenv
+
+groq
+ddgs
+
+langgraph
+tavily-python

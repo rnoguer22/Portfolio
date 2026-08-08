@@ -16,3 +16,5 @@ ddgs
 
 langgraph
 tavily-python
+langchain-google-genai
+langchain-openai 

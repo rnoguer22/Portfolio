@@ -8,6 +8,14 @@ load_dotenv()
 OLLAMA_MODEL = 'qwen3'
 GROQ_API_KEY = os.getenv('GROQ_API_KEY')
 TAVILY_API_KEY = os.getenv('TAVILY_API_KEY')
-GROQ_MODEL = 'llama-3.1-8b-instant' # Durante el desarrollo, al ofrecer mas tokens y requests / dia
-# GROQ_MODEL = 'llama-3.3-70b-versatile' # Cuando haya terminado el proyecto, ya se supone que es el que va mejor (gratuitamente con groq)
-# GROQ_MODEL = 'qwen3.6-27b' # Alternativa al anterior, comparar las respuestas y ver cual funciona mejor. Si no, puede ser buena alternativa para tests 
+GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+# Para IA agentica, usamos uno de los modelos de OpenAI, ya que no da errores de formato al llamar a las tools, que me pasaba con los modelos de llama 
+# Ademas, llama-3.1-8b-instant y llama-3.3-70b-versatile estan deprecated, y se recomienda cambiarlos por 'openai/gpt-oss-20b' y 'openai/gpt-oss-120b' respectivamente
+# GROQ_MODEL = 'openai/gpt-oss-20b'
+# GROQ_MODEL = 'openai/gpt-oss-120b'
+# GROQ_MODEL = 'qwen/qwen3.6-27b'
+GROQ_MODEL = 'llama-3.3-70b-versatile'
+GOOGLE_MODEL = 'gemini-3.5-flash' 
+OPENAI_MODEL = 'gpt-5-nano'
+# OPENAI_MODEL = 'gpt-4o-mini'

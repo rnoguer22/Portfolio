@@ -1,48 +1,34 @@
 
 
-Document 1: Document ID: 356 Source: /home/moyis/dotfiles/README.md
+Document 1: Document ID: 388 Source: /home/moyis/dotfiles/nvim/lua/config/lazy.lua
 ----------------------------------------------------------------------------------------------------
 Content: 
-# dotfiles
-
---- 
-
-Repositorio para guardar la configuracion de arch
-
-
-
-Document 2: Document ID: 330 Source: /home/moyis/dotfiles/prepare_dotfiles.sh
-----------------------------------------------------------------------------------------------------
-Content: 
-#!/bin/bash
-
-# Fichero para mover mi configuracion inicial a mi repo dotfiles
-
-# Directorio de destino del repositorio
-DEST_DIR="$HOME/dotfiles"
-
-# Carpetas dentro de ~/.config/ que vamos a migrar
-configs=("nvim" "kitty" "wofi" "hypr" "waybar" "btop" "ranger" "gtk-3.0" "gtk-4.0")
-
-for item in "${configs[@]}"; do
-  if [ -d "$HOME/.config/$item" ] || [ -f "$HOME/.config/$item" ]; then
-    echo "Migrando $item..."
-    # Movemos los ficheros a la carpeta ~/dotfiles/
-    mv "$HOME/.config/$item" "$DEST_DIR/"
-    # Y creamos un enlace simbólico de vuelta hacia .config
-    ln -sf "$DEST_DIR/$item" "$HOME/.config/$item"
-  fi
-done
-
-# Migramos .zshrc aparte, ya que no esta dentro de ~/.config/
-if [ -f "$HOME/.zshrc" ]; then
-  mv "$HOME/.zshrc" "$DEST_DIR/"
-  ln -sf "$DEST_DIR/.zshrc" "$HOME/.zshrc"
-fi
+},
+  install = { colorscheme = { "tokyonight", "habamax" } },
+  checker = {
+    enabled = true, -- check for plugin updates periodically
+    notify = false, -- notify on update
+  }, -- automatically check for plugin updates
+  performance = {
+    rtp = {
+      -- disable some rtp plugins
+      disabled_plugins = {
+        "gzip",
+        -- "matchit",
+        -- "matchparen",
+        -- "netrwPlugin",
+        "tarPlugin",
+        "tohtml",
+        "tutor",
+        "zipPlugin",
+      },
+    },
+  },
+})
 
 
 
-Document 3: Document ID: 328 Source: /home/moyis/dotfiles/install.sh
+Document 2: Document ID: 328 Source: /home/moyis/dotfiles/install.sh
 ----------------------------------------------------------------------------------------------------
 Content: 
 #!/bin/bash
@@ -75,201 +61,232 @@ echo "Creando enlaces simbólicos..."
 
 
 
-Document 4: Document ID: 329 Source: /home/moyis/dotfiles/install.sh
+Document 3: Document ID: 390 Source: /home/moyis/dotfiles/nvim/lua/config/keymaps.lua
 ----------------------------------------------------------------------------------------------------
 Content: 
-# 4. Crear directorios de configuración si no existen
-mkdir -p ~/.config
-mkdir -p ~/Pictures
+-- Keymaps are automatically loaded on the VeryLazy event
+-- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
+-- Add any additional keymaps here
 
-# 5. Crear enlaces simbólicos (ln -sf)
-echo "Creando enlaces simbólicos..."
-
-ln -sfT $DOTFILES_DIR/nvim ~/.config/nvim
-ln -sfT $DOTFILES_DIR/kitty ~/.config/kitty
-ln -sfT $DOTFILES_DIR/wofi ~/.config/wofi
-ln -sfT $DOTFILES_DIR/hypr ~/.config/hypr
-ln -sfT $DOTFILES_DIR/waybar ~/.config/waybar
-ln -sfT $DOTFILES_DIR/btop ~/.config/btop
-ln -sfT $DOTFILES_DIR/ranger ~/.config/ranger
-ln -sf $DOTFILES_DIR/.zshrc ~/.zshrc
-ln -sfT $DOTFILES_DIR/gtk-3.0 ~/.config/gtk-3.0
-ln -sfT $DOTFILES_DIR/gtk-4.0 ~/.config/gtk-4.0
-ln -sfT $DOTFILES_DIR/wallpapers ~/Pictures/wallpapers
-ln -sfT $DOTFILES_DIR ~/.config
-
-# 6. Configurar Zsh por defecto
-if [[ "$SHELL" != *"zsh"* ]]; then
-  chsh -s $(which zsh)
-fi
-
-echo "¡Configuración aplicada con éxito!"
+vim.keymap.set({ "n", "v" }, "j", "k", { desc = "Mover arriba" })
+vim.keymap.set({ "n", "v" }, "k", "j", { desc = "Mover abajo" })
 
 
 
-Document 5: Document ID: 385 Source: /home/moyis/dotfiles/nvim/lua/config/autocmds.lua
+Document 4: Document ID: 359 Source: /home/moyis/dotfiles/hypr/hyprland.lua
 ----------------------------------------------------------------------------------------------------
 Content: 
--- Autocmds are automatically loaded on the VeryLazy event
--- Default autocmds that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/autocmds.lua
+---------------------
+---- MY PROGRAMS ----
+---------------------
+
+-- Set programs that you use
+local terminal = "kitty"
+local fileManager = "kitty -e ranger"
+local menu = "hyprlauncher"
+
+-------------------
+---- AUTOSTART ----
+-------------------
+
+-- See https://wiki.hypr.land/Configuring/Basics/Autostart/
+
+-- Autostart necessary processes (like notifications daemons, status bars, etc.)
+-- Or execute your favorite apps at launch like this:
 --
--- Add any additional autocmds here
--- with `vim.api.nvim_create_autocmd`
+-- hl.on("hyprland.start", function ()
+--   hl.exec_cmd(terminal)
+--   hl.exec_cmd("nm-applet")
+--   hl.exec_cmd("waybar & hyprpaper & firefox")
+-- end)
 --
--- Or remove existing autocmds by their group name (which is prefixed with `lazyvim_` for the defaults)
--- e.g. vim.api.nvim_del_augroup_by_name("lazyvim_wrap_spell")
+-- Configuracion de arranque
+hl.on("hyprland.start", function()
+	hl.exec_cmd("waybar & hyprpaper & hyprsunset -t 4500")
+end)
+
+-------------------------------
+---- ENVIRONMENT VARIABLES ----
+-------------------------------
+
+-- See https://wiki.hypr.land/Configuring/Advanced-and-Cool/Environment-variables/
+
+hl.env("XCURSOR_SIZE", "24")
+hl.env("HYPRCURSOR_SIZE", "24")
+
+
+
+Document 5: Document ID: 389 Source: /home/moyis/dotfiles/nvim/lua/config/options.lua
+----------------------------------------------------------------------------------------------------
+Content: 
+-- Options are automatically loaded before lazy.nvim startup
+-- Default options that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/options.lua
+-- Add any additional options here
 --
 --
 --
--- Configuracion para que herede la transparencia de kitty
-vim.api.nvim_create_autocmd("ColorScheme", {
-  pattern = "*",
-  callback = function()
-    vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
-    vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
-    vim.api.nvim_set_hl(0, "NeoTreeNormal", { bg = "none" })
-    vim.api.nvim_set_hl(0, "NeoTreeNormalNC", { bg = "none" })
-  end,
+vim.cmd("colorscheme default")
+
+
+
+Document 6: Document ID: 366 Source: /home/moyis/dotfiles/hypr/hyprland.lua
+----------------------------------------------------------------------------------------------------
+Content: 
+-- See https://wiki.hypr.land/Configuring/Layouts/Master-Layout/ for more
+hl.config({
+	master = {
+		new_status = "master",
+	},
+})
+
+-- See https://wiki.hypr.land/Configuring/Layouts/Scrolling-Layout/ for more
+hl.config({
+	scrolling = {
+		fullscreen_on_one_column = true,
+	},
+})
+
+----------------
+----  MISC  ----
+----------------
+
+hl.config({
+	misc = {
+		force_default_wallpaper = -1, -- Set to 0 or 1 to disable the anime mascot wallpapers
+		disable_hyprland_logo = false, -- If true disables the random hyprland logo / anime girl background. :(
+	},
+})
+
+---------------
+---- INPUT ----
+---------------
+
+hl.config({
+	input = {
+		kb_layout = "us",
+		kb_variant = "intl",
+		kb_model = "",
+		kb_options = "",
+		kb_rules = "",
+
+		follow_mouse = 1,
+
+		sensitivity = 0, -- -1.0 - 1.0, 0 means no modification.
+
+		touchpad = {
+			natural_scroll = false,
+		},
+	},
+})
+
+hl.gesture({
+	fingers = 3,
+	direction = "horizontal",
+	action = "workspace",
 })
 
 
 
-Document 6: Document ID: 331 Source: /home/moyis/dotfiles/prepare_dotfiles.sh
+Document 7: Document ID: 358 Source: /home/moyis/dotfiles/hypr/hyprland.lua
 ----------------------------------------------------------------------------------------------------
 Content: 
-# Migramos .zshrc aparte, ya que no esta dentro de ~/.config/
-if [ -f "$HOME/.zshrc" ]; then
-  mv "$HOME/.zshrc" "$DEST_DIR/"
-  ln -sf "$DEST_DIR/.zshrc" "$HOME/.zshrc"
-fi
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+-- AUTOGENERATED HYPRLAND CONFIG.                        --
+-- EDIT THIS CONFIG ACCORDING TO THE WIKI INSTRUCTIONS.  --
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-# Y lo mismo con los wallpapers
-if [ -d "$HOME/Pictures/wallpapers" ]; then
-  echo "Migrando wallpapers..."
-  mv "$HOME/Pictures/wallpapers" "$DEST_DIR/wallpapers"
-  ln -sf "$DEST_DIR/wallpapers" "$HOME/Pictures/wallpapers"
-fi
+-- hl.config({ autogenerated = true }) -- remove this line to remove the warning
 
-echo "Migración completada. Configuraciones guardadas en $DEST_DIR y enlazadas en $HOME/.config/."
+-- This is an example Hyprland Lua config file.
+-- Refer to the wiki for more information.
+-- https://wiki.hypr.land/Configuring/Start/
+
+-- Please note not all available settings / options are set here.
+-- For a full list, see the wiki
+
+-- You can (and should!!) split this configuration into multiple files
+-- Create your files separately and then require them like this:
+-- require("myColors")
+
+------------------
+---- MONITORS ----
+------------------
+
+-- See https://wiki.hypr.land/Configuring/Basics/Monitors/
+hl.monitor({
+	output = "",
+	mode = "preferred",
+	position = "auto",
+	scale = "auto",
+})
+
+---------------------
+---- MY PROGRAMS ----
+---------------------
 
 
 
-Document 7: Document ID: 160 Source: /home/moyis/dotfiles/kitty/kitty.conf
+Document 8: Document ID: 387 Source: /home/moyis/dotfiles/nvim/lua/config/lazy.lua
 ----------------------------------------------------------------------------------------------------
 Content: 
-# vim:fileencoding=utf-8:foldmethod=marker
-
-# BEGIN_KITTY_THEME
-# Tokyo Night Storm
-include current-theme.conf
-# END_KITTY_THEME
-
-# Margenes 
-PROMPT=$'%B%F{blue}➜%f %F{magenta}%~%f $(indow_margin_width 0
-window_margin_height 0
-window_padding_width 10
-
-# Fuente un poco mas grande
-font_size 12.5
-font_family Ubuntu Mono
-
-# Opacidad del fondo
-background_opacity 0.85
-# Fondo un poco difuminado
-background_blur 1
-
-#: Fonts {{{
-
-#: kitty has very powerful font management. You can configure
-#: individual font faces and even specify special fonts for particular
-#: characters.
-
-# font_family      monospace
-# bold_font        auto
-# italic_font      auto
-# bold_italic_font auto
+require("lazy").setup({
+  spec = {
+    -- add LazyVim and import its plugins
+    { "LazyVim/LazyVim", import = "lazyvim.plugins" },
+    -- import/override with your plugins
+    { import = "plugins" },
+  },
+  defaults = {
+    -- By default, only LazyVim plugins will be lazy-loaded. Your custom plugins will load during startup.
+    -- If you know what you're doing, you can set this to `true` to have all your custom plugins lazy-loaded by default.
+    lazy = false,
+    -- It's recommended to leave version=false for now, since a lot the plugin that support versioning,
+    -- have outdated releases, which may break your Neovim install.
+    version = false, -- always use the latest git commit
+    -- version = "*", -- try installing the latest stable version for plugins that support semver
+  },
+  install = { colorscheme = { "tokyonight", "habamax" } },
+  checker = {
+    enabled = true, -- check for plugin updates periodically
+    notify = false, -- notify on update
 
 
 
-Document 8: Document ID: 123 Source: /home/moyis/dotfiles/ranger/rc.conf
+Document 9: Document ID: 374 Source: /home/moyis/dotfiles/hypr/hyprland.lua
 ----------------------------------------------------------------------------------------------------
 Content: 
-# Save the "`" bookmark to disk.  This can be used to switch to the last
-# directory by typing "``".
-set save_backtick_bookmark true
+-- Hyprland-run windowrule
+hl.window_rule({
+	name = "move-hyprland-run",
+	match = { class = "hyprland-run" },
 
-# You can display the "real" cumulative size of directories by using the
-# command :get_cumulative_size or typing "dc".  The size is expensive to
-# calculate and will not be updated automatically.  You can choose
-# to update it automatically though by turning on this option:
-set autoupdate_cumulative_size false
+	move = "20 monitor_h-120",
+	float = true,
+})
 
-# Turning this on makes sense for screen readers:
-set show_cursor false
-
-# One of: size, natural, basename, atime, ctime, mtime, type, random
-set sort natural
-
-# Additional sorting options
-set sort_reverse false
-set sort_case_insensitive true
-set sort_directories_first true
-set sort_unicode false
-
-# Enable this if key combinations with the Alt Key don't work for you.
-# (Especially on xterm)
-set xterm_alt_key false
-
-# Whether to include bookmarks in cd command
-set cd_bookmarks true
+-- Configuracion extra para Wofi
+hl.layer_rule({ "blur", "wofi" })
+hl.layer_rule({ "ignorezero", "wofi" })
+hl.layer_rule({ "ignorealpha", "0.5", "wofi" })
 
 
 
-Document 9: Document ID: 346 Source: /home/moyis/dotfiles/ranger/scope.sh
+Document 10: Document ID: 386 Source: /home/moyis/dotfiles/nvim/lua/config/lazy.lua
 ----------------------------------------------------------------------------------------------------
 Content: 
-#         --file "${FILE_PATH}" -- "$fe" > "${IMAGE_CACHE_PATH}" && exit 6
-        #     [ "$bsd" ] || [ "$tar" ] && rm -- "${IMAGE_CACHE_PATH}"
-        #     [ "$rar" ] && unrar p -p- -inul -- "${FILE_PATH}" "$fn" > \
-        #         "${IMAGE_CACHE_PATH}" && exit 6
-        #     [ "$zip" ] && unzip -pP "" -- "${FILE_PATH}" "$fe" > \
-        #         "${IMAGE_CACHE_PATH}" && exit 6
-        #     [ "$rar" ] || [ "$zip" ] && rm -- "${IMAGE_CACHE_PATH}"
-        #     ;;
-    esac
-
-
-
-Document 10: Document ID: 124 Source: /home/moyis/dotfiles/ranger/rc.conf
-----------------------------------------------------------------------------------------------------
-Content: 
-# Enable this if key combinations with the Alt Key don't work for you.
-# (Especially on xterm)
-set xterm_alt_key false
-
-# Whether to include bookmarks in cd command
-set cd_bookmarks true
-
-# Changes case sensitivity for the cd command tab completion
-set cd_tab_case sensitive
-
-# Use fuzzy tab completion with the "cd" command. For example,
-# ":cd /u/lo/b<tab>" expands to ":cd /usr/local/bin".
-set cd_tab_fuzzy false
-
-# Avoid previewing files larger than this size, in bytes.  Use a value of 0 to
-# disable this feature.
-set preview_max_size 0
-
-# The key hint lists up to this size have their sublists expanded.
-# Otherwise the submaps are replaced with "...".
-set hint_collapse_threshold 10
-
-# Add the highlighted file to the path in the titlebar
-set show_selection_in_titlebar true
-
-# The delay that ranger idly waits for user input, in milliseconds, with a
-# resolution of 100ms.  Lower delay reduces lag between directory updates but
-# increases CPU load.
-set idle_delay 2000
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not (vim.uv or vim.loop).fs_stat(lazypath) then
+  local lazyrepo = "https://github.com/folke/lazy.nvim.git"
+  local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
+  if vim.v.shell_error ~= 0 then
+    vim.api.nvim_echo({
+      { "Failed to clone lazy.nvim:\n", "ErrorMsg" },
+      { out, "WarningMsg" },
+      { "\nPress any key to exit..." },
+    }, true, {})
+    vim.fn.getchar()
+    os.exit(1)
+  end
+end
+vim.opt.rtp:prepend(lazypath)
 

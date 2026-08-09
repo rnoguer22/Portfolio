@@ -1,5 +1,5 @@
-from indexing import Indexing 
-from retrieval import Retrieval
+from RAG.code.indexing import Indexing 
+from RAG.code.retrieval import Retrieval
 from langchain_ollama import ChatOllama
 from langchain_groq import ChatGroq 
 from langchain_core.output_parsers import StrOutputParser 
@@ -81,7 +81,7 @@ class AugmentationGeneration:
                         # Mostramos la respuesta en formato Markdown gracias a la libreria Rich 
                         full_answer += chunk['answer']
                         live.update(Markdown(full_answer))
-        return context , full_answer
+        return context, full_answer
 
 
     # Metodo para volcar el contexto en un fichero, para comprobar que el retriever funciona correctamente 

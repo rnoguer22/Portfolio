@@ -41,18 +41,26 @@ class Indexing:
     def create_vectorstore(self, vectorstore_path):
         path = Path(self.dir_path)
         # Hacemos una busqueda de todos los ficheros dentro del directorio en funcion de su extension
-        extensions = ['*.py', '*.json', '*.yaml', '*.yml', '*.conf', '*.sh', '*.txt', '*.md', '*.lua']
+        extensions = ['*.py', '*.json', '*.html', '*.css', '*.js' , '*.jsx', '*.ts', '*.tsx', '*.yaml', '*.yml', '*.conf', '*.sh', '*.txt', '*.md', '*.lua']
+        # Ignoramos algunos directorios usuales que aportan ruido 
+        ignored_dirs = ('.venv', '.git', 'node_modules', '__pycache__', '.idea', '.vscode', 'dist', 'build')
         raw_documents = []
     
         for ext in extensions:
             for file_path in path.rglob(ext):
+                 # Troceamos la ruta con .parts (/home/user/) -> ('/', 'home', 'user') y si estan en la lista negra pasamos al siguiente fichero
+                if any(ignored in file_path.parts for ignored in ignored_dirs):
+                    continue
+
                 try:
                     # Obtenemos el texto del fichero con TextLoader
                     loader = TextLoader(str(file_path), encoding='utf-8')
                     # Los agregamos a la lista 
                     raw_documents.extend(loader.load())
+                    self.console.print(f"[green]Loaded {file_path}[/]")
                 except Exception as e:
                     # Si algún fichero da error de codificación o permisos, lo pasamos 
+                    self.console.print(f"[bold red]ERROR --> {file_path}: {e}[/]")
                     continue
 
         if not raw_documents:
@@ -72,7 +80,7 @@ class Indexing:
 
         if self.debug:
             self.console.print('Total chunks: ', len(docs))
-            self.console.print('Creating database...[/]', spinner='dots')
+            self.console.print('Creating database...')
 
         # Por ultimo guardamos los datos en Chroma, convirtiendolos en embeddings previamente
         vectorstore = Chroma.from_documents(

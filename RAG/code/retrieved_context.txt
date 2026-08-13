@@ -1,292 +1,286 @@
 
 
-Document 1: Document ID: 388 Source: /home/moyis/dotfiles/nvim/lua/config/lazy.lua
+Document 1: Document ID: 205 Source: /home/moyis/Desktop/Golum/portfolio/index.html
 ----------------------------------------------------------------------------------------------------
 Content: 
-},
-  install = { colorscheme = { "tokyonight", "habamax" } },
-  checker = {
-    enabled = true, -- check for plugin updates periodically
-    notify = false, -- notify on update
-  }, -- automatically check for plugin updates
-  performance = {
-    rtp = {
-      -- disable some rtp plugins
-      disabled_plugins = {
-        "gzip",
-        -- "matchit",
-        -- "matchparen",
-        -- "netrwPlugin",
-        "tarPlugin",
-        "tohtml",
-        "tutor",
-        "zipPlugin",
-      },
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="./assets/images/hacker.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <title>HAK3R Theme by GetCyber</title>
+    <meta name="title" content="HAK3R Theme by GetCyber">
+    <meta name="description" content="Free Open Source portfolio website template for cybersecurity freelancers and professionals. Created by GetCyber.">
+    <meta name="author" content="Dan Duran">
+    <meta name="keywords" content="cybersecurity, portfolio, freelancer, security professional, hacker, ethical hacking, open source">
+    
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://hak3r.getcyber.me">
+    <meta property="og:title" content="HAK3R Theme by GetCyber">
+
+
+
+Document 2: Document ID: 206 Source: /home/moyis/Desktop/Golum/portfolio/index.html
+----------------------------------------------------------------------------------------------------
+Content: 
+<meta property="og:type" content="website">
+    <meta property="og:url" content="https://hak3r.getcyber.me">
+    <meta property="og:title" content="HAK3R Theme by GetCyber">
+    <meta property="og:description" content="Free Open Source portfolio website template for cybersecurity freelancers and professionals. Created by GetCyber.">
+    <meta property="og:image" content="https://hak3r.getcyber.me/assets/images/hak3r.jpg">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://hak3r.getcyber.me">
+    <meta property="twitter:title" content="HAK3R Theme by GetCyber">
+    <meta property="twitter:description" content="Free Open Source portfolio website template for cybersecurity freelancers and professionals. Created by GetCyber.">
+    <meta property="twitter:image" content="https://hak3r.getcyber.me/assets/images/hak3r.jpg">
+    
+    <!-- Theme Color for browsers -->
+
+
+
+Document 3: Document ID: 332 Source: /home/moyis/Desktop/Golum/portfolio/src/components/Footer.tsx
+----------------------------------------------------------------------------------------------------
+Content: 
+{/* Footer Content */}
+      <footer className="bg-white py-4 dark:bg-black">
+        <div className="max-w-screen-xl mx-auto p-4 md:flex md:items-center md:justify-between">
+          <span className="text-sm text-gray-500 sm:text-center dark:text-gray-400">
+            © {new Date().getFullYear()} HAK3R Theme. All Rights Reserved.
+          </span>
+          <ul className="flex flex-wrap items-center mt-3 text-sm text-gray-500 dark:text-gray-400 sm:mt-0">
+            <li>
+              Brought to you with ❤️ by <a href="https://getcyber.me" className="mr-4 hover:underline md:mr-6">
+                GetCyber.me
+              </a>
+            </li>
+            <li>
+              <a href="/privacy" className="mr-4 hover:underline md:mr-6">
+                Privacy Policy
+              </a>
+            </li>
+          </ul>
+        </div>
+      </footer>
+    </>
+  );
+};
+
+export default Footer;
+
+
+
+Document 4: Document ID: 207 Source: /home/moyis/Desktop/Golum/portfolio/index.html
+----------------------------------------------------------------------------------------------------
+Content: 
+<meta property="twitter:image" content="https://hak3r.getcyber.me/assets/images/hak3r.jpg">
+    
+    <!-- Theme Color for browsers -->
+    <meta name="theme-color" content="#16a34a">
+    <meta name="msapplication-TileColor" content="#16a34a">
+    
+    <!-- Additional Meta -->
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="English">
+    <meta name="revisit-after" content="7 days">
+    <meta name="generator" content="Vite">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Anonymous+Pro:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Smooth Scroll -->
+    <style>
+    html {
+      scroll-behavior: smooth;
+    }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="./src/main.tsx"></script>
+    <script src="./assets/js/custom.js"></script>
+  </body>
+</html>
+
+
+
+Document 5: Document ID: 337 Source: /home/moyis/Desktop/Golum/portfolio/README.md
+----------------------------------------------------------------------------------------------------
+Content: 
+## 🚀 Deployment
+
+The site can be deployed to any static hosting service. The production build outputs to the `dist` folder.
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch
+3. Commit your changes
+4. Push to the branch
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 👨‍💻 Author
+
+**Dan Duran** - [GetCyber](https://getcyber.me)
+
+---
+
+Made with ❤️ by GetCyber
+
+
+
+Document 6: Document ID: 215 Source: /home/moyis/Desktop/Golum/portfolio/prettier.config.js
+----------------------------------------------------------------------------------------------------
+Content: 
+/** @type {import('prettier').Config} */
+export default {
+  plugins: ["prettier-plugin-tailwindcss"],
+  // tailwindcss
+  tailwindAttributes: ["theme"],
+  tailwindFunctions: ["twMerge", "createTheme"],
+};
+
+
+
+Document 7: Document ID: 166 Source: /home/moyis/Desktop/Golum/portfolio/package-lock.json
+----------------------------------------------------------------------------------------------------
+Content: 
+"optional": true
+        },
+        "prettier-plugin-twig-melody": {
+          "optional": true
+        }
+      }
     },
-  },
-})
+    "node_modules/punycode": {
+      "version": "2.3.1",
+      "resolved": "https://registry.npmjs.org/punycode/-/punycode-2.3.1.tgz",
+      "integrity": "sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==",
+      "dev": true,
+      "engines": {
+        "node": ">=6"
+      }
+    },
+    "node_modules/queue-microtask": {
+      "version": "1.2.3",
+      "resolved": "https://registry.npmjs.org/queue-microtask/-/queue-microtask-1.2.3.tgz",
+      "integrity": "sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==",
+      "funding": [
+        {
+          "type": "github",
+          "url": "https://github.com/sponsors/feross"
+        },
+        {
+          "type": "patreon",
+          "url": "https://www.patreon.com/feross"
+        },
+        {
+          "type": "consulting",
 
 
 
-Document 2: Document ID: 328 Source: /home/moyis/dotfiles/install.sh
+Document 8: Document ID: 164 Source: /home/moyis/Desktop/Golum/portfolio/package-lock.json
 ----------------------------------------------------------------------------------------------------
 Content: 
-#!/bin/bash
+"@trivago/prettier-plugin-sort-imports": "*",
+        "prettier": "^3.0",
+        "prettier-plugin-astro": "*",
+        "prettier-plugin-css-order": "*",
+        "prettier-plugin-import-sort": "*",
+        "prettier-plugin-jsdoc": "*",
+        "prettier-plugin-marko": "*",
+        "prettier-plugin-organize-attributes": "*",
+        "prettier-plugin-organize-imports": "*",
+        "prettier-plugin-sort-imports": "*",
+        "prettier-plugin-style-order": "*",
+        "prettier-plugin-svelte": "*"
+      },
+      "peerDependenciesMeta": {
+        "@ianvs/prettier-plugin-sort-imports": {
+          "optional": true
+        },
+        "@prettier/plugin-pug": {
+          "optional": true
+        },
+        "@shopify/prettier-plugin-liquid": {
+          "optional": true
+        },
+        "@trivago/prettier-plugin-sort-imports": {
+          "optional": true
+        },
+        "prettier-plugin-astro": {
+          "optional": true
+        },
+        "prettier-plugin-css-order": {
 
-# Directorio donde están tus dotfiles
-DOTFILES_DIR="$HOME/dotfiles"
-
-echo "Iniciando instalación de dotfiles..."
-
-# 1. Actualizar sistema e instalar paquetes base desde repositorios oficiales
-sudo pacman -Syu --noconfirm
-sudo pacman -S --needed --noconfirm neovim kitty zsh firefox chromium python python-pip git wget curl hyprland hyprlock hypridle hyprshot hyprsunset wofi hyprpaper btop ranger waybar otf-font-awesome bottom bluetui ttf-ubuntu-font-family
-
-# 2. Instalar yay si no existe
-if ! command -v yay &>/dev/null; then
-  echo "Instalando yay..."
-  git clone https://aur.archlinux.org/yay.git /tmp/yay
-  cd /tmp/yay && makepkg -si --noconfirm
-fi
-
-# 3. Instalar paquetes de AUR
-yay -S --noconfirm wlogout google-chrome github-cli pokemon-colorscripts-git brave-bin
-
-# 4. Crear directorios de configuración si no existen
-mkdir -p ~/.config
-mkdir -p ~/Pictures
-
-# 5. Crear enlaces simbólicos (ln -sf)
-echo "Creando enlaces simbólicos..."
 
 
-
-Document 3: Document ID: 390 Source: /home/moyis/dotfiles/nvim/lua/config/keymaps.lua
+Document 9: Document ID: 324 Source: /home/moyis/Desktop/Golum/portfolio/src/components/Nav.tsx
 ----------------------------------------------------------------------------------------------------
 Content: 
--- Keymaps are automatically loaded on the VeryLazy event
--- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
--- Add any additional keymaps here
+return (
+    <Navbar 
+    className={`fixed w-full transition-all duration-300 ${
+      isScrolled 
+        ? 'z-50 py-1 bg-white dark:bg-black shadow-lg md:bg-white md:dark:bg-black' 
+        : 'z-50 py-4 bg-white dark:bg-black md:bg-transparent md:dark:bg-transparent'
+    }`}
+      fluid
+    >
+      <Navbar.Brand href="/">
+        <img 
+          src="./assets/images/hacker.png" 
+          className={`mr-3 transition-all duration-300 ${
+            isScrolled ? 'h-5 sm:h-7' : 'h-6 sm:h-9'
+          }`} 
+          alt="Logo" 
+        />
+        <span className={`self-center whitespace-nowrap font-bold dark:text-white transition-all duration-300 ${
+          isScrolled ? 'text-lg' : 'text-2xl'
+        }`}>
+          HAK3R
+        </span>
+      </Navbar.Brand>
+      <div className="flex md:order-2">
+        <DarkThemeToggle />
+        <a
+        href="https://github.com/Dan-Duran/hak3r"
+        target="_blank"
+        rel="noopener noreferrer"
 
-vim.keymap.set({ "n", "v" }, "j", "k", { desc = "Mover arriba" })
-vim.keymap.set({ "n", "v" }, "k", "j", { desc = "Mover abajo" })
 
 
-
-Document 4: Document ID: 359 Source: /home/moyis/dotfiles/hypr/hyprland.lua
+Document 10: Document ID: 334 Source: /home/moyis/Desktop/Golum/portfolio/README.md
 ----------------------------------------------------------------------------------------------------
 Content: 
----------------------
----- MY PROGRAMS ----
----------------------
+# HAK3R Free Portfolio Website
 
--- Set programs that you use
-local terminal = "kitty"
-local fileManager = "kitty -e ranger"
-local menu = "hyprlauncher"
+A modern, responsive portfolio template built specifically for cybersecurity professionals. Built with React, TypeScript, and Flowbite React components, it offers a sleek design with light/dark mode support.
 
--------------------
----- AUTOSTART ----
--------------------
+## 💪 Join me! 
+- **👉 Subscribe to my YouTube Channel [GetCyber - YouTube](https://youtube.com/getCyber)**
+- **👉 Checkout some more awesome tools at [GetCyber](https://getcyber.me/tools)**
+- **👉 Discord Server [GetCyber - Discord](https://discord.gg/YUf3VpDeNH)**
 
--- See https://wiki.hypr.land/Configuring/Basics/Autostart/
+---
+## 📺 Tutorial
 
--- Autostart necessary processes (like notifications daemons, status bars, etc.)
--- Or execute your favorite apps at launch like this:
---
--- hl.on("hyprland.start", function ()
---   hl.exec_cmd(terminal)
---   hl.exec_cmd("nm-applet")
---   hl.exec_cmd("waybar & hyprpaper & firefox")
--- end)
---
--- Configuracion de arranque
-hl.on("hyprland.start", function()
-	hl.exec_cmd("waybar & hyprpaper & hyprsunset -t 4500")
-end)
+[![Video Demo](https://img.youtube.com/vi/DQ3S2x1zbzk/0.jpg)](https://youtu.be/DQ3S2x1zbzk)
 
--------------------------------
----- ENVIRONMENT VARIABLES ----
--------------------------------
+## 💻 Screenshot 
 
--- See https://wiki.hypr.land/Configuring/Advanced-and-Cool/Environment-variables/
+![Image](https://github.com/user-attachments/assets/faabb4d6-e21f-4b46-9959-342c3d00b40f)
 
-hl.env("XCURSOR_SIZE", "24")
-hl.env("HYPRCURSOR_SIZE", "24")
+## 🚀 Video Demo
 
+https://github.com/user-attachments/assets/d1416b79-ef4a-4b08-9887-6003180a8667
 
-
-Document 5: Document ID: 389 Source: /home/moyis/dotfiles/nvim/lua/config/options.lua
-----------------------------------------------------------------------------------------------------
-Content: 
--- Options are automatically loaded before lazy.nvim startup
--- Default options that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/options.lua
--- Add any additional options here
---
---
---
-vim.cmd("colorscheme default")
-
-
-
-Document 6: Document ID: 366 Source: /home/moyis/dotfiles/hypr/hyprland.lua
-----------------------------------------------------------------------------------------------------
-Content: 
--- See https://wiki.hypr.land/Configuring/Layouts/Master-Layout/ for more
-hl.config({
-	master = {
-		new_status = "master",
-	},
-})
-
--- See https://wiki.hypr.land/Configuring/Layouts/Scrolling-Layout/ for more
-hl.config({
-	scrolling = {
-		fullscreen_on_one_column = true,
-	},
-})
-
-----------------
-----  MISC  ----
-----------------
-
-hl.config({
-	misc = {
-		force_default_wallpaper = -1, -- Set to 0 or 1 to disable the anime mascot wallpapers
-		disable_hyprland_logo = false, -- If true disables the random hyprland logo / anime girl background. :(
-	},
-})
-
----------------
----- INPUT ----
----------------
-
-hl.config({
-	input = {
-		kb_layout = "us",
-		kb_variant = "intl",
-		kb_model = "",
-		kb_options = "",
-		kb_rules = "",
-
-		follow_mouse = 1,
-
-		sensitivity = 0, -- -1.0 - 1.0, 0 means no modification.
-
-		touchpad = {
-			natural_scroll = false,
-		},
-	},
-})
-
-hl.gesture({
-	fingers = 3,
-	direction = "horizontal",
-	action = "workspace",
-})
-
-
-
-Document 7: Document ID: 358 Source: /home/moyis/dotfiles/hypr/hyprland.lua
-----------------------------------------------------------------------------------------------------
-Content: 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
--- AUTOGENERATED HYPRLAND CONFIG.                        --
--- EDIT THIS CONFIG ACCORDING TO THE WIKI INSTRUCTIONS.  --
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
--- hl.config({ autogenerated = true }) -- remove this line to remove the warning
-
--- This is an example Hyprland Lua config file.
--- Refer to the wiki for more information.
--- https://wiki.hypr.land/Configuring/Start/
-
--- Please note not all available settings / options are set here.
--- For a full list, see the wiki
-
--- You can (and should!!) split this configuration into multiple files
--- Create your files separately and then require them like this:
--- require("myColors")
-
-------------------
----- MONITORS ----
-------------------
-
--- See https://wiki.hypr.land/Configuring/Basics/Monitors/
-hl.monitor({
-	output = "",
-	mode = "preferred",
-	position = "auto",
-	scale = "auto",
-})
-
----------------------
----- MY PROGRAMS ----
----------------------
-
-
-
-Document 8: Document ID: 387 Source: /home/moyis/dotfiles/nvim/lua/config/lazy.lua
-----------------------------------------------------------------------------------------------------
-Content: 
-require("lazy").setup({
-  spec = {
-    -- add LazyVim and import its plugins
-    { "LazyVim/LazyVim", import = "lazyvim.plugins" },
-    -- import/override with your plugins
-    { import = "plugins" },
-  },
-  defaults = {
-    -- By default, only LazyVim plugins will be lazy-loaded. Your custom plugins will load during startup.
-    -- If you know what you're doing, you can set this to `true` to have all your custom plugins lazy-loaded by default.
-    lazy = false,
-    -- It's recommended to leave version=false for now, since a lot the plugin that support versioning,
-    -- have outdated releases, which may break your Neovim install.
-    version = false, -- always use the latest git commit
-    -- version = "*", -- try installing the latest stable version for plugins that support semver
-  },
-  install = { colorscheme = { "tokyonight", "habamax" } },
-  checker = {
-    enabled = true, -- check for plugin updates periodically
-    notify = false, -- notify on update
-
-
-
-Document 9: Document ID: 374 Source: /home/moyis/dotfiles/hypr/hyprland.lua
-----------------------------------------------------------------------------------------------------
-Content: 
--- Hyprland-run windowrule
-hl.window_rule({
-	name = "move-hyprland-run",
-	match = { class = "hyprland-run" },
-
-	move = "20 monitor_h-120",
-	float = true,
-})
-
--- Configuracion extra para Wofi
-hl.layer_rule({ "blur", "wofi" })
-hl.layer_rule({ "ignorezero", "wofi" })
-hl.layer_rule({ "ignorealpha", "0.5", "wofi" })
-
-
-
-Document 10: Document ID: 386 Source: /home/moyis/dotfiles/nvim/lua/config/lazy.lua
-----------------------------------------------------------------------------------------------------
-Content: 
-local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not (vim.uv or vim.loop).fs_stat(lazypath) then
-  local lazyrepo = "https://github.com/folke/lazy.nvim.git"
-  local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
-  if vim.v.shell_error ~= 0 then
-    vim.api.nvim_echo({
-      { "Failed to clone lazy.nvim:\n", "ErrorMsg" },
-      { out, "WarningMsg" },
-      { "\nPress any key to exit..." },
-    }, true, {})
-    vim.fn.getchar()
-    os.exit(1)
-  end
-end
-vim.opt.rtp:prepend(lazypath)
+## ✨ Features
 

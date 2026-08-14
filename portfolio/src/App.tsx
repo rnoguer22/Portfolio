@@ -277,17 +277,17 @@ const App: React.FC = () => {
             </div>
           </section>
 
-          {/* #### SERVICES SECTION #### */}
+          {/* #### ABOUT ME  #### */}
           <section id="about" className="bg-white dark:bg-black pt-8">
           <div className="gap-16 items-center py-8 px-4 mx-auto max-w-screen-xl lg:grid lg:grid-cols-2 lg:py-8 lg:px-6">
             <div className="font-light text-gray-500 sm:text-lg dark:text-gray-400">
               <h2 className="mb-4 text-5xl tracking-tight font-extrabold text-gray-900 dark:text-white">
                 About Me              </h2>
               <p className="mb-4 text-3xl">
-              I've dedicated my career to finding the vulnerabilities that others miss. My journey began with CTF competitions and evolved into a full-time commitment to making digital spaces more secure.
+                I’m Rubén, a recent graduate with a double degree in Mathematical & Computer Engineering from Alfonso X el Sabio University. I have always enjoyed mathematics and programming, and throughout my five years at university, I have had the opportunity to explore the fusion of the best of both worlds.
               </p>
               <p className="text-xl">
-             My approach combines creative problem-solving with rigorous methodology, ensuring no stone is left unturned in the pursuit of robust security.
+                My academic and practical background includes building machine learning projects such as neural networks for melanoma detection, stock market prediction models for the IBEX 35 using time series, and predictive systems leveraging Random Forest and XGBoost. This culminated in my final degree project: a real-time network intrusion detection system designed to identify malicious traffic targeting web services using machine learning models. 
               </p>
               <a href="#" className="inline-flex mt-8 items-center justify-center px-5 py-4 text-base font-medium text:3xl text-center text-gray-900 border-4 border-blue-300  hover:bg-blue-100 focus:ring-4 focus:ring-gray-100 dark:text-white dark:border-blue-700 dark:hover:bg-blue-700 dark:focus:ring-gray-800"
           >
@@ -309,36 +309,29 @@ const App: React.FC = () => {
           </div>
           <div className="max-w-screen-xl px-4 pb-8 mx-auto text-center lg:pb-16 lg:px-6">
             <figure className="max-w-screen-md mx-auto">
-              <svg
-                className="h-12 mx-auto mb-3 text-gray-400 dark:text-gray-600"
-                viewBox="0 0 24 27"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M14.017 18L14.017 10.609C14.017 4.905 17.748 1.039 23 0L23.995 2.151C21.563 3.068 20 5.789 20 8H24V18H14.017ZM0 18V10.609C0 4.905 3.748 1.038 9 0L9.996 2.151C7.563 3.068 6 5.789 6 8H9.983L9.983 18L0 18Z"
-                  fill="currentColor"
-                />
+              <svg className="h-12 mx-auto mb-3 text-gray-400 dark:text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9.5 2A2.5 2.5 0 0112 4.5v15a2.5 2.5 0 01-4.96-.44 2.5 2.5 0 01-2.96-3.08 3 3 0 01-.34-5.58 2.5 2.5 0 012.3-3.64A2.5 2.5 0 019.5 2zM14.5 2a2.5 2.5 0 00-2.5 2.5v15a2.5 2.5 0 004.96-.44 2.5 2.5 0 002.96-3.08 3 3 0 00.34-5.58 2.5 2.5 0 00-2.3-3.64A2.5 2.5 0 0014.5 2z" />
               </svg>
-              <blockquote className="transform transition-all duration-300 hover:scale-125">
+            <blockquote className="transform transition-all duration-300 hover:scale-125">
               <p className="text-2xl font-medium py-8 text-gray-900 dark:text-white">
-                "Working with HAK3R transformed our security posture completely. Their methodical approach to penetration testing uncovered critical vulnerabilities that our internal team had missed for months. What sets them apart isn't just their technical expertise, but their ability to communicate complex security concepts in a way that resonates with us."
+                  Driven by a strong fascination for artificial intelligence, I continuously explore advancements in the field independently. Beyond my formal education, I built my first Retrieval-Augmented Generation (RAG) system years ago to solve workflow limitations, and recently developed an advanced, custom RAG tool from scratch—evaluating various embedding models, retrievers, and LLMs to optimize a terminal-based assistant tailored for Linux environments.
               </p>
             </blockquote>
               <figcaption className="flex items-center justify-center mt-6 space-x-3">
-              <img
-                className="w-6 h-6 rounded-full transition-opacity duration-300 hover:opacity-70"
-                src="./assets/images/michael-gouch.png"
-                alt="profile picture"
-              />
+                <svg className="w-6 h-6 transition-opacity duration-300 hover:opacity-70 text-gray-800 dark:text-gray-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
                 <div className="flex items-center divide-x-2 divide-gray-500 dark:divide-gray-700">
                   <div className="pr-3 font-medium text-gray-900 dark:text-white">
-                    John Doe
+                    Always Evolving
                   </div>
                   <div className="pl-3 text-sm font-light text-gray-500 dark:text-gray-400">
-                    CEO at Google
+                    Building Smart Systems 
                   </div>
                 </div>
+                <svg className="w-6 h-6 transition-opacity duration-300 hover:opacity-70 text-gray-500 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                </svg>
               </figcaption>
             </figure>
           </div>
@@ -352,80 +345,15 @@ const App: React.FC = () => {
             />
             <div className="mt-4 md:mt-0">
               <h2 className="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">
-              Ready to Strengthen Your Security Posture?
+               Let's Build Something Intelligent Together
               </h2>
               <p className="mb-6 font-light text-gray-500 text-xl lg:text-2xl dark:text-gray-400">
-              Let's connect and discuss how I can help identify vulnerabilities in your systems before malicious actors do.
+                Currently, I am expanding my expertise into AI agents using frameworks like LangChain, while developing this portfolio to showcase my projects and technical stack.
               </p>
-              <p className="mb-6 font-light text-gray-500 text-xl lg:text-2xl dark:text-gray-400">Whether you need penetration testing, security consultation, or vulnerability assessments, I'm here to provide expert guidance that fits your organization's unique needs. 
+              <p className="mb-6 font-light text-gray-500 text-xl lg:text-2xl dark:text-gray-400">
+                I am eager to bring my background in machine learning and software development to a professional role in the AI industry.
               </p>
             </div>
-          </div>
-        </section>
-        {/* #### CONTACT SECTION #### */}
-        <section className="bg-white dark:bg-black transition-all duration-300 hover:scale-105">
-          <div className="py-8 lg:py-16 px-4 mx-auto max-w-screen-md">
-            <h2 className="mb-4 text-4xl tracking-tight font-extrabold text-center text-gray-900 dark:text-white">
-            Book a consultation today – your security is my priority
-            </h2>
-            <p className="mb-8 lg:mb-16 font-light text-center text-gray-500 dark:text-gray-400 text-xl lg:text-2xl">
-            Protect your digital assets and maintain customer trust with proactive security testing.
-            </p>
-            <form action="#" className="space-y-8">
-            <div>
-                <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                  Your name
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  className="shadow-sm bg-gray-50 border-4 border-blue-300 text-gray-900 text-sm  focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-black dark:border-blue-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 dark:shadow-sm-light"
-                  placeholder="John Doe"
-                  required
-                />
-              </div>
-              <div>
-                <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                  Your email
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  className="shadow-sm bg-gray-50 border-4 border-blue-300 text-gray-900 text-sm  focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-black dark:border-blue-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 dark:shadow-sm-light"
-                  placeholder="name@company.com"
-                  required
-                />
-              </div>
-              <div>
-                <label htmlFor="subject" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                  Subject
-                </label>
-                <input
-                  type="text"
-                  id="subject"
-                  className="block p-3 w-full text-sm text-gray-900 bg-gray-50  border-4 border-blue-300 shadow-sm focus:ring-primary-500 focus:border-primary-500 dark:bg-black dark:border-blue-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 dark:shadow-sm-light"
-                  placeholder="Let us know how we can help you"
-                  required
-                />
-              </div>
-              <div className="sm:col-span-2">
-                <label htmlFor="message" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">
-                  Your message
-                </label>
-                <textarea
-                  id="message"
-                  rows={6}
-                  className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50  shadow-sm border-4 border-blue-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-black dark:border-blue-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                  placeholder="Leave a comment..."
-                ></textarea>
-              </div>
-              <button
-                type="submit"
-                className="py-3 px-5 text-lx font-medium text-center text-white bg-blue-600 hover:bg-blue-700 border-2 border-blue-600 rounded-none sm:w-fit focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:border-blue-600 dark:focus:ring-blue-800"
-              >
-                Send message
-              </button>
-            </form>
           </div>
         </section>
       </main>

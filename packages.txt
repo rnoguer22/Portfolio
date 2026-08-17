@@ -18,3 +18,9 @@ langgraph
 tavily-python
 langchain-google-genai
 langchain-openai 
+
+
+# Frontend
+
+# Usamos react-router-dom para gestionar las rutas 
+npm install react-router-dom

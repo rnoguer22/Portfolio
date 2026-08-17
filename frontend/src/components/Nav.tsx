@@ -1,15 +1,23 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { Navbar } from "flowbite-react";
 import { DarkThemeToggle } from "flowbite-react";
 
+
+
 const Nav: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
+  // useEffect is a hook use for loading things when the 'Nav' component is initialized for the first time 
   useEffect(() => {
-    // Check system theme preference
+    
+    // We check if the user's browser preference is in dark mode 
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     
-    // Function to handle theme changes
+    // Then we define a function to set the tag 'dark' depending on the user's browser preference 
+    // This allows us to manage the dark / light mode in our website with Tailwind
     const handleThemeChange = (e: MediaQueryListEvent | MediaQueryList) => {
       if (e.matches) {
         // System prefers dark mode
@@ -19,14 +27,13 @@ const Nav: React.FC = () => {
         document.documentElement.classList.remove('dark');
       }
     };
-
-    // Initial check
+    // Apply the theme  
     handleThemeChange(mediaQuery);
 
     // Listen for system theme changes
     mediaQuery.addEventListener('change', handleThemeChange);
 
-    // Scroll handler
+    // Scroll handler. This changes the navbar dimensions depending on the y-scroll 
     const handleScroll = () => {
       if (window.scrollY > 50) {
         setIsScrolled(true);
@@ -37,13 +44,32 @@ const Nav: React.FC = () => {
 
     window.addEventListener('scroll', handleScroll);
     
-    // Cleanup
+    // When the Nav component is destroyed the listeners are eliminated for preventing memory leaks 
     return () => {
       mediaQuery.removeEventListener('change', handleThemeChange);
       window.removeEventListener('scroll', handleScroll);
     };
+  // By using [] below, it makes all these code to be executed just one time 
   }, []);
 
+
+
+  // Function to handle nav clicks, making smooth transitions 
+  const handleNavClick = (section: string) => {
+    // If we are not in home, first we go to home 
+    if (location.pathname !== '/') {
+      navigate('/');
+      // Then we wait home to load and we scroll to the destination
+      setTimeout(() => {
+        scrollToSection(section);
+      }, 100);
+    } else {
+      // If we are already in home we just scroll into the section 
+      scrollToSection(section);
+    }
+  };
+
+  // Function to scroll to a section 
   const scrollToSection = (elementId: string) => {
     const element = document.getElementById(elementId);
     if (element) {
@@ -101,7 +127,7 @@ const Nav: React.FC = () => {
       </a>
         <button
           type="button"
-          onClick={() => scrollToSection('contact')}
+          // onClick={() => scrollToSection('contact')}
           className={`text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-bold text-center mx-3 md:mr-0 z-10 transition-all duration-300 ${
             isScrolled ? 'text-sm px-3 py-1.5' : 'text-md px-4 py-2'
           }`}
@@ -111,10 +137,10 @@ const Nav: React.FC = () => {
         <Navbar.Toggle />
       </div>
       <Navbar.Collapse>
-        {['home', 'services', 'about', 'contact'].map((section) => (
+        {['home', 'services', 'about'].map((section) => (
           <button 
             key={section}
-            onClick={() => scrollToSection(section)}
+            onClick={() => handleNavClick(section)}
             className={`block pr-4 pl-3 border-b border-gray-100 text-gray-700 hover:bg-gray-50 font-bold dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:border-0 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-white transition-all duration-300 ${
               isScrolled ? 'text-base text-3xl md:text-lg py-2' : 'text-3xl md:text-xl py-2.5'
             }`}
@@ -122,6 +148,9 @@ const Nav: React.FC = () => {
             {section.charAt(0).toUpperCase() + section.slice(1)}
           </button>
         ))}
+        <Link to="/agent" className="block pr-4 pl-3 border-b border-gray-100 text-gray-700 hover:bg-gray-50 font-bold dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:border-0 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-white transition-all duration-300 text-3xl md:text-xl py-2.5">
+          AI Demo
+        </Link>
       </Navbar.Collapse>
     </Navbar>
   );

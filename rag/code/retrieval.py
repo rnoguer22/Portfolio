@@ -1,4 +1,4 @@
-from RAG.code.indexing import Indexing
+from rag.code.indexing import Indexing
 from langchain_classic.retrievers import EnsembleRetriever 
 from config import DIR_PATH, COLLECTION_NAME, K  
 

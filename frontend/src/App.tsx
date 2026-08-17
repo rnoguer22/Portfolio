@@ -88,7 +88,7 @@ const App: React.FC = () => {
                   <dt className="mb-2 text-5xl md:text-7xl font-extrabold">
                       <span data-counter-target="5 years">0</span>+
                   </dt>
-                  <dd className="font-light text-2xl text-gray-500 dark:text-gray-400">AI Years of Experience</dd>
+                  <dd className="font-light text-2xl text-gray-500 dark:text-gray-400">Python Coding Experience</dd>
               </div>
               <div className="flex flex-col items-center justify-center">
                   <dt className="mb-2 text-5xl md:text-7xl font-extrabold">
@@ -113,7 +113,7 @@ const App: React.FC = () => {
 
               <div className="max-w-screen-md mb-8 lg:mb-12 mx-auto">
                 <h2 className="mb-4 text-4xl md:text-5xl tracking-tight font-extrabold text-gray-900 dark:text-white">
-                  Where Mathematics and Technology Meet
+                  What I Build: Where Mathematics & Technology Meet
                 </h2>
                 <p className="text-gray-500 text-2xl dark:text-gray-400">
                   Combining mathematical thinking with software engineering to explore, build and solve complex problems through data and intelligent systems.
@@ -256,7 +256,7 @@ const App: React.FC = () => {
           <section className="bg-gray-100 dark:bg-black lg:py-18 lg:px-6 border-t-4 border-b-4 border-solid border-blue-700 relative z-20">
             <div className="py-8 lg:py-16 mx-auto max-w-screen-xl px-4">
               <h2 className="mb-8 lg:mb-16 text-3xl font-extrabold tracking-tight leading-tight text-center text-gray-900 dark:text-white md:text-4xl">
-                Experience
+                Professional Experience
               </h2>
               <div className="grid grid-cols-2 gap-8 mx-24 text-gray-500 sm:gap-12 md:grid-cols-2 lg:grid-cols-2 dark:text-gray-400">
                 <a href="#" className="flex justify-center items-center group">
@@ -270,7 +270,12 @@ const App: React.FC = () => {
                   <img
                     src="/assets/images/accenture_logo.png"
                     alt="Accenture"
-                    className="h-12 w-auto object-contain opacity-70 transition-all duration-300 group-hover:opacity-100 group-hover:scale-110"
+                    className="h-12 w-auto object-contain opacity-70 transition-all duration-300 group-hover:opacity-100 group-hover:scale-110 hidden dark:block"
+                  />
+                  <img
+                    src="/assets/images/accenture_dark_logo.png"
+                    alt="Accenture"
+                    className="h-12 w-auto object-contain opacity-70 transition-all duration-300 group-hover:opacity-100 group-hover:scale-110 dark:hidden"
                   />
                 </a>
               </div>
@@ -296,14 +301,34 @@ const App: React.FC = () => {
             </div>
             <div className="grid grid-cols-2 gap-4 mt-8">
             <img
-              className="w-full transition-all duration-300 hover:saturate-150 hover:brightness-75 hover:hue-rotate-15"
-              src="./assets/images/office-long-2.png"
-              alt="office content 1"
+              className="w-full col-span-2 transition-all duration-300 hover:saturate-150 hover:brightness-75 hover:hue-rotate-15 dark:hidden"
+              src="./assets/images/accuracy_loss.png"
+              alt="Accuracy - Loss curve"
             />
             <img
-              className="mt-4 w-full lg:mt-10 transition-all duration-300 hover:saturate-150 hover:brightness-75 hover:hue-rotate-15"
-              src="./assets/images/office-long-1.png"
-              alt="office content 2"
+              className="w-full col-span-2 transition-all duration-300 hover:saturate-150 hover:brightness-75 hover:hue-rotate-15 hidden dark:block"
+              src="./assets/images/accuracy_loss_dark.png"
+              alt="Accuracy - Loss curve"
+            />
+            <img
+              className="w-full transition-all duration-300 hover:saturate-150 hover:brightness-75 hover:hue-rotate-15 dark:hidden"
+              src="./assets/images/roc.png"
+              alt="Rco curve"
+            />
+            <img
+              className="w-full transition-all duration-300 hover:saturate-150 hover:brightness-75 hover:hue-rotate-15 hidden dark:block"
+              src="./assets/images/roc_dark.png"
+              alt="Roc curve"
+            />
+            <img
+              className="mt-4 w-full lg:mt-10 transition-all duration-300 hover:saturate-150 hover:brightness-75 hover:hue-rotate-15 dark:hidden"
+              src="./assets/images/confusion_matrix.png"
+              alt="Confussion matrix"
+            />
+            <img
+              className="mt-4 w-full lg:mt-10 transition-all duration-300 hover:saturate-150 hover:brightness-75 hover:hue-rotate-15 hidden dark:block"
+              src="./assets/images/confusion_matrix_dark.png"
+              alt="Confussion matrix"
             />
           </div>
           </div>
@@ -348,7 +373,7 @@ const App: React.FC = () => {
                Let's Build Something Intelligent Together
               </h2>
               <p className="mb-6 font-light text-gray-500 text-xl lg:text-2xl dark:text-gray-400">
-                Currently, I am expanding my expertise into AI agents using frameworks like LangChain, while developing this portfolio to showcase my projects and technical stack.
+                Currently, I am expanding my expertise into AI agents using frameworks like LangGraph, while developing this portfolio to showcase my projects and technical stack.
               </p>
               <p className="mb-6 font-light text-gray-500 text-xl lg:text-2xl dark:text-gray-400">
                 I am eager to bring my background in machine learning and software development to a professional role in the AI industry.

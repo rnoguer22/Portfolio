@@ -1,6 +1,6 @@
-from RAG.code.indexing import Indexing 
-from RAG.code.retrieval import Retrieval
-from RAG.code.augmentation_generation import AugmentationGeneration
+from rag.code.indexing import Indexing 
+from rag.code.retrieval import Retrieval
+from rag.code.augmentation_generation import AugmentationGeneration
 from config import DIR_PATH, COLLECTION_NAME, OLLAMA_MODEL, GROQ_MODEL, HUGGINGFACE_EMBEDDINGS
 from helpers.pretty_terminal import PrettyTerminal
 

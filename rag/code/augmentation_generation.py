@@ -1,5 +1,5 @@
-from RAG.code.indexing import Indexing 
-from RAG.code.retrieval import Retrieval
+from rag.code.indexing import Indexing
+from rag.code.retrieval import Retrieval
 from langchain_ollama import ChatOllama
 from langchain_groq import ChatGroq 
 from langchain_core.output_parsers import StrOutputParser 

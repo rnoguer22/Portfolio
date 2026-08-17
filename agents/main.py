@@ -1,4 +1,4 @@
-from Agents.search_agent import *
+from agents.search_agent import *
 from helpers.pretty_terminal import PrettyTerminal
 from config import OPENAI_MODEL 
 

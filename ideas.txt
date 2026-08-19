@@ -1,3 +1,12 @@
 1) Dar acceso a todos los ficheros de mi sistema, para poder realizar cambios de configuracion mucho mas facil 
 2) Añadir mediante bs4 la documentacion de una biblioteca reciente de python para hacerle preguntas
 3) 
+
+
+
+
+
+FRONTEND
+
+He añadido localStorage para guardar la conversacion del usuario (se guarda en cada usuario con un equipo distinto, ya que funciona a taves del almacenamiento local del propio navegador, en disco)
+  --> Cuando estemos en pro, tener cookies con ID de usuario, y que mediante el backend se entreguen unicamente el historial de mensajes de dicho usuario (almecenando todos los historiales en mi servidor y no en el dispositivo del usuario) 

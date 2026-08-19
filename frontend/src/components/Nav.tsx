@@ -12,26 +12,21 @@ const Nav: React.FC = () => {
 
   // useEffect is a hook use for loading things when the 'Nav' component is initialized for the first time 
   useEffect(() => {
-    
-    // We check if the user's browser preference is in dark mode 
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    
-    // Then we define a function to set the tag 'dark' depending on the user's browser preference 
-    // This allows us to manage the dark / light mode in our website with Tailwind
-    const handleThemeChange = (e: MediaQueryListEvent | MediaQueryList) => {
-      if (e.matches) {
-        // System prefers dark mode
-        document.documentElement.classList.add('dark');
+   
+    const storedTheme = localStorage.getItem("flowbite-theme-mode")
+    if (!storedTheme) {
+      // Set dark mode by default, and storage it in the local browser storage system 
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("flowbite-theme-mode", "dark");
+    } else {
+      // Here we change the theme, or we recover it from before 
+      // This is important to keep the user's theme preference from Home to AI-Demo 
+      if (storedTheme === "dark") {
+        document.documentElement.classList.add("dark");
       } else {
-        // System prefers light mode
-        document.documentElement.classList.remove('dark');
+        document.documentElement.classList.remove("dark");
       }
-    };
-    // Apply the theme  
-    handleThemeChange(mediaQuery);
-
-    // Listen for system theme changes
-    mediaQuery.addEventListener('change', handleThemeChange);
+    }
 
     // Scroll handler. This changes the navbar dimensions depending on the y-scroll 
     const handleScroll = () => {
@@ -46,7 +41,6 @@ const Nav: React.FC = () => {
     
     // When the Nav component is destroyed the listeners are eliminated for preventing memory leaks 
     return () => {
-      mediaQuery.removeEventListener('change', handleThemeChange);
       window.removeEventListener('scroll', handleScroll);
     };
   // By using [] below, it makes all these code to be executed just one time 
@@ -94,7 +88,7 @@ const Nav: React.FC = () => {
           }`} 
           alt="Logo" 
         />
-        <span className={`self-center whitespace-nowrap font-bold dark:text-white transition-all duration-300 ${
+        <span className={`self-center whitespace-nowrap font-bold text-gray-900 dark:text-white transition-all duration-300 ${
           isScrolled ? 'text-lg' : 'text-2xl'
         }`}>
           rnoguer

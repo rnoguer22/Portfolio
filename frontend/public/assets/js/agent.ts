@@ -84,7 +84,7 @@ export function useAgentChat() {
         clearInterval(interval);
         setIsGenerating(false);
       }
-    }, 2.5);
+    }, 10);
   };
 
   

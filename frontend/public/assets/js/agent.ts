@@ -8,12 +8,23 @@ export function useAgentChat() {
   // Define useState variuables
   const [greetingText, setGreetingText] = useState("");
   const [inputValue, setInputValue] = useState("");
-  const [messages, setMessages] = useState([]);
-  const [hasSubmitted, setHasSubmitted] = useState(false);
+
+  // We read the chat history as it follows, so that when we return to AI-demo we see the messages we had sent before
+  const [messages, setMessages] = useState(() => {
+    const saved = localStorage.getItem("chat_history");
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [hasSubmitted, setHasSubmitted] = useState(() => {
+    const saved = localStorage.getItem("chat_history");
+    return saved ? JSON.parse(saved).length > 0 : false;
+  });
+
   const [isGenerating, setIsGenerating] = useState(false);
 
   const initText = "Good morning! What's on your mind today?";
   const response = "¡Hola! He recibido tu mensaje de prueba desde la interfaz separada. Pronto lo conectaremos con FastAPI. \n\nLorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since 1966, when designers at Letraset and James Mosley, the librarian at St Bride Printing Library in London, took a 1914 Cicero translation and scrambled it to make dummy text for Letraset's Body Type sheets. It has survived not only many decades, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised thanks to these sheets and more recently with desktop publishing software like Aldus PageMaker and Microsoft Word including versions of Lorem Ipsum.";
+
+
 
   // Display the initial greet variable with a cool effect
   useEffect(() => {
@@ -29,6 +40,11 @@ export function useAgentChat() {
 
     return () => clearInterval(interval)
   }, []);
+
+  // Save the chat_history so that we return to AI-demo we see the old messages from before
+  useEffect(() => {
+    localStorage.setItem("chat_history", JSON.stringify(messages));
+  }, [messages]);
 
 
 

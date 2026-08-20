@@ -10,17 +10,16 @@ langchain-ollama
 langchain-groq 
 unstructured
 python-dotenv
-
 groq
 ddgs
-
 langgraph
 tavily-python
 langchain-google-genai
 langchain-openai 
+fastapi
+uvicorn
 
 
 # Frontend
-
 # Usamos react-router-dom para gestionar las rutas 
-npm install react-router-dom
+# npm install react-router-dom

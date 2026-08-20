@@ -1,6 +1,6 @@
 .*
 **/chromadb/
-__pychache__/
+__pycache__/
 docs
 
 # Dependencies

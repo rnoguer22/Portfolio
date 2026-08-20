@@ -9,8 +9,8 @@ import "/public/assets/css/particles.css";
 export default function Agent(){
   const {
     greetingText,
-    inputValue,
-    setInputValue, 
+    inputPrompt,
+    setInputPrompt, 
     messages,
     hasSubmitted,
     isGenerating, 
@@ -97,8 +97,8 @@ export default function Agent(){
           </button>
           <input 
             type="text"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
+            value={inputPrompt}
+            onChange={(e) => setInputPrompt(e.target.value)}
             disabled={isGenerating}
             placeholder={isGenerating ? "The agent is generating the response..." : "Send a message..."}
             className="flex-grow bg-transparent text-gray-800 dark:text-gray-200 px-2 py-1.5 focus:outline-none placeholder-gray-400 dark:placeholder-gray-500 md:text-base disabled:opacity-50 disabled:cursor-not-allowed border-none"
@@ -106,7 +106,7 @@ export default function Agent(){
           <button
             type="submit"
             title="Send message to the agent"
-            disabled={isGenerating || !inputValue.trim()}
+            disabled={isGenerating || !inputPrompt.trim()}
             className="bg-blue-600 hover:bg-blue-800 dark:hover:bg-blue-700 text-white p-2.5 rounded-full font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

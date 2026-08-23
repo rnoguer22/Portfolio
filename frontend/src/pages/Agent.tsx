@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react"; 
+import ReactMarkdown from "react-markdown";
 import Nav from "../components/Nav";
 import Footer from "../components/Footer";
 import { useAgentChat } from "../../public/assets/js/agent.ts";
@@ -11,11 +12,13 @@ export default function Agent(){
     greetingText,
     inputPrompt,
     setInputPrompt, 
+    selectedFile,
     messages,
     hasSubmitted,
     isGenerating, 
     handleSubmit,
-    handleAttachFile
+    handleAttachFile,
+    handleRemoveFile
   } = useAgentChat();
 
   // Reference for the automatic scroll to the last message
@@ -65,12 +68,14 @@ export default function Agent(){
                   </div>
                 ) : (
                   <div className="bg-gray-200 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-200 px-5 py-4 rounded-2xl rounded-bl-none w-full shadow-lg">
-                    <p className="leading-relaxed">
-                      {message.text}
+                    <div className="leading-relaxed prose dark:prose-invert max-w-none">
+                      <ReactMarkdown>
+                        {message.text}
+                      </ReactMarkdown>
                       {isGenerating && index === messages.length - 1 && (
                           <span className="animate-pulse ml-1">|</span>
                       )}
-                    </p>
+                    </div>
                   </div>
                 )}
               </div>
@@ -85,6 +90,25 @@ export default function Agent(){
           onSubmit={handleSubmit}
           className="bg-gray-200 dark:bg-gray-900 backdrop-blur-md border border-gray-300 dark:border-gray-800 px-4 py-2.5 rounded-full w-full max-w-2xl shadow-2xl flex items-center gap-3 transition-all duration-300 z-20"
         >
+          {/* Selected File display */}
+          {selectedFile && (
+            <div className="absolute bottom-full left-4 mb-2 bg-gray-200 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-800 dark:text-gray-200 text-xs px-3 py-1.5 rounded-xl shadow-lg flex items-center gap-2 z-30 animate-fade-in">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              <span className="truncate max-w-[200px] font-medium">{selectedFile.name}</span>
+              <button 
+                type="button"
+                onClick={handleRemoveFile}
+                clasName="text-gray-400 hover:text-red-500 transition-colors ml-1 focus:outline-none"
+                title="Remove file"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          )}
           <button
             type="button"
             onClick={handleAttachFile}
@@ -106,7 +130,7 @@ export default function Agent(){
           <button
             type="submit"
             title="Send message to the agent"
-            disabled={isGenerating || !inputPrompt.trim()}
+            disabled={isGenerating || !inputPrompt.trim() &&!selectedFile}
             className="bg-blue-600 hover:bg-blue-800 dark:hover:bg-blue-700 text-white p-2.5 rounded-full font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

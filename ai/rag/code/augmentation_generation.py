@@ -1,5 +1,5 @@
-from rag.code.indexing import Indexing
-from rag.code.retrieval import Retrieval
+from ai.rag.code.indexing import Indexing
+from ai.rag.code.retrieval import Retrieval
 from langchain_ollama import ChatOllama
 from langchain_groq import ChatGroq 
 from langchain_core.output_parsers import StrOutputParser 
@@ -9,7 +9,7 @@ from rich.console import Console
 from rich.live import Live 
 from rich.markdown import Markdown 
 
-from config import DIR_PATH, CONTEXT_FILE_PATH, COLLECTION_NAME, OLLAMA_MODEL, GROQ_MODEL, GROQ_API_KEY
+from ai.config import DIR_PATH, CONTEXT_FILE_PATH, COLLECTION_NAME, OLLAMA_MODEL, GROQ_MODEL, GROQ_API_KEY
 
 
 

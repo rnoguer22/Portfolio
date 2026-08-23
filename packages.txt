@@ -23,3 +23,15 @@ uvicorn
 # Frontend
 # Usamos react-router-dom para gestionar las rutas 
 # npm install react-router-dom
+
+# Execution
+
+# Terminal 1 {
+#  cd frontend 
+#  npm run dev 
+#  }
+# Terminal 2 {
+#  source .venv/bin/activate 
+#  cd backend 
+#  uvicorn main:app --reload 
+#  }

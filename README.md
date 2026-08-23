@@ -1,24 +1,12 @@
-# HAK3R Free Portfolio Website
+# Rubén Nogueras Portfolio Github Repository 
 
-A modern, responsive portfolio template built specifically for cybersecurity professionals. Built with React, TypeScript, and Flowbite React components, it offers a sleek design with light/dark mode support.
-
-## 💪 Join me! 
-- **👉 Subscribe to my YouTube Channel [GetCyber - YouTube](https://youtube.com/getCyber)**
-- **👉 Checkout some more awesome tools at [GetCyber](https://getcyber.me/tools)**
-- **👉 Discord Server [GetCyber - Discord](https://discord.gg/YUf3VpDeNH)**
+description of the project
 
 ---
-## 📺 Tutorial
-
-[![Video Demo](https://img.youtube.com/vi/DQ3S2x1zbzk/0.jpg)](https://youtu.be/DQ3S2x1zbzk)
 
 ## 💻 Screenshot 
 
-![Image](https://github.com/user-attachments/assets/faabb4d6-e21f-4b46-9959-342c3d00b40f)
-
-## 🚀 Video Demo
-
-https://github.com/user-attachments/assets/d1416b79-ef4a-4b08-9887-6003180a8667
+![Image](https://github.com/user-attachments/assets/...)
 
 ## ✨ Features
 
@@ -41,22 +29,6 @@ https://github.com/user-attachments/assets/d1416b79-ef4a-4b08-9887-6003180a8667
 - ESLint & Prettier
 
 ## 📦 Installation
-
-1. Clone the repository:
-```bash
-git clone https://github.com/Dan-Duran/hak3r.git
-cd hak3r
-```
-
-2. Install dependencies:
-```bash
-npm install
-```
-
-3. Start the development server:
-```bash
-npm run dev
-```
 
 ## 🏗️ Building for Production (folder dist)
 
@@ -102,26 +74,9 @@ The project uses a custom Vite configuration for optimal production builds:
 - Proper path resolution
 - Custom JS handling
 
-## 🚀 Deployment
-
-The site can be deployed to any static hosting service. The production build outputs to the `dist` folder.
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create your feature branch
-3. Commit your changes
-4. Push to the branch
-5. Open a Pull Request
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 👨‍💻 Author
 
-**Dan Duran** - [GetCyber](https://getcyber.me)
+**Rubén Nogueras** - [Portfolio](https://rnoguer.dev)
 
 ---
-
-Made with ❤️ by GetCyber

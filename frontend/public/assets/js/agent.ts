@@ -8,6 +8,7 @@ export function useAgentChat() {
   // Define useState variuables
   const [greetingText, setGreetingText] = useState("");
   const [inputPrompt, setInputPrompt] = useState("");
+  const [selectedFile, setSelectedFile] = useState<FIle | null>(null);
 
   // We read the chat history as it follows, so that when we return to AI-demo we see the messages we had sent before
   const [messages, setMessages] = useState(() => {
@@ -66,12 +67,18 @@ export function useAgentChat() {
 
     // Connection with backend FastAPI
     try {
+      const formData = new FormData();
+      formData.append("prompt", userText);
+      // If theres a selected file, we add it to the form data 
+      if (selectedFile){
+        formData.append("file", selectedFile);
+      }
+
       const res = await fetch("http://localhost:8000/agent", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        // We send {prompt: str} as we defined in FastAPI in the class QueryRequest
-        body: JSON.stringify({ prompt: userText })
+        body: formData
       });
+
       // Wait for the backend and llm to generate the response
       console.log("Sending data...");
       const data = await res.json();
@@ -108,18 +115,35 @@ export function useAgentChat() {
   const handleAttachFile = () => {
     const fileInput = document.createElement("input");
     fileInput.type = "file";
+
+    fileInput.onchange = (e: Event) => {
+      const target = e.target as HTMLInputElement;
+      if (target.files && target.files.length > 0) {
+        const file = target.files[0];
+        setSelectedFile(file);
+        console.log("File loaded successfully: ", file.name, " Size: ", file.size, " bytes");
+      }
+    };
     fileInput.click();
   }
+
+  const handleRemoveFile = () => {
+    setSelectedFile(null);
+  }
+
+
 
   return {
     greetingText,
     inputPrompt,
     setInputPrompt, 
+    selectedFile,
     messages,
     hasSubmitted,
     isGenerating, 
     handleSubmit,
-    handleAttachFile
+    handleAttachFile,
+    handleRemoveFile
   };
 
 }

@@ -3,10 +3,12 @@
 3) 
 
 
-
+uvicorn backend.main:app --reload
 
 
 FRONTEND
 
 He añadido localStorage para guardar la conversacion del usuario (se guarda en cada usuario con un equipo distinto, ya que funciona a taves del almacenamiento local del propio navegador, en disco)
   --> Cuando estemos en pro, tener cookies con ID de usuario, y que mediante el backend se entreguen unicamente el historial de mensajes de dicho usuario (almecenando todos los historiales en mi servidor y no en el dispositivo del usuario) 
+
+Añadir limite maximod de bytes al adjuntar un archivo. Y para el prompt del usuario lo mimos, para evitar generar muchos tokens de contexto

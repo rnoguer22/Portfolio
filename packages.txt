@@ -1,6 +1,7 @@
 numpy 
 sentence_transformers
 PyPDF2
+rank_bm25
 langchain
 langchain-community
 chromadb

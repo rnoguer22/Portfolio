@@ -6,7 +6,6 @@ from dotenv import load_dotenv
 load_dotenv()
 
 DIR_PATH = os.getenv('DIR_PATH')
-CONTEXT_FILE_PATH = os.getenv('CONTEXT_FILE_PATH')
 GRAPH_PATH = os.getenv('GRAPH_PATH')
 COLLECTION_NAME = os.getenv('COLLECTION_NAME')
 CHROMADB_PATH = os.getenv('CHROMADB_PATH')
@@ -19,9 +18,8 @@ GROQ_API_KEY = os.getenv('GROQ_API_KEY')
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
 TAVILY_API_KEY = os.getenv('TAVILY_API_KEY')
-GROQ_MODEL = 'llama-3.1-8b-instant' # Durante el desarrollo, al ofrecer mas tokens y requests / dia
-# GROQ_MODEL = 'llama-3.3-70b-versatile' # Cuando haya terminado el proyecto, ya se supone que es el que va mejor (gratuitamente con groq)
-# GROQ_MODEL = 'qwen3.6-27b' # Alternativa al anterior, comparar las respuestas y ver cual funciona mejor. Si no, puede ser buena alternativa para tests 
+GROQ_MODEL = 'qwen3.6-27b' 
+
 GOOGLE_MODEL = 'gemini-3.5-flash' 
 OPENAI_MODEL = 'gpt-5-nano'
 HUGGINGFACE_EMBEDDINGS = 'sentence-transformers/all-mpnet-base-v2'

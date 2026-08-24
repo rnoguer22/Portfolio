@@ -1,4 +1,4 @@
-from ai.agents.search_agent import *
+from ai.agents.portfolio_agent import *
 from ai.helpers.pretty_terminal import PrettyTerminal
 from ai.config import OPENAI_MODEL 
 
@@ -10,7 +10,7 @@ if __name__ == '__main__':
     pretty_terminal.show_agent_init_info(model_name=OPENAI_MODEL, web_search_provider='Tavily')
     console = pretty_terminal.get_console()
 
-    search_web = Search_Agent(ollama=False)
+    search_web = Portfolio_Agent(ollama=False)
     app = search_web.define_graph(AgentState)
     color, text = search_web.draw_graph(app)
     console.print(f"[{color}]{text}[/]")

@@ -53,8 +53,9 @@ def web_search(query: str) -> str:
 
 @tool 
 def doc_search(query: str) -> str:
-    'Search the attached documents to find the information'
+    'Search the documents from chroma dabatase to find the information'
     print(f"\n[🛠️ LangGraph Executing RAG Tool for: '{query}']")
+    
     
 
 

@@ -1,7 +1,8 @@
+from pathlib import Path
 from ai.rag.code.indexing import Indexing
 from ai.rag.code.retrieval import Retrieval
 from langchain_ollama import ChatOllama
-from langchain_groq import ChatGroq 
+from langchain_openai import ChatOpenAI
 from langchain_core.output_parsers import StrOutputParser 
 from langchain_core.runnables import RunnableParallel, RunnablePassthrough
 from langchain_core.prompts import ChatPromptTemplate
@@ -9,7 +10,7 @@ from rich.console import Console
 from rich.live import Live 
 from rich.markdown import Markdown 
 
-from ai.config import DIR_PATH, CONTEXT_FILE_PATH, COLLECTION_NAME, OLLAMA_MODEL, GROQ_MODEL, GROQ_API_KEY
+from ai.config import DIR_PATH, CHROMADB_PATH, COLLECTION_NAME, OLLAMA_MODEL, OPENAI_API_KEY, OPENAI_MODEL
 
 
 
@@ -26,12 +27,13 @@ class AugmentationGeneration:
             self.llm = ChatOllama(model=OLLAMA_MODEL)
             self.model = OLLAMA_MODEL
         else:
-            # Usamos el modelo definido en config.py para Groq y usamos nuestra API KEY 
-            self.llm = ChatGroq(
-                model=GROQ_MODEL,
-                api_key=GROQ_API_KEY
+            self.llm = ChatOpenAI(
+                model=OPENAI_MODEL,
+                api_key=OPENAI_API_KEY,
+                max_tokens=2000, # Limite de tokens en la salida, ahora que estamos incluyendo modelos die pago 
+                reasoning_effort='low' # Lo mismo, para que piense menos el modelo y gaste menos tokens
             )
-            self.model = GROQ_MODEL
+            self.model = OPENAI_MODEL
 
         # Necesitamos un prompt para el RAG. De momento vamos a dejar algo simple 
         self.prompt = ChatPromptTemplate.from_messages([
@@ -66,7 +68,7 @@ class AugmentationGeneration:
 
 
     # Metodo para generar la respuesta en el terminal. Devuelve el contexto para la funcion save_context_in_file
-    def generate_response(self, rag_chain_with_source, user_query): 
+    def generate_response_in_terminal(self, rag_chain_with_source, user_query): 
         context = []
         full_answer = ''
         with self.console.status('[bold white]Generating response...[/]', spinner='dots'):
@@ -84,9 +86,18 @@ class AugmentationGeneration:
         return context, full_answer
 
 
+    # Metodo para generar la respuesta con invoke en lugar de stream, simplificando mucho la conexion entre FastAPI y el frontend 
+    def generate_response(self, rag_chain_with_source, user_query):
+        result = rag_chain_with_source.invoke(user_query)
+        context = result.get('context', [])
+        full_answer = result.get('answer', '')
+        return context, full_answer
+
+
     # Metodo para volcar el contexto en un fichero, para comprobar que el retriever funciona correctamente 
-    def save_context_in_file(self, context):
-        with open(CONTEXT_FILE_PATH, 'w', encoding='utf-8') as f:
+    def save_context_in_file(self, context, collection_name):
+        context_file_path = Path(CHROMADB_PATH) / collection_name / f"{collection_name}_context.txt"
+        with open(context_file_path, 'w', encoding='utf-8') as f:
             for i, doc in enumerate(context, start=1):
                 doc_id = doc.metadata['id']
                 doc_source = doc.metadata['source']

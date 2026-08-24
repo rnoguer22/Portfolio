@@ -44,7 +44,7 @@ class IndexingFile(Indexing):
 
         # We add source file metadata to know its origin
         for i, doc in enumerate(docs):
-            doc.metadata['source_file'] = path.name 
+            doc.metadata['id'] = path.name 
 
         return docs
 
@@ -66,7 +66,6 @@ class IndexingFile(Indexing):
         )
         if self.debug:
             self.console.print('[green]Created database in disk![/]')
-
         return vectorstore
 
 

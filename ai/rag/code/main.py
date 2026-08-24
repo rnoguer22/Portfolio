@@ -34,7 +34,7 @@ if __name__ == '__main__':
             user_query = pretty_terminal.get_user_query(name='Obsidian RAG')
             if user_query:
                 # 4) Generation 
-                context, answer = augmentation_generation.generate_response(rag_chain_with_source, user_query)
+                context, answer = augmentation_generation.generate_response_in_terminal(rag_chain_with_source, user_query)
                 augmentation_generation.save_context_in_file(context)
 
         except KeyboardInterrupt:

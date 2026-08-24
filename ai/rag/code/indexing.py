@@ -98,14 +98,14 @@ class Indexing:
 
     # Metodo para conectarnos a una base de datos de Chroma ya existente en disco 
     # Necesitamos el modelo que genera los embeddings para las nuevas queries del usuario 
-    def load_vectorstore(self):
+    def load_vectorstore(self, vectorstore_path=CHROMADB_PATH):
         # De esta manera obtenemos los chunks en forma de embeddings (vectores)
         if self.debug:
             self.console.print('Loading database...')
         vectorstore = Chroma(
             collection_name=self.collection_name, 
             embedding_function=self.embedding_function,
-            persist_directory=CHROMADB_PATH,
+            persist_directory=vectorstore_path,
             collection_metadata=self.vectorstore_metadata
         )
         if self.debug:

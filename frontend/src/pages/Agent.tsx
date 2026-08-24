@@ -68,12 +68,16 @@ export default function Agent(){
                   </div>
                 ) : (
                   <div className="bg-gray-200 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-200 px-5 py-4 rounded-2xl rounded-bl-none w-full shadow-lg">
-                    <div className="leading-relaxed prose dark:prose-invert max-w-none">
-                      <ReactMarkdown>
+                    <div className="leading-relaxed prose dark:prose-invert max-w-none inline">
+                      <ReactMarkdown
+                        components={{
+                              p: ({node, ...props}) => <span {...props}/>
+                            }}
+                      >
                         {message.text}
                       </ReactMarkdown>
                       {isGenerating && index === messages.length - 1 && (
-                          <span className="animate-pulse ml-1">|</span>
+                          <span className="animate-pulse inline-block ml-0.5 font-bold">|</span>
                       )}
                     </div>
                   </div>

@@ -25,7 +25,7 @@ tavily_client = TavilyClient(TAVILY_API_KEY)
 @tool 
 def web_search(query: str) -> str:
     'Search the web for recent information'
-    print(f"\n[🛠️ LangGraph Ejecutando Tavily Tool para: '{query}']")
+    print(f"\n[🛠️ LangGraph Executing Tavily Tool for: '{query}']")
     try:
         # Respuesta basica, ya que tenemos limitaciones con el llm de groq que no puede acumular mucho contexto 
         response = tavily_client.search(
@@ -49,6 +49,13 @@ def web_search(query: str) -> str:
 
     except Exception as e:
         return 'Error: Reached searches limit for Tavily, Try again later'
+
+
+@tool 
+def doc_search(query: str) -> str:
+    'Search the attached documents to find the information'
+    print(f"\n[🛠️ LangGraph Executing RAG Tool for: '{query}']")
+    
 
 
 

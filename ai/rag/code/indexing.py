@@ -14,7 +14,7 @@ from ai.config import DIR_PATH, COLLECTION_NAME, CHROMADB_PATH, K, THRESHOLD, HU
 # Fase donde se cargan los documentos, se dividen en chunks, se generan los embeddings y se almacenan en Chroma 
 class Indexing:
 
-    def __init__(self, dir_path, collection_name, cosine=True, knn=True, debug=False, console=Console()):
+    def __init__(self, dir_path=None, collection_name=COLLECTION_NAME, cosine=True, knn=True, debug=False, console=Console()):
         self.dir_path = dir_path
         self.collection_name = collection_name
 
@@ -91,7 +91,7 @@ class Indexing:
             collection_metadata=self.vectorstore_metadata
         )
         if self.debug:
-            self.console.print('Created database in disk!')
+            self.console.print('[green]Created database in disk![/]')
 
         return vectorstore
 
@@ -179,7 +179,7 @@ class Indexing:
 
 if __name__ == '__main__':
 
-    indexing = Indexing(DIR_PATH, COLLECTION_NAME, debug=True)
+    indexing = Indexing(DIR_PATH, debug=True)
     vectorstore = indexing.create_vectorstore(CHROMADB_PATH)
     # vectorstore = indexing.load_vectorstore()
     dense_retriever = indexing.get_dense_retriever(vectorstore)

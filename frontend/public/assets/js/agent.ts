@@ -72,6 +72,7 @@ export function useAgentChat() {
       // If theres a selected file, we add it to the form data 
       if (selectedFile){
         formData.append("file", selectedFile);
+        setSelectedFile(null);
       }
 
       const res = await fetch("http://localhost:8000/agent", {

@@ -12,3 +12,7 @@ He añadido localStorage para guardar la conversacion del usuario (se guarda en 
   --> Cuando estemos en pro, tener cookies con ID de usuario, y que mediante el backend se entreguen unicamente el historial de mensajes de dicho usuario (almecenando todos los historiales en mi servidor y no en el dispositivo del usuario) 
 
 Añadir limite maximod de bytes al adjuntar un archivo. Y para el prompt del usuario lo mimos, para evitar generar muchos tokens de contexto
+
+Poner fuente de ubuntu-mono en el chatbot de /agent
+
+Falta mejorar un poco la interfaz y mandar el contenido del archivo al agente (tambien hay que unificar el agente de busqueda en internet con el rag, a traves de un agente que gestione ambos sistemas)' 

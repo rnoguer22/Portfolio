@@ -2,6 +2,7 @@
 **/chromadb/
 __pycache__/
 docs
+ai/rag/temp/
 
 # Dependencies
 node_modules

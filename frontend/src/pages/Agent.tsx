@@ -63,12 +63,20 @@ export default function Agent(){
                 className={`flex w-full ${message.sender === "user" ? "justify-end" : "justify-start"}`}
               >
                 {message.sender === "user" ? (
-                  <div className=" bg-blue-600 text-white px-5 py-3 rounded-2xl rounded-br-none max-w-2xl shadow-md">
-                    <p className="break-words">{message.text}</p>
+                  <div className="bg-blue-600 text-white px-5 py-3 rounded-2xl rounded-br-none max-w-2xl shadow-md">
+                    {message.fileName && (
+                      <div className="mb-2 bg-blue-700/80 border border-blue-500 text-white text-xs px-3 py-1.5 rounded-xl shadow-sm flex items-center gap-2 w-fit">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-200 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <span className="truncate max-w-[200px] font-medium">{message.fileName}</span>
+                      </div>
+                    )}
+                    <p className="font-['Ubuntu_Mono'] break-words">{message.text}</p>
                   </div>
                 ) : (
                   <div className="bg-gray-200 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-200 px-5 py-4 rounded-2xl rounded-bl-none w-full shadow-lg">
-                    <div className="leading-relaxed prose dark:prose-invert max-w-none inline">
+                    <div className="font-['Ubuntu_Mono'] leading-relaxed prose dark:prose-invert max-w-none inline">
                       <ReactMarkdown
                         components={{
                               p: ({node, ...props}) => <span {...props}/>
@@ -117,7 +125,8 @@ export default function Agent(){
             type="button"
             onClick={handleAttachFile}
             title="Attach files here"
-            className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-300 dark:hover:bg-gray-800 p-2 rounded-full transition-colors focus:outline-none"
+            disabled={isGenerating}
+            className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-300 dark:hover:bg-gray-800 p-2 rounded-full transition-colors focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 rotate-45" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
@@ -129,7 +138,7 @@ export default function Agent(){
             onChange={(e) => setInputPrompt(e.target.value)}
             disabled={isGenerating}
             placeholder={isGenerating ? "The agent is generating the response..." : "Send a message..."}
-            className="flex-grow bg-transparent text-gray-800 dark:text-gray-200 px-2 py-1.5 focus:outline-none placeholder-gray-400 dark:placeholder-gray-500 md:text-base disabled:opacity-50 disabled:cursor-not-allowed border-none"
+            className="font-['Ubuntu_Mono'] flex-grow bg-transparent text-gray-800 dark:text-gray-200 px-2 py-1.5 focus:outline-none placeholder-gray-400 dark:placeholder-gray-500 md:text-base disabled:opacity-50 disabled:cursor-not-allowed border-none"
           />
           <button
             type="submit"

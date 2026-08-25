@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from langchain_community.document_loaders import TextLoader
+from langchain_community.document_loaders import PyPDFLoader, Docx2txtLoader, UnstructuredExcelLoader, UnstructuredPowerPointLoader, TextLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_chroma import Chroma 
 from ai.config import COLLECTION_NAME, CHROMADB_PATH
@@ -28,10 +28,18 @@ class IndexingFile(Indexing):
             raise FileNotFoundError(f"The file {file_path} does not exist.")
 
         # Load the file 
-        if path.suffix.lower() == '.pdf':
+        file_type = path.suffix.lower()
+        if file_type == '.pdf':
             loader = PyPDFLoader(str(path))
+        elif file_type in ['.doc', '.docx']:
+            loader = Docx2txtLoader(str(path))
+        elif file_type in ['.xls', '.xlsx']:
+            loader = UnstructuredExcelLoader(str(path))
+        elif file_type in ['.ppt', '.pptx']:
+            loader = UnstructuredPowerPointLoader(str(path))
         else:
             loader = TextLoader(str(path), encoding='utf-8')
+
         raw_documents = loader.load()
 
         # Split the document in chunks 
@@ -44,7 +52,7 @@ class IndexingFile(Indexing):
 
         # We add source file metadata to know its origin
         for i, doc in enumerate(docs):
-            doc.metadata['id'] = path.name 
+            doc.metadata['id'] = f"{path.name}_chunk_{i}"
 
         return docs
 
@@ -75,6 +83,8 @@ class IndexingFile(Indexing):
 
         # Load the existing vectorstore from its parent class 
         vectorstore = self.load_vectorstore(vectorstore_path=self.vectorstore_path)
+        print(self.vectorstore_path)
+        print(vectorstore)
         if self.debug:
             self.console.print(f"Adding [bold white]({len(docs)})[/] chunks from file [bold cyan]{file_path}[/] to existing db...")
 

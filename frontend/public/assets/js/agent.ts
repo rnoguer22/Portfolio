@@ -62,7 +62,7 @@ export function useAgentChat() {
     setIsGenerating(true);
 
     // We add the user query to the history of messages 
-    setMessages((prev) => [...prev, { sender: "user", text: userText }]);
+    setMessages((prev) => [...prev, { sender: "user", text: userText, fileName: selectedFile ? selectedFile.name : null }]);
     setMessages((prev) => [...prev, { sender: "agent", text: "" }]);
 
     // Connection with backend FastAPI

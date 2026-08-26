@@ -102,7 +102,7 @@ export function useAgentChat() {
           clearInterval(interval);
           setIsGenerating(false);
         }
-      }, 10);
+      }, 30);
 
     } catch (error) {
       errorMessage = "Error connecting with backend";

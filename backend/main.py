@@ -24,10 +24,14 @@ router = APIRouter()
 
 
 
-@router.post('/agent')
+@router.post("/agent")
 async def ask_agent(prompt: str = Form(...), file: UploadFile = File(None)):
 
     print("Received prompt: ", prompt)
+    # CHANGE THIS IN FUTURE SO THAT WE RECEIVE A COOKIE WITH A USER ID 
+    user_cookie = "test"
+    # init the RAG Indexing phase, so that we can retrieve docs from the vectorstore and provide a precise answer to the user 
+    indexing = IndexingFile(collection_name=user_cookie, debug=True)
 
     if file:
         print(f"Received file: {file.filename}")
@@ -40,42 +44,27 @@ async def ask_agent(prompt: str = Form(...), file: UploadFile = File(None)):
             shutil.copyfileobj(file.file, buffer)
         print(f"File saved temporarily in {temp_file_path}")
 
-        # 1) Indexing
-        indexing = IndexingFile(debug=True)
-        vectorstore = indexing.process_file(temp_file_path)
-        dense_retriever = indexing.get_dense_retriever(vectorstore)
-        sparse_retriever = indexing.get_sparse_retriever(vectorstore)
-
-        # 2) Retrieval 
-        retrieval = Retrieval(dense_retriever, sparse_retriever)  
-
-        # 3) Augmentation 
-        augmentation_generation = AugmentationGeneration(local=False)
-        rag_chain_with_source = augmentation_generation.define_chain(retrieval)
-
-        # 4) Generation 
-        context, llm_response = augmentation_generation.generate_response(rag_chain_with_source, prompt)
-        # collection_name will be replaced with an user id (maybe email, or similar), but for now we define it as a constant while developing
-        collection_name = COLLECTION_NAME
-        augmentation_generation.save_context_in_file(context, collection_name)
-        print('\nResponse: ', llm_response)
-        return {'message': llm_response}
-
-    else:
-        agent = Portfolio_Agent(ollama=False)
-        app = agent.define_graph(AgentState)
-        inputs = {
-            'messages': [
-                HumanMessage(content=prompt)
-            ]
-        }
-        llm_response = app.invoke(inputs)
-        # By using inputs = {'messages': ...} format, we can not return {'message': llm_response} directly, we need to access to the response, which is the value of the 'message' key
-        latest_message = llm_response['messages'][-1]
-        if latest_message.type == 'ai' and latest_message.content:
-            print('\nAgent: ', latest_message.content)
-            return {'message': latest_message.content}
+        # Store the file in the vectorstore
+        indexing.add_file(temp_file_path)
+        
+    # A continuacion definimos el agente 
+    agent = Portfolio_Agent(indexing_instance=indexing, ollama=False)
+    app = agent.define_graph(AgentState)
+    inputs = {
+        "messages": [
+            HumanMessage(content=prompt)
+        ]
+    }
+    llm_response = app.invoke(inputs)
+    # By using inputs = {'messages': ...} format, we can not return {'message': llm_response} directly, we need to access to the response, which is the value of the 'message' key
+    latest_message = llm_response['messages'][-1]
+    if latest_message.type == 'ai' and latest_message.content:
+        print('\nAgent: ', latest_message.content)
+        return {'message': latest_message.content}
 
 
 
 app.include_router(router)
+
+
+

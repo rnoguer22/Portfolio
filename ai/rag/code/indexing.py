@@ -17,11 +17,10 @@ class Indexing:
     def __init__(self, dir_path=None, collection_name=COLLECTION_NAME, cosine=True, knn=True, debug=False, console=Console()):
         self.dir_path = dir_path
         self.collection_name = collection_name
-
-        with console.status('[bold cyan]Loading embeddings model...\n[/]', spinner='dots'):
-            self.embedding_function = HuggingFaceEmbeddings(model_name=HUGGINGFACE_EMBEDDINGS)
         self.debug = debug 
         self.console = console
+        self.vectorstore_path = Path(CHROMADB_PATH) / collection_name
+        self.vectorstore_path.mkdir(parents=True, exist_ok=True)
 
         self.vectorstore_metadata = {}
         # Configuracion de la base de datos
@@ -36,9 +35,27 @@ class Indexing:
             # Esto es util si tenemos pocos chunks 
             self.vectorstore_metadata['chroma:hnsw_impl'] = 'flat'
 
+        with console.status('[bold cyan]Loading embeddings model...\n[/]', spinner='dots'):
+            self.embedding_function = HuggingFaceEmbeddings(model_name=HUGGINGFACE_EMBEDDINGS)
+
+        self._vectorstore = None 
+
+
+    @property
+    def vectorstore(self):
+        """Usamos el decorador property para interceptar cuando se llame a la bbdd"""
+        if self._vectorstore is None:
+            self._vectorstore = self.load_vectorstore()
+        return self._vectorstore
     
+    @vectorstore.setter
+    def vectorstore(self, value):
+        """Setter para interceptar cuando hacemos self.vectorstore = value"""
+        self._vectorstore = value
+
+
     # Metodo para cargar todos los ficheros del directorio en la base de datos
-    def create_vectorstore(self, vectorstore_path):
+    def create_vectorstore(self):
         path = Path(self.dir_path)
         # Hacemos una busqueda de todos los ficheros dentro del directorio en funcion de su extension
         extensions = ['*.py', '*.json', '*.html', '*.css', '*.js' , '*.jsx', '*.ts', '*.tsx', '*.yaml', '*.yml', '*.conf', '*.sh', '*.txt', '*.md', '*.lua']
@@ -51,7 +68,6 @@ class Indexing:
                  # Troceamos la ruta con .parts (/home/user/) -> ('/', 'home', 'user') y si estan en la lista negra pasamos al siguiente fichero
                 if any(ignored in file_path.parts for ignored in ignored_dirs):
                     continue
-
                 try:
                     # Obtenemos el texto del fichero con TextLoader
                     loader = TextLoader(str(file_path), encoding='utf-8')
@@ -87,7 +103,7 @@ class Indexing:
             documents=docs, 
             embedding=self.embedding_function,
             collection_name=self.collection_name,
-            persist_directory=CHROMADB_PATH,
+            persist_directory=self.vectorstore_path,
             collection_metadata=self.vectorstore_metadata
         )
         if self.debug:
@@ -98,14 +114,14 @@ class Indexing:
 
     # Metodo para conectarnos a una base de datos de Chroma ya existente en disco 
     # Necesitamos el modelo que genera los embeddings para las nuevas queries del usuario 
-    def load_vectorstore(self, vectorstore_path=CHROMADB_PATH):
+    def load_vectorstore(self):
         # De esta manera obtenemos los chunks en forma de embeddings (vectores)
         if self.debug:
             self.console.print('Loading database...')
         vectorstore = Chroma(
             collection_name=self.collection_name, 
             embedding_function=self.embedding_function,
-            persist_directory=vectorstore_path,
+            persist_directory=self.vectorstore_path,
             collection_metadata=self.vectorstore_metadata
         )
         if self.debug:
@@ -116,10 +132,10 @@ class Indexing:
     # Metodo para obtener el dense retriever 
     # Dense (denso) --> busca los k chunks mas similares en funcion de su significado (las palabras clave no tienen que coincidir exactamente)
     # (de todas formas, no estamos llamando a invoke(), por lo que solo estamos inicializando el retriever y no estamos buscando los k chunks mas proximos)
-    def get_dense_retriever(self, vectorstore, similarity_score_threshold=False, mmr=False):
+    def get_dense_retriever(self, similarity_score_threshold=False, mmr=False):
         # Usamos similarity_score_threshold para descartar aquellos chunks cuya puntuacion este por debjo del umbral 
         if similarity_score_threshold and not mmr:
-            return vectorstore.as_retriever(
+            return self.vectorstore.as_retriever(
                 search_type='similarity_score_threshold',
                 search_kwargs={
                     'score_threshold': THRESHOLD,
@@ -128,12 +144,12 @@ class Indexing:
             )
         # Tambien podemos usar MMR para descartar chunks similares entre si y evitar redundancia
         elif mmr and not similarity_score_threshold:
-            return vectorstore.as_retriever(
+            return self.vectorstore.as_retriever(
                 search_type='mmr',
                 search_kwargs={'k': K}
             )
         else:
-            return vectorstore.as_retriever(
+            return self.vectorstore.as_retriever(
                 search_kwargs={'k': K}
         )
     
@@ -141,18 +157,19 @@ class Indexing:
     # Sparse retriever 
     # Sparse (disperso) --> usa modelos estadisticos para encontrar las mayores coincidencias (exactas) de las palabras claves de la query del usuario
     # (de todas formas, no estamos llamando a invoke(), por lo que solo estamos inicializando el retriever y no estamos buscando los k chunks mas proximos)
-    def get_sparse_retriever(self, vectorstore):
+    def get_sparse_retriever(self):
         # No podemos añadir todos los elementos de la base de datos en memoria del tiron, especialmente si son muchos chunks (22871 en mi caso)
         # Entonces los vamos añadiendo poco a poco, de 5000 en 5000, para no saturar el sistema 
         documents = []
         limit = 5000
         offset = 0
         # Obtenemos el total de elementos de la base de datos
-        total = vectorstore._collection.count()
+        total = self.vectorstore._collection.count()
+        print('\n', total, '\n')
         
         while offset < total:
             # Con .get() obtemos los chunks con el texto original, sin la transformacion en vectores
-            data = vectorstore._collection.get(
+            data = self.vectorstore._collection.get(
                 limit=limit,
                 offset=offset,
                 include=['documents', 'metadatas']
@@ -180,10 +197,10 @@ class Indexing:
 if __name__ == '__main__':
 
     indexing = Indexing(DIR_PATH, debug=True)
-    vectorstore = indexing.create_vectorstore(CHROMADB_PATH)
+    vectorstore = indexing.create_vectorstore()
     # vectorstore = indexing.load_vectorstore()
-    dense_retriever = indexing.get_dense_retriever(vectorstore)
-    sparse_retriever = indexing.get_sparse_retriever(vectorstore)
+    dense_retriever = indexing.get_dense_retriever()
+    sparse_retriever = indexing.get_sparse_retriever()
 
     print('\n')
     print('-'*50)

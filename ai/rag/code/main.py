@@ -17,8 +17,8 @@ if __name__ == '__main__':
     # 1) Indexing 
     indexing = Indexing(DIR_PATH, COLLECTION_NAME, debug=False)
     vectorstore = indexing.load_vectorstore()
-    dense_retriever = indexing.get_dense_retriever(vectorstore)
-    sparse_retriever = indexing.get_sparse_retriever(vectorstore)
+    dense_retriever = indexing.get_dense_retriever()
+    sparse_retriever = indexing.get_sparse_retriever()
 
     # 2) Retrieval 
     retrieval = Retrieval(dense_retriever, sparse_retriever)  

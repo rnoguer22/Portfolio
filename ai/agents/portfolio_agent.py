@@ -14,48 +14,13 @@ from langgraph.graph.message import add_messages
 from typing_extensions import TypedDict
 import pprint
 
+from ai.rag.code.retrieval import Retrieval
 from ai.config import GROQ_API_KEY, TAVILY_API_KEY, GROQ_MODEL, OLLAMA_MODEL, GOOGLE_MODEL, GOOGLE_API_KEY, OPENAI_API_KEY, OPENAI_MODEL, GRAPH_PATH
 
 
 
 
 
-tavily_client = TavilyClient(TAVILY_API_KEY)
-
-@tool 
-def web_search(query: str) -> str:
-    'Search the web for recent information'
-    print(f"\n[🛠️ LangGraph Executing Tavily Tool for: '{query}']")
-    try:
-        # Respuesta basica, ya que tenemos limitaciones con el llm de groq que no puede acumular mucho contexto 
-        response = tavily_client.search(
-            query=query,
-            search_depth='basic',
-            max_results=3
-        )
-        results = response.get('results', [])
-        if not results:
-            return 'Error: Information not found'
-
-        cleaned_response = []
-        for result in results:
-            title = result.get('title')
-            url = result.get('url')
-            score = result.get('score')
-            # Lo mismo, limitamos el content a 1000 caracteres para evitar saturar el contexto del modelo 
-            content = result.get('content')[:1000]
-            cleaned_response.append(f"Title: {title}\nURL: {url}\nScore: {score}\nContent: {content}\n")
-        return '\n---\n'.join(cleaned_response)
-
-    except Exception as e:
-        return 'Error: Reached searches limit for Tavily, Try again later'
-
-
-@tool 
-def doc_search(query: str) -> str:
-    'Search the documents from chroma dabatase to find the information'
-    print(f"\n[🛠️ LangGraph Executing RAG Tool for: '{query}']")
-    
     
 
 
@@ -72,8 +37,10 @@ class AgentState(TypedDict):
 
 class Portfolio_Agent:
 
-    def __init__(self, ollama=False):
-        self.tools = [web_search]
+    def __init__(self, indexing_instance, ollama=False):
+        self.tavily_client = TavilyClient(TAVILY_API_KEY)
+        self.indexing_instance = indexing_instance
+        self.vectorstore = self.indexing_instance.load_vectorstore()
         if ollama:
             llm = ChatOllama(model=OLLAMA_MODEL)
         else:
@@ -83,18 +50,93 @@ class Portfolio_Agent:
                 max_tokens=2000, # Limite de tokens en la salida, ahora que estamos incluyendo modelos die pago 
                 reasoning_effort='low' # Lo mismo, para que piense menos el modelo y gaste menos tokens
             )
+
+        # Definimos las tools internamente en lugar de fuera de clase como anteriormente 
+        @tool 
+        def web_search(query: str) -> str:
+            'Search the web for recent information'
+            print(f"\n[🛠️ LangGraph Executing Tavily Tool for: '{query}']")
+            try:
+                # Respuesta basica, ya que tenemos limitaciones con el llm de groq que no puede acumular mucho contexto 
+                response = self.tavily_client.search(
+                    query=query,
+                    search_depth='basic',
+                    max_results=3
+                )
+                results = response.get('results', [])
+                if not results:
+                    return 'Error: Information not found'
+
+                cleaned_response = []
+                for result in results:
+                    title = result.get('title')
+                    url = result.get('url')
+                    score = result.get('score')
+                    # Lo mismo, limitamos el content a 1000 caracteres para evitar saturar el contexto del modelo 
+                    content = result.get('content')[:1000]
+                    cleaned_response.append(f"Title: {title}\nURL: {url}\nScore: {score}\nContent: {content}\n")
+
+                web_context = '\n---\n'.join(cleaned_response)
+
+                # Guardamos el contexto de la busqueda en un fichero .txt
+                context_temp_path = os.path.join(TEMP_DIR, f"{self.indexing_instance.collection_name}.txt")
+                with open(context_temp_path, "w", encoding="utf-8") as f:
+                    f.write(web_context)
+                print(f"Temp file {context_temp_path} created successfully!")
+
+                # Y actualizamos la base de datos con el contenido del archivo 
+                self.indexing_instance.add_file(context_temp_path)
+                return "Information found and saved in the database. Use 'db_search' to read it"
+
+            except Exception as e:
+                return 'Error: Reached searches limit for Tavily, Try again later'
+
+
+        # Tool que implementa el RAG para encontrar los chunks mas relevantes en funcion de la query del usuario
+        @tool 
+        def db_search(query: str) -> str:
+            'Search the documents from chroma dabatase to find the information'
+            print(f"\n[🛠️ LangGraph Executing RAG Tool for: '{query}']")
+            
+            dense_retriever = self.indexing_instance.get_dense_retriever()
+            sparse_retriever = self.indexing_instance.get_sparse_retriever()
+            # Retrieval 
+            retrieval = Retrieval(dense_retriever, sparse_retriever)  
+            docs = retrieval.hybrid_search(query)
+            if not docs:
+                return "Error: Information not found in the database"
+            context = "\n---\n".join([doc.page_content for doc in docs])
+            return context
+
+
+        self.tools = [db_search, web_search]
         self.llm_with_tools = llm.bind_tools(self.tools)
         
+
 
     # A continuacion definimos los nodos del grafo 
     # 1) Nodo del agente (cuando el LLM esta pensando)
     def call_model(self, state: AgentState):
         messages = state['messages']
+        '''
         system_prompt = SystemMessage(content=(
             "Usa la tool web_search para responder preguntas sobre información actual. "
             "Llama a la tool usando el mecanismo de function calling, nunca escribas la llamada como texto."
             "IMPORTANTE: Si ya tienes resultados de una búsqueda anterior en la conversación, "
             "NO vuelvas a buscar lo mismo. Usa esos resultados para responder directamente al usuario en texto."
+        ))
+        '''
+        system_prompt = SystemMessage(content=(
+            "Eres un asistente experto y actúas como un agente inteligente con capacidad de razonamiento ReAct. "
+            "Tienes acceso a dos herramientas principales:\n"
+            "1. `web_search`: Para buscar información actualizada en internet (esta herramienta además guardará los resultados en tu base de datos).\n"
+            "2. `db_search`: Para buscar y recuperar información dentro de los documentos adjuntos o la base de datos local.\n\n"
+            "Instrucciones de comportamiento:\n"
+            "- Analiza la pregunta del usuario. Si la pregunta requiere noticias recientes o datos externos que no están en los documentos, usa `web_search`.\n"
+            "- En cualquier otro caso, ejecuta la `db_search` para obtener la información y generar tu respuesta en base a ella. Si aún así no dispones de la información necesaria para responder, explica brevemente que no se encuentra la información y usa tu propio conocimiento.\n"
+            "- IMPORTANTE: Si usas `web_search`, recuerda que los resultados se guardarán automáticamente en la base de datos; por lo tanto, en el siguiente paso o iteración puedes (o debes) usar `db_search` si necesitas profundizar en el contenido descargado.\n"
+            "- Llama a las herramientas usando el mecanismo de function calling, nunca escribas la llamada como texto plano.\n"
+            "- Si ya tienes la información necesaria en el historial de la conversación, responde directamente al usuario sin volver a invocar herramientas."
         ))
         # Inyectamos el prompt del sistema y llamamos al modelo 
         response = self.llm_with_tools.invoke([system_prompt] + messages)

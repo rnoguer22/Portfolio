@@ -15,6 +15,7 @@ Añadir limite maximod de bytes al adjuntar un archivo. Y para el prompt del usu
 
 rag/COLLECTION_NAME --> COLLECTION_NAME sera el id del usuario en un futuro
 Fatla comprobar que los ficheros .xlsx funcionan! 
+El efecto de lights solo se ve en los primeros 4 prompts (mas o menos). En el home pasa algo similar --> Arreglar
 
 Unificar Agente! Que no sea un RAG cuando se adjunte un fichero y un agente else 
 sino que sea un agente que busque informacion en los documentos adjuntos del usuario cuando sea necesario

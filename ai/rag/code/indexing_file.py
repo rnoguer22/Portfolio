@@ -60,9 +60,12 @@ class IndexingFile(Indexing):
 
         if self.debug:
             self.console.print(f"Adding [bold white]({len(docs)})[/] chunks from file [bold cyan]{file_path}[/] to existing db...")
+        if docs:
+            # Add the documents to the existing vectorstore
+            self.vectorstore.add_documents(docs)
+            if self.debug:
+                self.console.print("[green]Chunks added successfully![/]")
+        else:
+            print("Could not read file: ", file_path)
 
-        # Add the documents to the existing vectorstore
-        self.vectorstore.add_documents(docs)
-        if self.debug:
-            self.console.print("[green]Chunks added successfully![/]")
         return self.vectorstore

@@ -56,7 +56,7 @@ export default function Agent(){
             </p>
           </div>
         ) : (
-          <div className="flex-grow flex flex-col w-full max-w-4xl py-10 gap-6 text-left overflow-y-auto z-10 pr-2">
+          <div className="font-['Ubuntu_Mono'] flex-grow flex flex-col w-full max-w-4xl py-10 gap-6 text-left overflow-y-auto z-10 pr-2">
             {messages.map((message, index) => (
               <div 
                 key={index}
@@ -72,15 +72,26 @@ export default function Agent(){
                         <span className="truncate max-w-[200px] font-medium">{message.fileName}</span>
                       </div>
                     )}
-                    <p className="font-['Ubuntu_Mono'] break-words">{message.text}</p>
+                    <p className="break-words">{message.text}</p>
                   </div>
                 ) : (
                   <div className="bg-gray-200 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-200 px-5 py-4 rounded-2xl rounded-bl-none w-full shadow-lg">
-                    <div className="font-['Ubuntu_Mono'] leading-relaxed prose dark:prose-invert max-w-none inline">
+                    <div className="leading-relaxed prose dark:prose-invert max-w-none inline">
                       <ReactMarkdown
                         components={{
-                              p: ({node, ...props}) => <span {...props}/>
-                            }}
+                          pre: ({node, ...props}) => (
+                            <div className="overflow-x-auto my-3 p-3 bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100 rounder-xl border border-gray-300 dark:border-gray-700 shadow-inner">
+                              <pre {...props} /> 
+                            </div>
+                          ), 
+                          code: ({node, inline, ...props}: any) =>
+                            inline ? (
+                              <code className="bg-gray-300 dark:bg-gray-700 px-1.5 py-0.5 rounded text-xs font-mono" {...props} />
+                            ) : (
+                              <code className="font-mono text-xs md:text-sm block" {...props} />
+                            ),
+                          p: ({node, ...props}) => <p className="mb-2 last:mb-0" {...props} /> 
+                        }}
                       >
                         {message.text}
                       </ReactMarkdown>

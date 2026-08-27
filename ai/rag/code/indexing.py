@@ -165,7 +165,6 @@ class Indexing:
         offset = 0
         # Obtenemos el total de elementos de la base de datos
         total = self.vectorstore._collection.count()
-        print('\n', total, '\n')
         
         while offset < total:
             # Con .get() obtemos los chunks con el texto original, sin la transformacion en vectores

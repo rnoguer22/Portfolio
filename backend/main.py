@@ -27,7 +27,7 @@ router = APIRouter()
 @router.post("/agent")
 async def ask_agent(prompt: str = Form(...), file: UploadFile = File(None)):
 
-    print("Received prompt: ", prompt)
+    print("\nReceived prompt: ", prompt)
     # CHANGE THIS IN FUTURE SO THAT WE RECEIVE A COOKIE WITH A USER ID 
     user_cookie = "test"
     # init the RAG Indexing phase, so that we can retrieve docs from the vectorstore and provide a precise answer to the user 

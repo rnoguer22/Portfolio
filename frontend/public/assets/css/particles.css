@@ -2,17 +2,19 @@
 
 
 .light {
-    position: absolute;
+    position: fixed;
     width: 0px;
     opacity: .75;
     background-color: black;
     box-shadow: #0095ff 0px 0px 20px 2px;
-    opacity: 0;
+    /* opacity: 0; */
     top: 100vh;
     bottom: 0px;
     left: 0px;
     right: 0px;
     margin: auto;
+    pointer-events: none;
+    z-index: 0
 }
 
 .x1{

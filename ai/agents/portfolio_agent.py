@@ -15,13 +15,9 @@ from typing_extensions import TypedDict
 import pprint
 
 from ai.rag.code.retrieval import Retrieval
-from ai.config import GROQ_API_KEY, TAVILY_API_KEY, GROQ_MODEL, OLLAMA_MODEL, GOOGLE_MODEL, GOOGLE_API_KEY, OPENAI_API_KEY, OPENAI_MODEL, GRAPH_PATH
+from ai.config import TAVILY_API_KEY, OLLAMA_MODEL, OPENAI_API_KEY, OPENAI_MODEL, TEMP_DIR, GRAPH_PATH
 
 
-
-
-
-    
 
 
 
@@ -77,6 +73,7 @@ class Portfolio_Agent:
                     cleaned_response.append(f"Title: {title}\nURL: {url}\nScore: {score}\nContent: {content}\n")
 
                 web_context = '\n---\n'.join(cleaned_response)
+                print("Web search successfull: ", web_context[:100])
 
                 # Guardamos el contexto de la busqueda en un fichero .txt
                 context_temp_path = os.path.join(TEMP_DIR, f"{self.indexing_instance.collection_name}.txt")
@@ -89,7 +86,8 @@ class Portfolio_Agent:
                 return "Information found and saved in the database. Use 'db_search' to read it"
 
             except Exception as e:
-                return 'Error: Reached searches limit for Tavily, Try again later'
+                print("\nTavily is not working properly: ", e, "\n")
+                return "Error: Reached searches limit for Tavily, Try again later"
 
 
         # Tool que implementa el RAG para encontrar los chunks mas relevantes en funcion de la query del usuario
@@ -125,7 +123,6 @@ class Portfolio_Agent:
             "IMPORTANTE: Si ya tienes resultados de una búsqueda anterior en la conversación, "
             "NO vuelvas a buscar lo mismo. Usa esos resultados para responder directamente al usuario en texto."
         ))
-        '''
         system_prompt = SystemMessage(content=(
             "Eres un asistente experto y actúas como un agente inteligente con capacidad de razonamiento ReAct. "
             "Tienes acceso a dos herramientas principales:\n"
@@ -137,6 +134,19 @@ class Portfolio_Agent:
             "- IMPORTANTE: Si usas `web_search`, recuerda que los resultados se guardarán automáticamente en la base de datos; por lo tanto, en el siguiente paso o iteración puedes (o debes) usar `db_search` si necesitas profundizar en el contenido descargado.\n"
             "- Llama a las herramientas usando el mecanismo de function calling, nunca escribas la llamada como texto plano.\n"
             "- Si ya tienes la información necesaria en el historial de la conversación, responde directamente al usuario sin volver a invocar herramientas."
+        ))
+        '''
+        system_prompt = SystemMessage(content=(
+            "Eres un asistente experto y actúas como un agente inteligente con capacidad de razonamiento ReAct.\n"
+            "Tienes acceso a dos herramientas principales:\n"
+            "1. `web_search`: Para buscar información actualizada en internet.\n"
+            "2. `db_search`: Para buscar y recuperar información dentro de los documentos adjuntos o la base de datos local.\n\n"
+            "Instrucciones de comportamiento obligatorias:\n"
+            "- SI el usuario menciona explícitamente archivos suyos previos, DEBES invocar obligatoriamente `db_search` para recuperar ese contenido antes de responder, incluso si crees que puedes redactar una respuesta genérica.\n"
+            "- Si la pregunta requiere noticias recientes o datos externos que no están en los documentos, usa `web_search`.\n"
+            "- Para cualquier otra consulta general sobre tus documentos, ejecuta `db_search` para obtener la información y generar tu respuesta en base a ella.\n"
+            "- Llama a las herramientas usando el mecanismo de function calling, nunca escribas la llamada como texto plano.\n"
+            "- Si ya tienes la información necesaria en el historial de la conversación (porque ya se ejecutó una búsqueda previa en los mensajes anteriores), responde directamente al usuario sin volver a invocar herramientas."
         ))
         # Inyectamos el prompt del sistema y llamamos al modelo 
         response = self.llm_with_tools.invoke([system_prompt] + messages)

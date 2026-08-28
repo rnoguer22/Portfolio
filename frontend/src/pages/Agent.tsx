@@ -4,6 +4,7 @@ import Nav from "../components/Nav";
 import Footer from "../components/Footer";
 import { useAgentChat } from "../../public/assets/js/agent.ts";
 import "/public/assets/css/particles.css"; 
+import "/public/assets/css/animation.css"; 
 
 
 
@@ -75,7 +76,7 @@ export default function Agent(){
                     <p className="break-words">{message.text}</p>
                   </div>
                 ) : (
-                  <div className="bg-gray-200 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-200 px-5 py-4 rounded-2xl rounded-bl-none w-full shadow-lg">
+                  <div className="bg-gray-200 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-200 px-5 py-4 rounded-2xl rounded-bl-none w-full shadow-lg animate-[fadeIn_1.5s_ease-out_forwards]">
                     <div className="leading-relaxed prose dark:prose-invert max-w-none inline">
                       <ReactMarkdown
                         components={{
@@ -143,14 +144,21 @@ export default function Agent(){
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
             </svg>
           </button>
-          <input 
-            type="text"
-            value={inputPrompt}
-            onChange={(e) => setInputPrompt(e.target.value)}
-            disabled={isGenerating}
-            placeholder={isGenerating ? "The agent is generating the response..." : "Send a message..."}
-            className="font-['Ubuntu_Mono'] flex-grow bg-transparent text-gray-800 dark:text-gray-200 px-2 py-1.5 focus:outline-none placeholder-gray-400 dark:placeholder-gray-500 md:text-base disabled:opacity-50 disabled:cursor-not-allowed border-none"
-          />
+          <div className="flex-grow flex items-center min-w-0 overflow-hidden px-2 py-1.5">
+            {isGenerating ? (
+              <span className="typing-placeholder font-['Ubuntu_Mono'] text-gray-400 dark:text-gray-500 text-left md:text-base">
+                The agent is generating the response...
+              </span>
+            ) : (
+              <input 
+                type="text"
+                value={inputPrompt}
+                onChange={(e) => setInputPrompt(e.target.value)}
+                placeholder="Send a message..."
+                className="font-['Ubuntu_Mono'] w-full bg-transparent text-gray-800 dark:text-gray-200 focus:outline-none placeholder-gray-400 dark:placeholder-gray-500 md:text-base border-none text-left"
+              />
+            )}
+          </div>
           <button
             type="submit"
             title="Send message to the agent"

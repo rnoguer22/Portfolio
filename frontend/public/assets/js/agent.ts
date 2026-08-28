@@ -63,7 +63,6 @@ export function useAgentChat() {
 
     // We add the user query to the history of messages 
     setMessages((prev) => [...prev, { sender: "user", text: userText, fileName: selectedFile ? selectedFile.name : null }]);
-    setMessages((prev) => [...prev, { sender: "agent", text: "" }]);
 
     // Connection with backend FastAPI
     try {
@@ -75,39 +74,50 @@ export function useAgentChat() {
         setSelectedFile(null);
       }
 
+      // We use AbortController to handle timeouts from the server, avoiding the chat to get frozen
+      const abortController = new AbortController();
+      const timeoutId = setTimeout(() => {
+        abortController.abort();
+      }, 30000);
+
       const res = await fetch("http://localhost:8000/agent", {
         method: "POST",
-        body: formData
+        body: formData,
+        signal: abortController.signal // Assign the abortController instance to start
       });
 
       // Wait for the backend and llm to generate the response
       console.log("Sending data...");
       const data = await res.json();
       console.log("Data received: ", data);
-      const llmResponse = data.message;
 
-      let index = 0;
-      const interval = setInterval(() => {
-        if (index <= llmResponse.length) {
-          const currentSlice = llmResponse.substring(0, index);
-          // Update the last response message as we go generating, so that we can scroll while the response is being created
-          setMessages((prev) => {
-            const newMessages = [...prev];
-            newMessages[newMessages.length - 1] = { sender: "agent", text: currentSlice };
-            return newMessages;
-          });
+      let responseAgent = "";
+      if (data.error) {
+        responseAgent = data.error;
+      } else if (data.message) {
+        responseAgent = data.message;
+      } else {
+        responseAgent = "Error, please try again later."
+      }
 
-          index++;
-        } else {
-          clearInterval(interval);
-          setIsGenerating(false);
-        }
-      }, 10);
+      setMessages((prev) => [
+        ...prev, 
+        {sender: "agent", text: responseAgent}
+      ]);
+      setIsGenerating(false);
 
     } catch (error) {
-      errorMessage = "Error connecting with backend";
+      let errorMessage = "";
+      // If AbortController exceeds the limit time, we return a time out error
+      if (error.name === "AbortError") {
+        errorMessage = "Error: Connection timed out. Please try again later...";
+      } else {
+        // Generic error 
+        errorMessage = "Error: Connection to the server refused. Please try again later...";
+      }
       console.error(errorMessage, error);
-      setMessages((prev) => [...prev.slice(0, -1), { sender: "agent", text: errorMessage}])
+      setMessages((prev) => [...prev, { sender: "agent", text: errorMessage}]);
+      setIsGenerating(false)
     }
   };
 
@@ -141,7 +151,7 @@ export function useAgentChat() {
     selectedFile,
     messages,
     hasSubmitted,
-    isGenerating, 
+    isGenerating,
     handleSubmit,
     handleAttachFile,
     handleRemoveFile

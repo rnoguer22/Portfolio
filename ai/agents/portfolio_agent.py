@@ -137,7 +137,7 @@ class Portfolio_Agent:
         ))
         '''
         system_prompt = SystemMessage(content=(
-            "Eres un asistente experto y actúas como un agente inteligente con capacidad de razonamiento ReAct.\n"
+            "Eres un asistente experto y actúas como un agente inteligente con capacidad de razonamiento ReAct. Proporciona respuestas cortas cuando sea posible, respondiendo siempre con la información que se solicita.\n"
             "Tienes acceso a dos herramientas principales:\n"
             "1. `web_search`: Para buscar información actualizada en internet.\n"
             "2. `db_search`: Para buscar y recuperar información dentro de los documentos adjuntos o la base de datos local.\n\n"
@@ -148,8 +148,19 @@ class Portfolio_Agent:
             "- Llama a las herramientas usando el mecanismo de function calling, nunca escribas la llamada como texto plano.\n"
             "- Si ya tienes la información necesaria en el historial de la conversación (porque ya se ejecutó una búsqueda previa en los mensajes anteriores), responde directamente al usuario sin volver a invocar herramientas."
         ))
-        # Inyectamos el prompt del sistema y llamamos al modelo 
-        response = self.llm_with_tools.invoke([system_prompt] + messages)
+        try:
+            # Inyectamos el prompt del sistema y llamamos al modelo 
+            response = self.llm_with_tools.invoke([system_prompt] + messages)
+            if not response:
+                return {'error': 'Error: Empty or invalid response from the model. Please try again...'}
+        except Exception as e:
+            error_message = str(e).lower()
+            if 'token' in error_message or 'rate_limit' in error_message or 'context_length' in error_message:
+                return {'error': 'Error: Reached limit tokens. Please contact with the administrator. '}
+            # Cualquier otro error sera mas generico 
+            print('\nError: ', e)
+            return {'error': 'Error: Intern system error. Please try again later...'}
+
         return {'messages': [response]}
 
 
@@ -170,7 +181,7 @@ class Portfolio_Agent:
         workflow = StateGraph(state)
         # El primer nodo es la funcion call_model, para que el llm decida si debe ejecutar la herramienta o no 
         workflow.add_node('agent', self.call_model)
-        # El segundo nodo es el nodo de herramientas (de momento solo se puede hacer una busqueda en internet)
+        # El segundo nodo es el nodo de herramientas. Puede hacer una busqueda en internet, o buscar informacion en la base de datos del usuario
         workflow.add_node('tools', ToolNode(self.tools))
         # Definimos el punto de entrada del grafo 
         workflow.set_entry_point('agent')

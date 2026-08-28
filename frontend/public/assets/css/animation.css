@@ -1,0 +1,35 @@
+
+
+
+.typing-placeholder {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  vertical-align: middle;
+  border-right: 2px solid currentColor;
+  width: 0;
+  max-width: 41ch;
+  animation: 
+    typing-cycle 12s infinite,
+    blink-caret 0.75s step-end infinite;
+}
+
+@keyframes typing-cycle {
+  0% {
+    width: 0;
+  }
+  25% {
+    width: 41ch;
+    animation-timing-function: steps(41, end);
+  }
+  50% {
+    width: 41ch;
+  }
+  75% {
+    width: 0;
+    animation-timing-function: steps(41, end);
+  }
+  100% {
+    width: 0;
+  }
+}

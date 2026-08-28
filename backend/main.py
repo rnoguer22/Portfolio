@@ -1,4 +1,5 @@
 import shutil
+from time import sleep
 from fastapi import FastAPI, APIRouter, Form, File, UploadFile
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
@@ -56,11 +57,21 @@ async def ask_agent(prompt: str = Form(...), file: UploadFile = File(None)):
         ]
     }
     llm_response = app.invoke(inputs)
-    # By using inputs = {'messages': ...} format, we can not return {'message': llm_response} directly, we need to access to the response, which is the value of the 'message' key
-    latest_message = llm_response['messages'][-1]
-    if latest_message.type == 'ai' and latest_message.content:
-        print('\nAgent: ', latest_message.content)
-        return {'message': latest_message.content}
+
+    # Check if we got an error 
+    if 'error' in llm_response:
+        error = llm_response['error']
+        print("\n[!] Error en el sistema: ", error)
+        return {'error', error}
+
+    elif 'messages' in llm_response: 
+        # By using inputs = {'messages': ...} format, we can not return {'message': llm_response} directly, we need to access to the response, which is the value of the 'message' key
+        latest_message = llm_response['messages'][-1]
+        if latest_message.type == 'ai' and latest_message.content:
+            print('\nAgent: ', latest_message.content)
+            return {'message': latest_message.content}
+    else:
+        return {'error': 'Error: Unexpected error. Please try again later...'}
 
 
 

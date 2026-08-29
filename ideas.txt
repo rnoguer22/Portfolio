@@ -16,6 +16,9 @@ Añadir limite maximod de bytes al adjuntar un archivo. Y para el prompt del usu
 rag/COLLECTION_NAME --> COLLECTION_NAME sera el id del usuario en un futuro
 Fatla comprobar que los ficheros .xlsx funcionan! 
 
+Hay que añadir algo para que el usuario no pueda hacer mas de X mensajes
+Esto lo podemos hacer con el localStorage (aunque se pueda borrar pero bueno), o que el backend bloquee la respuesta en funcion de la ip y el numero de mensajes que ha hecho 
+
 
 
 --- Posibles errores a tener en cuenta en produccion
@@ -24,3 +27,11 @@ Fatla comprobar que los ficheros .xlsx funcionan!
 chmod -R u+w ai/rag/chromadb 
 
 X) Asegurarse de que si hay algun error interno en backend, se muestre un mensaje de error generico
+
+
+
+--- Cosas que voy haciendo (creo que es importante tener una seccion con las cosas que voy implemetando, que ya son tantas que al final se me olvidan xd, para ponerlo posteriormente en una seccion nueva de la web)
+
+Correo electronico - Crear cuenta: rnoguer.portfolio@gmail.com 
+--> Configurar contraseña de aplicacion para poder usarla aqui con codigo
+  He hecho el back, falta hacer el front, diseño, que llame a los endpoints, etc.

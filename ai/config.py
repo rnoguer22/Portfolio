@@ -28,3 +28,10 @@ HUGGINGFACE_EMBEDDINGS = 'sentence-transformers/all-mpnet-base-v2'
 # GROQ_MODEL = 'openai/gpt-oss-120b'
 # GROQ_MODEL = 'qwen/qwen3.6-27b'
 # OPENAI_MODEL = 'gpt-4o-mini'
+
+
+
+EMAIL = "rnoguer.portfolio@gmail.com"
+EMAIL_PASSWD = os.getenv('EMAIL_PASSWD')
+SMTP_SERVER = "smtp.gmail.com"
+SMTP_PORT = 587

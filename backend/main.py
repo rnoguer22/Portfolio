@@ -1,13 +1,15 @@
 import shutil
-from time import sleep
-from fastapi import FastAPI, APIRouter, Form, File, UploadFile
+import random 
+import uuid
+from fastapi import FastAPI, APIRouter, Form, File, UploadFile, Request, Response, Depends
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from ai.agents.portfolio_agent import *
 from ai.rag.code.indexing_file import IndexingFile 
 from ai.rag.code.retrieval import Retrieval 
 from ai.rag.code.augmentation_generation import AugmentationGeneration
-from ai.config import OPENAI_MODEL, TEMP_DIR, COLLECTION_NAME
+from ai.helpers.email_verification import send_email_verification
+from ai.config import OPENAI_MODEL, TEMP_DIR, COLLECTION_NAME, EMAIL_PASSWD
 
 
 
@@ -23,14 +25,46 @@ app.add_middleware(
 
 router = APIRouter()
 
+# Local memory storage for the codes. ESTO LO PONDREMOS CON UNA BD SQLITE MEJOR
+otp_storage = {}
+
+class EmailRequest(BaseModel):
+    email: str
+
+class VerifyRequest(BaseModel):
+    code: str 
+
+
+
+# Function to manage the user cookie 
+async def get_set_user_cookie(request: Request, response: Response):
+    user_cookie = request.cookies.get("user_cookie")
+    # If the cookie doesnt exists (its the first the user access to the web in this device), we just create it
+    if not user_cookie:
+        user_cookie = str(uuid.uuid4())
+        response.set_cookie(
+            key="user_cookie",
+            value=user_cookie, 
+            max_age=60*60*24*30, # 60 hours, 60 min, 24h, 30 days = A whole month 
+            httponly=True,
+            samesite="lax"
+        )
+    return user_cookie
+
 
 
 @router.post("/agent")
-async def ask_agent(prompt: str = Form(...), file: UploadFile = File(None)):
+async def ask_agent(prompt: str = Form(...), 
+                    file: UploadFile = File(None), 
+                    user_cookie: str = Depends(get_set_user_cookie) # With Depends we inject dependencies in FastAPI
+):
 
     print("\nReceived prompt: ", prompt)
-    # CHANGE THIS IN FUTURE SO THAT WE RECEIVE A COOKIE WITH A USER ID 
-    user_cookie = "test"
+
+    # ME GUSTARIA ALMACENAR LA COOKIE DEL USUARIO Y SU EMAIL EN UNA BD SQLITE, PARA ACCEDER PONER COLLECTION_NAME=USER_EMAIL
+    # Aqui pondriamos una verificaicon que existe el correo asociado a la cookie en la bd, recuperamos el correo en funcion de la cookie y lo asignamos a collection_name
+    # PERO PRIMERO VAMOS A VERIFICAR QUE FUNCIONA TODO CORRECTAMENTE
+   
     # init the RAG Indexing phase, so that we can retrieve docs from the vectorstore and provide a precise answer to the user 
     indexing = IndexingFile(collection_name=user_cookie, debug=True)
 
@@ -74,6 +108,51 @@ async def ask_agent(prompt: str = Form(...), file: UploadFile = File(None)):
         return {'error': 'Error: Unexpected error. Please try again later...'}
 
 
+
+# Endpoint to send the verification code to the user 
+@router.post("/auth/request-code")
+async def request_code(data: EmailRequest, user_cookie: str = Depends(get_set_user_cookie)):
+    email = data.email.strip()
+    # Generic email verification
+    if not email or "@" not in email:
+        return {"error": "Email not valid"}
+    
+    # Generate the code 
+    code = str(random.randint(100000, 999999))
+    # Storate it temporarly in memory (we will change this to a database)
+    otp_storage[user_cookie] = {
+        "email": email,
+        "code": code 
+    }
+
+    # Finally send the verification code with the funcion defined in email_verification file
+    success = send_email_verification(email, code)
+    if not success:
+        return {"error": "Could not send the code verification email. Please check SMTP config"}
+    return {"message": "Verification code successfully sent!"}
+    
+
+@router.post("/auth/verify-code")
+async def verify_code(data: VerifyRequest, user_cookie: str = Depends(get_set_user_cookie)):
+    # Get the user's data 
+    user_data = otp_storage.get(user_cookie)
+    if not user_data:
+        return {"error": "There is no verification active request for this session."}
+    if data.code.strip() != user_data["code"]:
+        return {"error": "Invalid code. Please try again."}
+
+    verified_email = user_data["email"]
+
+    # La conexion ha tenido exito y aqui vinculariamos el correo con la cookie del usuario en la bbdd
+    # Ya estableceriamos un limite en la base de datos de prompts pendientes (10 por ejemplo)
+    # PENDIENTE POR HACER 
+
+    del otp_storage[user_cookie]
+
+    return {
+        "success": True,
+        "message": f"{verified_email} verified successfully! Granted access!"
+    }
 
 app.include_router(router)
 

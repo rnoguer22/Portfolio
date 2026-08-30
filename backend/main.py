@@ -8,8 +8,9 @@ from ai.agents.portfolio_agent import *
 from ai.rag.code.indexing_file import IndexingFile 
 from ai.rag.code.retrieval import Retrieval 
 from ai.rag.code.augmentation_generation import AugmentationGeneration
-from ai.helpers.email_verification import send_email_verification
-from ai.config import OPENAI_MODEL, TEMP_DIR, COLLECTION_NAME, EMAIL_PASSWD
+from helpers.email_verification import send_email_verification
+from helpers.sqlite3_db import Sqlite3_Db 
+from config import OPENAI_MODEL, TEMP_DIR, COLLECTION_NAME, EMAIL_PASSWD
 
 
 
@@ -17,7 +18,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # Cuando estemos en pro, poner dominio (https://moyete.dev)
+    allow_origins=["http://localhost:5173"], # Cuando estemos en pro, poner dominio (https://moyete.dev)
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -25,9 +26,13 @@ app.add_middleware(
 
 router = APIRouter()
 
-# Local memory storage for the codes. ESTO LO PONDREMOS CON UNA BD SQLITE MEJOR
-otp_storage = {}
-verified_sessions = set()
+# Initialize the database 
+db = Sqlite3_Db()
+db.init_db()
+
+# Local memory storage for the codes
+codes = {}
+
 
 class EmailRequest(BaseModel):
     email: str
@@ -57,7 +62,7 @@ async def get_set_user_cookie(request: Request, response: Response):
 # Endpoint to check if the user has verified its email. We can check this with the cookie
 @router.get("/auth/status")
 async def check_auth_status(user_cookie: str = Depends(get_set_user_cookie)):
-    is_verified = user_cookie in verified_sessions
+    is_verified = db.is_cookie_verified(user_cookie)
     return {"verified": is_verified}
 
 
@@ -67,15 +72,11 @@ async def ask_agent(prompt: str = Form(...),
                     user_cookie: str = Depends(get_set_user_cookie) # With Depends we inject dependencies in FastAPI
 ):
     # Addtional verification 
-    if user_cookie not in verified_sessions:
-        return {"error": "Please verify your email to enjoy the AI agent! Refresh the page to continue..."}
+    if not db.is_cookie_verified(user_cookie):
+        return {"error": "Access denied. Please verify your email to continue. Refresh the page..."}
 
     print("\nReceived prompt: ", prompt)
 
-    # ME GUSTARIA ALMACENAR LA COOKIE DEL USUARIO Y SU EMAIL EN UNA BD SQLITE, PARA ACCEDER PONER COLLECTION_NAME=USER_EMAIL
-    # Aqui pondriamos una verificaicon que existe el correo asociado a la cookie en la bd, recuperamos el correo en funcion de la cookie y lo asignamos a collection_name
-    # PERO PRIMERO VAMOS A VERIFICAR QUE FUNCIONA TODO CORRECTAMENTE
-   
     # init the RAG Indexing phase, so that we can retrieve docs from the vectorstore and provide a precise answer to the user 
     indexing = IndexingFile(collection_name=user_cookie, debug=True)
 
@@ -128,7 +129,7 @@ async def request_code(data: EmailRequest, user_cookie: str = Depends(get_set_us
     # Generate the code 
     code = str(random.randint(100000, 999999))
     # Storate it temporarly in memory (we will change this to a database)
-    otp_storage[user_cookie] = {
+    codes[user_cookie] = {
         "email": email,
         "code": code 
     }
@@ -143,7 +144,7 @@ async def request_code(data: EmailRequest, user_cookie: str = Depends(get_set_us
 @router.post("/auth/verify-code")
 async def verify_code(data: VerifyRequest, user_cookie: str = Depends(get_set_user_cookie)):
     # Get the user"s data 
-    user_data = otp_storage.get(user_cookie)
+    user_data = codes.get(user_cookie)
     if not user_data:
         return {"error": "There is no verification active request for this session."}
     if data.code.strip() != user_data["code"]:
@@ -151,13 +152,9 @@ async def verify_code(data: VerifyRequest, user_cookie: str = Depends(get_set_us
 
     verified_email = user_data["email"]
 
-    # La conexion ha tenido exito y aqui vinculariamos el correo con la cookie del usuario en la bbdd
-    # Ya estableceriamos un limite en la base de datos de prompts pendientes (10 por ejemplo)
-    # PENDIENTE POR HACER 
-    
-    # Add the user_cookie to the verified sessions 
-    verified_sessions.add(user_cookie)
-    del otp_storage[user_cookie]
+    # Add the user_cookie to the database 
+    db.save_verified_cookie(verified_email, user_cookie)
+    del codes[user_cookie]
 
     return {
         "success": True,

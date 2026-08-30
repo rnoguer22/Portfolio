@@ -14,7 +14,7 @@ from langgraph.graph.message import add_messages
 from typing_extensions import TypedDict
 import pprint
 
-from ai.config import GROQ_API_KEY, TAVILY_API_KEY, GROQ_MODEL, OLLAMA_MODEL, GOOGLE_MODEL, GOOGLE_API_KEY, OPENAI_API_KEY, OPENAI_MODEL, GRAPH_PATH
+from config import GROQ_API_KEY, TAVILY_API_KEY, GROQ_MODEL, OLLAMA_MODEL, GOOGLE_MODEL, GOOGLE_API_KEY, OPENAI_API_KEY, OPENAI_MODEL, GRAPH_PATH
 
 
 

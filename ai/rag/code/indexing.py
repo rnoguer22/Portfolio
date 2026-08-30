@@ -6,7 +6,7 @@ from langchain_community.retrievers import BM25Retriever
 from langchain_chroma import Chroma 
 from langchain_huggingface import HuggingFaceEmbeddings
 from rich.console import Console 
-from ai.config import DIR_PATH, COLLECTION_NAME, CHROMADB_PATH, K, THRESHOLD, HUGGINGFACE_EMBEDDINGS 
+from config import DIR_PATH, COLLECTION_NAME, CHROMADB_PATH, K, THRESHOLD, HUGGINGFACE_EMBEDDINGS 
 
 
 

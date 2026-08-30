@@ -1,6 +1,6 @@
 from ai.agents.portfolio_agent import *
-from ai.helpers.pretty_terminal import PrettyTerminal
-from ai.config import OPENAI_MODEL 
+from helpers.pretty_terminal import PrettyTerminal
+from config import OPENAI_MODEL 
 
 
 

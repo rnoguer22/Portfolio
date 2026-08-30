@@ -15,7 +15,7 @@ from typing_extensions import TypedDict
 import pprint
 
 from ai.rag.code.retrieval import Retrieval
-from ai.config import TAVILY_API_KEY, OLLAMA_MODEL, OPENAI_API_KEY, OPENAI_MODEL, TEMP_DIR, GRAPH_PATH
+from config import TAVILY_API_KEY, OLLAMA_MODEL, OPENAI_API_KEY, OPENAI_MODEL, TEMP_DIR, GRAPH_PATH
 
 
 

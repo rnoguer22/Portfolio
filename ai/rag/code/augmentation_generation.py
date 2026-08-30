@@ -10,7 +10,7 @@ from rich.console import Console
 from rich.live import Live 
 from rich.markdown import Markdown 
 
-from ai.config import DIR_PATH, CHROMADB_PATH, COLLECTION_NAME, OLLAMA_MODEL, OPENAI_API_KEY, OPENAI_MODEL
+from config import DIR_PATH, CHROMADB_PATH, COLLECTION_NAME, OLLAMA_MODEL, OPENAI_API_KEY, OPENAI_MODEL
 
 
 

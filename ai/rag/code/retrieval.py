@@ -1,6 +1,6 @@
 from ai.rag.code.indexing import Indexing
 from langchain_classic.retrievers import EnsembleRetriever 
-from ai.config import DIR_PATH, COLLECTION_NAME, K  
+from config import DIR_PATH, COLLECTION_NAME, K  
 
 
 

@@ -2,7 +2,7 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import os
-from ai.config import SMTP_SERVER, SMTP_PORT, EMAIL, EMAIL_PASSWD
+from config import SMTP_SERVER, SMTP_PORT, EMAIL, EMAIL_PASSWD
 
 
 

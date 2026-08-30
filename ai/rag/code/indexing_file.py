@@ -3,7 +3,7 @@ from pathlib import Path
 from langchain_community.document_loaders import PyPDFLoader, Docx2txtLoader, UnstructuredExcelLoader, UnstructuredPowerPointLoader, TextLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_chroma import Chroma 
-from ai.config import COLLECTION_NAME
+from config import COLLECTION_NAME
 from ai.rag.code.indexing import Indexing 
 
 

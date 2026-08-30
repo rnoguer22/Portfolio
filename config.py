@@ -35,3 +35,4 @@ EMAIL = "rnoguer.portfolio@gmail.com"
 EMAIL_PASSWD = os.getenv('EMAIL_PASSWD')
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
+SQLITE_FILE_PATH = os.getenv("SQLITE_FILE_PATH")

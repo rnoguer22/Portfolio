@@ -83,7 +83,8 @@ export function useAgentChat() {
       const res = await fetch("http://localhost:8000/agent", {
         method: "POST",
         body: formData,
-        signal: abortController.signal // Assign the abortController instance to start
+        signal: abortController.signal, // Assign the abortController instance to start
+        credentials: "include" // To get the cookies
       });
 
       // Wait for the backend and llm to generate the response

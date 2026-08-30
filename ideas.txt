@@ -35,3 +35,11 @@ X) Asegurarse de que si hay algun error interno en backend, se muestre un mensaj
 Correo electronico - Crear cuenta: rnoguer.portfolio@gmail.com 
 --> Configurar contraseña de aplicacion para poder usarla aqui con codigo
   He hecho el back, falta hacer el front, diseño, que llame a los endpoints, etc.
+  Ya esta el front implementado y funcionando correctamente 
+
+  Sin embargo, al verificar el correo se devuelve un mensaje de error al escribir cualquier promtp 
+  SOLUCIONAR LUEGO 
+
+--> Base de datos con sqlite para almacenar usuarios verificados y sus cookies 
+  Tambien deberiamos meter el limite de requests restantes y el historial del chat 
+  Para ello tendriamos que tener una tabla por cada usuario, guardando el email, prompts restantes, e historial

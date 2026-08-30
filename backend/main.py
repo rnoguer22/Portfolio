@@ -27,6 +27,7 @@ router = APIRouter()
 
 # Local memory storage for the codes. ESTO LO PONDREMOS CON UNA BD SQLITE MEJOR
 otp_storage = {}
+verified_sessions = set()
 
 class EmailRequest(BaseModel):
     email: str
@@ -53,11 +54,21 @@ async def get_set_user_cookie(request: Request, response: Response):
 
 
 
+# Endpoint to check if the user has verified its email. We can check this with the cookie
+@router.get("/auth/status")
+async def check_auth_status(user_cookie: str = Depends(get_set_user_cookie)):
+    is_verified = user_cookie in verified_sessions
+    return {"verified": is_verified}
+
+
 @router.post("/agent")
 async def ask_agent(prompt: str = Form(...), 
                     file: UploadFile = File(None), 
                     user_cookie: str = Depends(get_set_user_cookie) # With Depends we inject dependencies in FastAPI
 ):
+    # Addtional verification 
+    if user_cookie not in verified_sessions:
+        return {"error": "Please verify your email to enjoy the AI agent! Refresh the page to continue..."}
 
     print("\nReceived prompt: ", prompt)
 
@@ -75,7 +86,7 @@ async def ask_agent(prompt: str = Form(...),
             os.makedirs(TEMP_DIR, exist_ok=True)
         temp_file_path = os.path.join(TEMP_DIR, file.filename)
 
-        with open(temp_file_path, 'wb') as buffer:
+        with open(temp_file_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
         print(f"File saved temporarily in {temp_file_path}")
 
@@ -93,19 +104,19 @@ async def ask_agent(prompt: str = Form(...),
     llm_response = app.invoke(inputs)
 
     # Check if we got an error 
-    if 'error' in llm_response:
-        error = llm_response['error']
+    if "error" in llm_response:
+        error = llm_response["error"]
         print("\n[!] Error en el sistema: ", error)
-        return {'error', error}
+        return {"error", error}
 
-    elif 'messages' in llm_response: 
-        # By using inputs = {'messages': ...} format, we can not return {'message': llm_response} directly, we need to access to the response, which is the value of the 'message' key
-        latest_message = llm_response['messages'][-1]
-        if latest_message.type == 'ai' and latest_message.content:
-            print('\nAgent: ', latest_message.content)
-            return {'message': latest_message.content}
+    elif "messages" in llm_response: 
+        # By using inputs = {"messages": ...} format, we can not return {"message": llm_response} directly, we need to access to the response, which is the value of the "message" key
+        latest_message = llm_response["messages"][-1]
+        if latest_message.type == "ai" and latest_message.content:
+            print("\nAgent: ", latest_message.content)
+            return {"message": latest_message.content}
     else:
-        return {'error': 'Error: Unexpected error. Please try again later...'}
+        return {"error": "Error: Unexpected error. Please try again later..."}
 
 
 
@@ -113,9 +124,6 @@ async def ask_agent(prompt: str = Form(...),
 @router.post("/auth/request-code")
 async def request_code(data: EmailRequest, user_cookie: str = Depends(get_set_user_cookie)):
     email = data.email.strip()
-    # Generic email verification
-    if not email or "@" not in email:
-        return {"error": "Email not valid"}
     
     # Generate the code 
     code = str(random.randint(100000, 999999))
@@ -134,7 +142,7 @@ async def request_code(data: EmailRequest, user_cookie: str = Depends(get_set_us
 
 @router.post("/auth/verify-code")
 async def verify_code(data: VerifyRequest, user_cookie: str = Depends(get_set_user_cookie)):
-    # Get the user's data 
+    # Get the user"s data 
     user_data = otp_storage.get(user_cookie)
     if not user_data:
         return {"error": "There is no verification active request for this session."}
@@ -146,7 +154,9 @@ async def verify_code(data: VerifyRequest, user_cookie: str = Depends(get_set_us
     # La conexion ha tenido exito y aqui vinculariamos el correo con la cookie del usuario en la bbdd
     # Ya estableceriamos un limite en la base de datos de prompts pendientes (10 por ejemplo)
     # PENDIENTE POR HACER 
-
+    
+    # Add the user_cookie to the verified sessions 
+    verified_sessions.add(user_cookie)
     del otp_storage[user_cookie]
 
     return {
@@ -154,7 +164,6 @@ async def verify_code(data: VerifyRequest, user_cookie: str = Depends(get_set_us
         "message": f"{verified_email} verified successfully! Granted access!"
     }
 
+
+
 app.include_router(router)
-
-
-

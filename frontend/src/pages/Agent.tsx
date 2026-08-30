@@ -3,6 +3,7 @@ import ReactMarkdown from "react-markdown";
 import Nav from "../components/Nav";
 import Footer from "../components/Footer";
 import { useAgentChat } from "../../public/assets/js/agent.ts";
+import { emailAuth } from "../../public/assets/js/emailAuth.ts";
 import "/public/assets/css/particles.css"; 
 import "/public/assets/css/animation.css"; 
 
@@ -22,6 +23,21 @@ export default function Agent(){
     handleRemoveFile
   } = useAgentChat();
 
+  const {
+    isVerified,
+    isAuthModalOpen,
+    authStep,
+    setAuthStep,
+    authEmail,
+    setAuthEmail,
+    authCode,
+    setAuthCode,
+    authLoading,
+    authMessage,
+    handleRequestOtp,
+    handleVerifyOtp
+  } = emailAuth();
+
   // Reference for the automatic scroll to the last message
   const messagesEndRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -32,7 +48,76 @@ export default function Agent(){
 
   return (
     <div className="min-h-screen text-white flex flex-col dark:bg-black">
-      <Nav />
+      <div className="relative z-[110]">
+          <Nav />
+      </div>
+
+      {/* Modal de Bloqueo Automático por Correo */}
+      {isAuthModalOpen && (
+        <div className="font-['Ubuntu_Mono'] fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-[fadeIn_0.3s_ease-out]">
+          <div className="bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-800 rounded-2xl p-6 w-full max-w-md shadow-2xl text-left relative">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+              {authStep === "email" ? "Restricted access" : "Verify code"}
+            </h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+              {authStep === "email" 
+                ? "In order to use the AI agent tool, please introduce your email. We will send you a verification code"
+                : `Introduce the code sent to ${authEmail}.`}
+            </p>
+
+            {authStep === "email" ? (
+              <form onSubmit={handleRequestOtp} className="space-y-4">
+                <input 
+                  type="email"
+                  value={authEmail}
+                  onChange={(e) => setAuthEmail(e.target.value)}
+                  placeholder="your.email@example.com"
+                  required
+                  className="w-full bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl px-4 py-2.5 text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 font-['Ubuntu_Mono'] text-sm"
+                />
+                <button
+                  type="submit"
+                  disabled={authLoading}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-xl transition-all disabled:opacity-50"
+                >
+                  {authLoading ? "Sending..." : "Send code"}
+                </button>
+              </form>
+            ) : (
+              <form onSubmit={handleVerifyOtp} className="space-y-4">
+                <input 
+                  type="text"
+                  value={authCode}
+                  onChange={(e) => setAuthCode(e.target.value)}
+                  placeholder="123456"
+                  required
+                  className="w-full bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl px-4 py-2.5 text-center tracking-widest text-lg text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 font-['Ubuntu_Mono']"
+                />
+                <button
+                  type="submit"
+                  disabled={authLoading}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-xl transition-all disabled:opacity-50"
+                >
+                  {authLoading ? "Verifying..." : "Verify and access the tool"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setAuthStep("email")}
+                  className="w-full text-xs text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 text-center mt-2"
+                >
+                  Misstyped the email? Change it
+                </button>
+              </form>
+            )}
+
+            {authMessage && (
+              <p className={`mt-4 text-xs text-center ${authMessage.includes("successfull") || authMessage.includes("successfully") ? "text-green-500" : "text-red-500"}`}>
+                {authMessage}
+              </p>
+            )}
+          </div>
+        </div>
+      )}
 
       <main className="flex-grow container mx-auto px-4 pt-20 pb-10 flex flex-col justify-between items-center text-center">
 
@@ -155,6 +240,7 @@ export default function Agent(){
                 value={inputPrompt}
                 onChange={(e) => setInputPrompt(e.target.value)}
                 placeholder="Send a message..."
+                disabled={!isVerified}
                 className="font-['Ubuntu_Mono'] w-full bg-transparent text-gray-800 dark:text-gray-200 focus:outline-none placeholder-gray-400 dark:placeholder-gray-500 md:text-base border-none text-left"
               />
             )}

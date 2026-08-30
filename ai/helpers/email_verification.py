@@ -37,8 +37,8 @@ def send_email_verification(user_email: str, code: str):
 
         # SMTP Google connection and secure login with TLS 
         with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
-            server.startttls()
-            server.login(EMAIL, EMAIL)
+            server.starttls()
+            server.login(EMAIL, EMAIL_PASSWD)
             server.sendmail(EMAIL, user_email, message.as_string())
         
         print(f"Verification email sent successfully to the user: {user_email}")

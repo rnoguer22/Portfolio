@@ -10,16 +10,9 @@ export function useAgentChat() {
   const [inputPrompt, setInputPrompt] = useState("");
   const [selectedFile, setSelectedFile] = useState<FIle | null>(null);
 
-  // We read the chat history as it follows, so that when we return to AI-demo we see the messages we had sent before
-  const [messages, setMessages] = useState(() => {
-    const saved = localStorage.getItem("chat_history");
-    return saved ? JSON.parse(saved) : [];
-  });
-  const [hasSubmitted, setHasSubmitted] = useState(() => {
-    const saved = localStorage.getItem("chat_history");
-    return saved ? JSON.parse(saved).length > 0 : false;
-  });
-
+  // set messages empty so we can load them from the database
+  const [messages, setMessages] = useState<any[]>([]);
+  const [hasSubmitted, setHasSubmitted] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
 
   const initText = "Good morning! What's on your mind today?";
@@ -42,10 +35,25 @@ export function useAgentChat() {
     return () => clearInterval(interval)
   }, []);
 
-  // Save the chat_history so that we return to AI-demo we see the old messages from before
+  // Load the chat history from the database while mounting the component 
   useEffect(() => {
-    localStorage.setItem("chat_history", JSON.stringify(messages));
-  }, [messages]);
+    fetch("http://localhost:8000/chat/history", {
+      credentials: "include"
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.messages && data.messages.length > 0) {
+          const formattedMessages = data.messages.map((m: any) => ({
+            sender: m.sender,
+            text: m.text,
+            fileName: m.file_name 
+          }));
+          setMessages(formattedMessages);
+          setHasSubmitted(true);
+        }
+      })
+      .catch((err) => console.error("Error fetching chat history: ", err));
+  }, []);
 
 
 

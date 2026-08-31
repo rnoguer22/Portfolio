@@ -74,9 +74,11 @@ async def ask_agent(prompt: str = Form(...),
     # Addtional verification 
     if not db.is_cookie_verified(user_cookie):
         return {"error": "Access denied. Please verify your email to continue. Refresh the page..."}
+    # Requests left verification 
+    if db.get_requests_left(user_cookie) == 0:
+        return {"error": "You have reached the requests limit. Thank you for using rnoguer's Portfolio! Contact Ruben to provide objective feedback about your experience!"}
 
-    print("\nReceived prompt: ", prompt)
-
+    print("\nReceived prompt: ", str(prompt), " --> ", prompt)
     # init the RAG Indexing phase, so that we can retrieve docs from the vectorstore and provide a precise answer to the user 
     indexing = IndexingFile(collection_name=user_cookie, debug=True)
 
@@ -93,6 +95,11 @@ async def ask_agent(prompt: str = Form(...),
 
         # Store the file in the vectorstore
         indexing.add_file(temp_file_path)
+
+        # Add the users prompt and file name to the db
+        db.add_message(user_cookie, "user", prompt, file.filename)
+    else:
+        db.add_message(user_cookie, "user", prompt)
         
     # A continuacion definimos el agente 
     agent = Portfolio_Agent(indexing_instance=indexing, ollama=False)
@@ -114,8 +121,12 @@ async def ask_agent(prompt: str = Form(...),
         # By using inputs = {"messages": ...} format, we can not return {"message": llm_response} directly, we need to access to the response, which is the value of the "message" key
         latest_message = llm_response["messages"][-1]
         if latest_message.type == "ai" and latest_message.content:
-            print("\nAgent: ", latest_message.content)
-            return {"message": latest_message.content}
+            agent_response = latest_message.content
+            print("\nAgent: ", agent_response)
+            # Add the agent response to the db, and update the prompts limit left 
+            db.add_message(user_cookie, "agent", agent_response)
+            db.decrement_requests(user_cookie)
+            return {"message": agent_response}
     else:
         return {"error": "Error: Unexpected error. Please try again later..."}
 
@@ -162,5 +173,12 @@ async def verify_code(data: VerifyRequest, user_cookie: str = Depends(get_set_us
     }
 
 
+@router.get("/chat/history")
+async def get_chat_history(user_cookie: str = Depends(get_set_user_cookie)):
+    # Endpoint to get the chat history from the database 
+    if not db.is_cookie_verified(user_cookie):
+        return {"messages": []}
+    messages = db.get_messages(user_cookie)
+    return {"messages": messages}
 
 app.include_router(router)

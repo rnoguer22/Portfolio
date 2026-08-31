@@ -41,5 +41,11 @@ Correo electronico - Crear cuenta: rnoguer.portfolio@gmail.com
   SOLUCIONAR LUEGO 
 
 --> Base de datos con sqlite para almacenar usuarios verificados y sus cookies 
-  Tambien deberiamos meter el limite de requests restantes y el historial del chat 
-  Para ello tendriamos que tener una tabla por cada usuario, guardando el email, prompts restantes, e historial
+  Tambien he incluido el limite de requests restantes y los mensajes recibidos en otra tabla (que luego se filtran en funcion del usuario) 
+
+
+
+--> Añadir un fichero de log para ver lo que esta pasando
+--> Implementar el tfg para detectar ciberataques
+
+--> Deploy, primero en mi raspberry pi en mi red local y luego a produccion

@@ -1,0 +1,20 @@
+services:
+  backend:
+    build: .
+    container_name: porfolio-backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./db:/app/db
+    restart: always
+
+  frontend:
+    build: ./frontend
+    container_name: porfolio-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: always

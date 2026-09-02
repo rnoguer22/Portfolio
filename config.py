@@ -1,15 +1,16 @@
-import os 
+import os
+from pathlib import Path 
 from dotenv import load_dotenv
 
 # Fichero con constantes
 # Cargamos las variables del fichero .env 
 load_dotenv()
 
-DIR_PATH = os.getenv('DIR_PATH')
-GRAPH_PATH = os.getenv('GRAPH_PATH')
-COLLECTION_NAME = os.getenv('COLLECTION_NAME')
-CHROMADB_PATH = os.getenv('CHROMADB_PATH')
-TEMP_DIR = os.getenv('TEMP_DIR')
+DIR_PATH = Path(__file__).resolve().parent
+GRAPH_PATH = os.path.join(DIR_PATH, os.getenv('GRAPH_PATH'))
+COLLECTION_NAME = os.path.join(DIR_PATH, os.getenv('COLLECTION_NAME'))
+CHROMADB_PATH = os.path.join(DIR_PATH, os.getenv('CHROMADB_PATH'))
+TEMP_DIR = os.path.join(DIR_PATH, os.getenv('TEMP_DIR'))
 
 K = 10
 THRESHOLD = 0.5
@@ -35,4 +36,4 @@ EMAIL = "rnoguer.portfolio@gmail.com"
 EMAIL_PASSWD = os.getenv('EMAIL_PASSWD')
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
-SQLITE_FILE_PATH = os.getenv("SQLITE_FILE_PATH")
+SQLITE_FILE_PATH = os.path.join(DIR_PATH, os.getenv("SQLITE_FILE_PATH"))

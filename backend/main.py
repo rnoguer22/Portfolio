@@ -18,7 +18,9 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"], # Cuando estemos en pro, poner dominio (https://moyete.dev)
+    allow_origins=["http://192.168.1.65:3000",
+                   "http://localhost:3000",
+                   "http://127.0.0.1:3000"], # Cuando estemos en pro, poner dominio (https://moyete.dev)
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -55,6 +57,7 @@ async def get_set_user_cookie(request: Request, response: Response):
             httponly=True,
             samesite="lax"
         )
+    print('User cookie: ', user_cookie)
     return user_cookie
 
 
@@ -156,6 +159,9 @@ async def request_code(data: EmailRequest, user_cookie: str = Depends(get_set_us
 async def verify_code(data: VerifyRequest, user_cookie: str = Depends(get_set_user_cookie)):
     # Get the user"s data 
     user_data = codes.get(user_cookie)
+    print('\n', user_cookie)
+    print(codes)
+    print(user_data, '\n')
     if not user_data:
         return {"error": "There is no verification active request for this session."}
     if data.code.strip() != user_data["code"]:

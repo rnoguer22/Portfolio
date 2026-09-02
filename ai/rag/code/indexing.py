@@ -19,7 +19,7 @@ class Indexing:
         self.collection_name = collection_name
         self.debug = debug 
         self.console = console
-        self.vectorstore_path = Path(CHROMADB_PATH) / collection_name
+        self.vectorstore_path = Path(CHROMADB_PATH)
         self.vectorstore_path.mkdir(parents=True, exist_ok=True)
 
         self.vectorstore_metadata = {}

@@ -1,9 +1,8 @@
 .*
-**/chromadb/
+db/*
 __pycache__/
 docs
 ai/rag/temp/
-sqlite_database.db
 
 # Dependencies
 node_modules

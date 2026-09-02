@@ -13,7 +13,7 @@ export function emailAuth() {
   const [authMessage, setAuthMessage] = useState("");
   
   useEffect(() => {
-    fetch("http://localhost:8000/auth/status", {
+    fetch("http://192.168.1.65:8000/auth/status", {
       credentials: "include"
     })
       .then(res => res.json())
@@ -41,7 +41,7 @@ export function emailAuth() {
     setAuthMessage("");
 
     try {
-      const res = await fetch("http://localhost:8000/auth/request-code", {
+      const res = await fetch("http://192.168.1.65:8000/auth/request-code", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({ email: authEmail }),
@@ -73,7 +73,7 @@ export function emailAuth() {
     setAuthMessage("");
 
     try {
-      const res = await fetch("http://localhost:8000/auth/verify-code", {
+      const res = await fetch("http://192.168.1.65:8000/auth/verify-code", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({ code: authCode }),

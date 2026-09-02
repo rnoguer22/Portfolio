@@ -37,15 +37,19 @@ Correo electronico - Crear cuenta: rnoguer.portfolio@gmail.com
   He hecho el back, falta hacer el front, diseño, que llame a los endpoints, etc.
   Ya esta el front implementado y funcionando correctamente 
 
-  Sin embargo, al verificar el correo se devuelve un mensaje de error al escribir cualquier promtp 
-  SOLUCIONAR LUEGO 
-
---> Base de datos con sqlite para almacenar usuarios verificados y sus cookies 
-  Tambien he incluido el limite de requests restantes y los mensajes recibidos en otra tabla (que luego se filtran en funcion del usuario) 
+Base de datos con sqlite para almacenar usuarios verificados y sus cookies 
+--> Tambien he incluido el limite de requests restantes y los mensajes recibidos en otra tabla (que luego se filtran en funcion del usuario) 
 
 
 
---> Añadir un fichero de log para ver lo que esta pasando
---> Implementar el tfg para detectar ciberataques
+Añadir un fichero de log para ver lo que esta pasando
+Implementar el tfg para detectar ciberataques
 
---> Deploy, primero en mi raspberry pi en mi red local y luego a produccion
+Deploy, primero en mi raspberry pi en mi red local y luego a produccion
+
+
+
+----- RASPBERRY PI CONFIG ----- 
+  He instalado el sistema operativo Raspberry Pi OS Lite 64-bits 
+  Configurado una direccion IP estatica
+  Autologin al arrancar

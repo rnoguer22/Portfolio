@@ -209,7 +209,7 @@ export default function Agent(){
               <button 
                 type="button"
                 onClick={handleRemoveFile}
-                clasName="text-gray-400 hover:text-red-500 transition-colors ml-1 focus:outline-none"
+                className="text-gray-400 hover:text-red-500 transition-colors ml-1 focus:outline-none"
                 title="Remove file"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -110,3 +110,16 @@ class Sqlite3_Db:
         conn.close()
         return cursor.rowcount > 0
 
+    # Get the email based on the cookie 
+    def get_email(self, cookie: str) -> str:
+        conn = sqlite3.connect(self.sqlite_file_path)
+        cursor = conn.cursor()
+        cursor.execute(f"""
+            SELECT email FROM {self.users_table} WHERE cookie = ?
+        """, (cookie,))
+        result = cursor.fetchone()
+        conn.close()
+        # fetchone returns a tuple if the value is found, or None if not, so we need to check that
+        if result is None:
+            return None
+        return result[0]

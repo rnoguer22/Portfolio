@@ -8,7 +8,7 @@ export function useAgentChat() {
   // Define useState variuables
   const [greetingText, setGreetingText] = useState("");
   const [inputPrompt, setInputPrompt] = useState("");
-  const [selectedFile, setSelectedFile] = useState<FIle | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   // set messages empty so we can load them from the database
   const [messages, setMessages] = useState<any[]>([]);
@@ -16,7 +16,6 @@ export function useAgentChat() {
   const [isGenerating, setIsGenerating] = useState(false);
 
   const initText = "Good morning! What's on your mind today?";
-  const [response, setResponse] = useState("");
 
 
 
@@ -37,7 +36,7 @@ export function useAgentChat() {
 
   // Load the chat history from the database while mounting the component 
   useEffect(() => {
-    fetch("http://localhost:8000/chat/history", {
+    fetch("http://192.168.1.65:8000/chat/history", {
       credentials: "include"
     })
       .then((res) => res.json())
@@ -84,11 +83,11 @@ export function useAgentChat() {
 
       // We use AbortController to handle timeouts from the server, avoiding the chat to get frozen
       const abortController = new AbortController();
-      const timeoutId = setTimeout(() => {
+      setTimeout(() => {
         abortController.abort();
       }, 30000);
 
-      const res = await fetch("http://localhost:8000/agent", {
+      const res = await fetch("http://192.168.1.65:8000/agent", {
         method: "POST",
         body: formData,
         signal: abortController.signal, // Assign the abortController instance to start
@@ -115,7 +114,7 @@ export function useAgentChat() {
       ]);
       setIsGenerating(false);
 
-    } catch (error) {
+    } catch (error: any) {
       let errorMessage = "";
       // If AbortController exceeds the limit time, we return a time out error
       if (error.name === "AbortError") {
@@ -128,6 +127,7 @@ export function useAgentChat() {
       setMessages((prev) => [...prev, { sender: "agent", text: errorMessage}]);
       setIsGenerating(false)
     }
+
   };
 
   

@@ -8,12 +8,8 @@ uvicorn backend.main:app --reload
 
 FRONTEND
 
-He añadido localStorage para guardar la conversacion del usuario (se guarda en cada usuario con un equipo distinto, ya que funciona a taves del almacenamiento local del propio navegador, en disco)
-  --> Cuando estemos en pro, tener cookies con ID de usuario, y que mediante el backend se entreguen unicamente el historial de mensajes de dicho usuario (almecenando todos los historiales en mi servidor y no en el dispositivo del usuario) 
-
 Añadir limite maximod de bytes al adjuntar un archivo. Y para el prompt del usuario lo mimos, para evitar generar muchos tokens de contexto
 
-rag/COLLECTION_NAME --> COLLECTION_NAME sera el id del usuario en un futuro
 Fatla comprobar que los ficheros .xlsx funcionan! 
 
 Hay que añadir algo para que el usuario no pueda hacer mas de X mensajes
@@ -21,7 +17,7 @@ Esto lo podemos hacer con el localStorage (aunque se pueda borrar pero bueno), o
 
 
 
---- Posibles errores a tener en cuenta en produccion
+----- Posibles errores a tener en cuenta en produccion -----
 
 1) He tenido que dar permisos a la bd de chroma, porque estaba en modo readonly. Usar este comando 
 chmod -R u+w ai/rag/chromadb 
@@ -30,7 +26,8 @@ X) Asegurarse de que si hay algun error interno en backend, se muestre un mensaj
 
 
 
---- Cosas que voy haciendo (creo que es importante tener una seccion con las cosas que voy implemetando, que ya son tantas que al final se me olvidan xd, para ponerlo posteriormente en una seccion nueva de la web)
+----- Cosas que voy haciendo -----
+(creo que es importante tener una seccion con las cosas que voy implemetando, que ya son tantas que al final se me olvidan xd, para ponerlo posteriormente en una seccion nueva de la web)
 
 Correo electronico - Crear cuenta: rnoguer.portfolio@gmail.com 
 --> Configurar contraseña de aplicacion para poder usarla aqui con codigo
@@ -39,6 +36,12 @@ Correo electronico - Crear cuenta: rnoguer.portfolio@gmail.com
 
 Base de datos con sqlite para almacenar usuarios verificados y sus cookies 
 --> Tambien he incluido el limite de requests restantes y los mensajes recibidos en otra tabla (que luego se filtran en funcion del usuario) 
+
+Despliegue en docker - Ya esta funcionando en toda mi red local. Hay que dar el salto a produccion en cloud
+
+Ajustes de diseño en frontend para que se vea mejor en dispositivos moviles 
+
+CUANDO HAGA EL CV ESTILO HARVARD AÑADIR LA OPCION DE DESCARGARLO
 
 
 

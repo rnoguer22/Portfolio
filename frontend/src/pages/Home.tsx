@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import Nav from "../components/Nav";
 import Footer from "../components/Footer";
 import "/public/assets/css/particles.css"; 
+import "/public/assets/css/skills.css"; 
 import { initializeAnimations } from "../../public/assets/js/custom.js";
 
 
@@ -13,6 +14,20 @@ export default function Home(){
     // Otherwise, coming from AI-Demo to anywhere in home causes animations not to be loaded 
     initializeAnimations();
   }, []);
+
+  // Define the skills for the Skills section 
+  const skills = [
+    { name: "LangChain", icon: "langchain" },
+    { name: "LangGraph", icon: "langgraph" },
+    { name: "PyTorch", icon: "pytorch" },
+    { name: "Scikit-learn", icon: "scikitlearn" },
+    { name: "MySQL", icon: "mysql" },
+    { name: "MongoDB", icon: "mongodb" },
+    { name: "FastAPI", icon: "fastapi" },
+    { name: "Django", icon: "django" },
+    { name: "React", icon: "react" },
+    { name: "Git", icon: "git" },
+  ];
 
 
   return (
@@ -37,9 +52,9 @@ export default function Home(){
 
       <div className="grid max-w-screen-xl px-4 py-8 mx-auto lg:gap-8 xl:gap-0 lg:py-32 lg:grid-cols-12 relative z-10">
         <div className="mr-auto place-self-center lg:col-span-7">
-        <h1
+          <h1
             id="dynamicHeadline"
-            className="max-w-2xl mb-4 text-4xl font-extrabold tracking-tight leading-none md:text-5xl xl:text-6xl dark:text-white"
+            className="max-w-2xl mb-4 text-4xl font-extrabold tracking-tight leading-none md:text-5xl xl:text-6xl dark:text-white min-h-[108px] md:min-h-0"
           >
             Driving The Future{" "}
             <span id="dynamicWords" className="text-blue-500 font-bold">
@@ -52,7 +67,7 @@ export default function Home(){
           </p>
           <a
             href="#about"
-            className="inline-flex items-center justify-center px-5 py-3 mr-3 text-base font-medium text:3xl text-center text-white  bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:focus:ring-primary-900"
+            className="inline-flex items-center justify-center px-5 py-3 mr-3 text-base font-medium text:3xl text-center text-gray-900 dark:text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:focus:ring-primary-900"
           >
             More About Me
             <svg
@@ -77,7 +92,7 @@ export default function Home(){
         </div>
         <div 
           id="logo" 
-          className="lg:mt-0 lg:col-span-5 lg:flex relative z-10"
+          className="mt-8 lg:mt-0 lg:col-span-5 lg:flex relative z-10"
           style={{ opacity: 0 }}  // This ensures it's initially invisible but still rendered
         >
           <img
@@ -121,7 +136,7 @@ export default function Home(){
 
               <div className="max-w-screen-md mb-8 lg:mb-12 mx-auto">
                 <h2 className="mb-4 text-4xl md:text-5xl tracking-tight font-extrabold text-gray-900 dark:text-white">
-                  What I Build: Where Mathematics & Technology Meet
+                  What I Build: Where Mathematics & skillnology Meet
                 </h2>
                 <p className="text-gray-500 text-2xl dark:text-gray-400">
                   Combining mathematical thinking with software engineering to explore, build and solve complex problems through data and intelligent systems.
@@ -260,32 +275,35 @@ export default function Home(){
             </div>
           </section>
           
-          {/* #### LOGOS SECTION #### */}
-          <section className="bg-gray-100 dark:bg-black lg:py-18 lg:px-6 border-t-4 border-b-4 border-solid border-blue-700 relative z-20">
-            <div className="py-8 lg:py-16 mx-auto max-w-screen-xl px-4">
-              <h2 className="mb-8 lg:mb-16 text-3xl font-extrabold tracking-tight leading-tight text-center text-gray-900 dark:text-white md:text-4xl">
-                Professional Experience
+          {/* #### SKILLS SECTION #### */}
+          <section className="bg-white dark:bg-black py-12 border-y-4 border-solid border-blue-700 relative z-20 overflow-hidden">
+            <div className="max-w-screen-xl mx-auto px-4">
+              <h2 className="mb-10 text-3xl font-extrabold tracking-tight leading-tight text-center text-gray-900 dark:text-white md:text-4xl">
+                Skills 
               </h2>
-              <div className="grid grid-cols-2 gap-8 mx-24 text-gray-500 sm:gap-12 md:grid-cols-2 lg:grid-cols-2 dark:text-gray-400">
-                <a href="#" className="flex justify-center items-center group">
-                  <img
-                    src="/assets/images/ey_logo.png"
-                    alt="EY"
-                    className="h-12 w-auto object-contain opacity-70 transition-all duration-300 group-hover:opacity-100 group-hover:scale-110"
-                  />
-                </a>
-                <a href="#" className="flex justify-center items-center group">
-                  <img
-                    src="/assets/images/accenture_logo.png"
-                    alt="Accenture"
-                    className="h-12 w-auto object-contain opacity-70 transition-all duration-300 group-hover:opacity-100 group-hover:scale-110 hidden dark:block"
-                  />
-                  <img
-                    src="/assets/images/accenture_dark_logo.png"
-                    alt="Accenture"
-                    className="h-12 w-auto object-contain opacity-70 transition-all duration-300 group-hover:opacity-100 group-hover:scale-110 dark:hidden"
-                  />
-                </a>
+            </div>
+            <div className="skills-container">
+              <div className="skills-track">
+                {/* Place the array twice so the animation is more fluid */}
+                {[...skills, ...skills].map((skill, index) => (
+                  <div
+                    key={`${skill.name}-${index}`}
+                    className="flex flex-col items-center justify-center gap-2 mx-8 shrink-0 group"
+                  >
+                    <img
+                      src={`https://cdn.simpleicons.org/${skill.icon}`}
+                      alt={skill.name}
+                      className="h-12 w-12 object-contain opacity-70 transition-all duration-300 group-hover:opacity-100 group-hover:scale-110"
+                      onError={(e) => {
+                        // If we cant find the icon in simple icons, we dont show it 
+                        (e.target as HTMLImageElement).style.display = "none";
+                      }}
+                    />
+                    <span className="text-sm font-bold text-gray-500 dark:text-gray-400 whitespace-nowrap">
+                      {skill.name}
+                    </span>
+                  </div>
+                ))}
               </div>
             </div>
           </section>
@@ -294,10 +312,11 @@ export default function Home(){
           <section id="about" className="bg-white dark:bg-black pt-8">
           <div className="gap-16 items-center py-8 px-4 mx-auto max-w-screen-xl lg:grid lg:grid-cols-2 lg:py-8 lg:px-6">
             <div className="font-light text-gray-500 sm:text-lg dark:text-gray-400">
-              <h2 className="mb-4 text-5xl tracking-tight font-extrabold text-gray-900 dark:text-white">
-                About Me              </h2>
-              <p className="mb-4 text-3xl">
-                I’m Rubén, a recent graduate with a double degree in Mathematical & Computer Engineering from Alfonso X el Sabio University. I have always enjoyed mathematics and programming, and throughout my five years at university, I have had the opportunity to explore the fusion of the best of both worlds.
+              <h2 className="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">
+                About Me              
+              </h2>
+              <p className="mb-4 text-2xl">
+                I am Rubén Nogueras González, recent graduate with a double degree in Mathematical & Computer Engineering from Alfonso X el Sabio University. I have always enjoyed mathematics and programming, and throughout my five years at university, I have had the opportunity to explore the fusion of the best of both worlds.
               </p>
               <p className="text-xl">
                 My academic and practical background includes building machine learning projects such as neural networks for melanoma detection, stock market prediction models for the IBEX 35 using time series, and predictive systems leveraging Random Forest and XGBoost. This culminated in my final degree project: a real-time network intrusion detection system designed to identify malicious traffic targeting web services using machine learning models. 
@@ -309,32 +328,32 @@ export default function Home(){
             </div>
             <div className="grid grid-cols-2 gap-4 mt-8">
             <img
-              className="w-full col-span-2 transition-all duration-300 hover:saturate-150 hover:brightness-75 hover:hue-rotate-15 dark:hidden"
+              className="w-full col-span-2 transition-all duration-300 hover:saturate-150 hover:brightness-75 hover:hue-rotate-15 dark:hidden rounded-xl"
               src="./assets/images/accuracy_loss.png"
               alt="Accuracy - Loss curve"
             />
             <img
-              className="w-full col-span-2 transition-all duration-300 hover:saturate-150 hover:brightness-75 hover:hue-rotate-15 hidden dark:block"
+              className="w-full col-span-2 transition-all duration-300 hover:saturate-150 hover:brightness-75 hover:hue-rotate-15 hidden dark:block rounded-xl"
               src="./assets/images/accuracy_loss_dark.png"
               alt="Accuracy - Loss curve"
             />
             <img
-              className="w-full transition-all duration-300 hover:saturate-150 hover:brightness-75 hover:hue-rotate-15 dark:hidden"
+              className="w-full transition-all duration-300 hover:saturate-150 hover:brightness-75 hover:hue-rotate-15 dark:hidden rounded-xl"
               src="./assets/images/roc.png"
               alt="Rco curve"
             />
             <img
-              className="w-full transition-all duration-300 hover:saturate-150 hover:brightness-75 hover:hue-rotate-15 hidden dark:block"
+              className="w-full transition-all duration-300 hover:saturate-150 hover:brightness-75 hover:hue-rotate-15 hidden dark:block rounded-xl"
               src="./assets/images/roc_dark.png"
               alt="Roc curve"
             />
             <img
-              className="mt-4 w-full lg:mt-10 transition-all duration-300 hover:saturate-150 hover:brightness-75 hover:hue-rotate-15 dark:hidden"
+              className="mt-4 w-full lg:mt-10 transition-all duration-300 hover:saturate-150 hover:brightness-75 hover:hue-rotate-15 dark:hidden rounded-xl"
               src="./assets/images/confusion_matrix.png"
               alt="Confussion matrix"
             />
             <img
-              className="mt-4 w-full lg:mt-10 transition-all duration-300 hover:saturate-150 hover:brightness-75 hover:hue-rotate-15 hidden dark:block"
+              className="mt-4 w-full lg:mt-10 transition-all duration-300 hover:saturate-150 hover:brightness-75 hover:hue-rotate-15 hidden dark:block rounded-xl"
               src="./assets/images/confusion_matrix_dark.png"
               alt="Confussion matrix"
             />
@@ -370,21 +389,24 @@ export default function Home(){
           </div>
         </section>
         <section id="contact" className="bg-white dark:bg-black">
-          <div className="gap-8 items-center py-8 px-4 mx-auto max-w-screen-xl xl:gap-16 md:grid md:grid-cols-2 sm:py-16 lg:px-6">
+          <div className="gap-8 items-center pt-8 pb-12 px-4 mx-auto max-w-screen-xl xl:gap-16 md:grid md:grid-cols-2 sm:py-16 lg:px-6">
             <img
-              className="w-full transition-opacity duration-300 hover:opacity-70"
+              className="w-full rounded-xl transition-opacity duration-300 hover:opacity-70"
               src="./assets/images/data.png"
               alt="dashboard image"
             />
             <div className="mt-4 md:mt-0">
-              <h2 className="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">
-               Let's Build Something Intelligent Together
+              <h2 className="mb-2 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">
+               Contact Me
               </h2>
+              <h4 className="mb-4 text-2xl tracking-tight font-bold text-gray-600 dark:text-gray-300">
+                Let's Build Something Together!
+              </h4>
               <p className="mb-6 font-light text-gray-500 text-xl lg:text-2xl dark:text-gray-400">
-                Currently, I am expanding my expertise into AI agents using frameworks like LangGraph, while developing this portfolio to showcase my projects and technical stack.
+                I am eager to bring my background in mathematical and computer engineering to a professional role in the AI industry.
               </p>
-              <p className="mb-6 font-light text-gray-500 text-xl lg:text-2xl dark:text-gray-400">
-                I am eager to bring my background in machine learning and software development to a professional role in the AI industry.
+              <p className="font-light text-gray-500 text-xl lg:text-2xl dark:text-gray-400">
+                Currently, I am seeking for professional opportunities all over thw world! If my profile suits your requirements, let's connect at nogueras.ruben@gmail.com!
               </p>
             </div>
           </div>

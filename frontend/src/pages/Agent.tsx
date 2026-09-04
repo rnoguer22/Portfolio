@@ -54,14 +54,14 @@ export default function Agent(){
 
       {/* Modal de Bloqueo Automático por Correo */}
       {isAuthModalOpen && (
-        <div className="font-['Ubuntu_Mono'] fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-[fadeIn_0.3s_ease-out]">
+        <div className="font-mono fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-[fadeIn_0.3s_ease-out]">
           <div className="bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-800 rounded-2xl p-6 w-full max-w-md shadow-2xl text-left relative">
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
               {authStep === "email" ? "Restricted access" : "Verify code"}
             </h3>
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
               {authStep === "email" 
-                ? "In order to use the AI agent tool, please introduce your email. We will send you a verification code"
+                ? "Please introduce your email and we will send you a verification code to start using the AI agent!"
                 : `Introduce the code sent to ${authEmail}.`}
             </p>
 
@@ -73,7 +73,7 @@ export default function Agent(){
                   onChange={(e) => setAuthEmail(e.target.value)}
                   placeholder="your.email@example.com"
                   required
-                  className="w-full bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl px-4 py-2.5 text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 font-['Ubuntu_Mono'] text-sm"
+                  className="w-full bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl px-4 py-2.5 text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 font-mono text-sm"
                 />
                 <button
                   type="submit"
@@ -91,7 +91,7 @@ export default function Agent(){
                   onChange={(e) => setAuthCode(e.target.value)}
                   placeholder="123456"
                   required
-                  className="w-full bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl px-4 py-2.5 text-center tracking-widest text-lg text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 font-['Ubuntu_Mono']"
+                  className="w-full bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl px-4 py-2.5 text-center tracking-widest text-lg text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 font-mono"
                 />
                 <button
                   type="submit"
@@ -142,7 +142,7 @@ export default function Agent(){
             </p>
           </div>
         ) : (
-          <div className="font-['Ubuntu_Mono'] flex-grow flex flex-col w-full max-w-4xl py-10 gap-6 text-left overflow-y-auto z-10 pr-2">
+          <div className="font-mono flex-grow flex flex-col w-full max-w-4xl py-10 gap-6 text-left overflow-y-auto z-10 pr-2">
             {messages.map((message, index) => (
               <div 
                 key={index}
@@ -231,7 +231,7 @@ export default function Agent(){
           </button>
           <div className="flex-grow flex items-center min-w-0 overflow-hidden px-2 py-1.5">
             {isGenerating ? (
-              <span className="typing-placeholder font-['Ubuntu_Mono'] text-gray-400 dark:text-gray-500 text-left md:text-base">
+              <span className="typing-placeholder font-mono text-gray-400 dark:text-gray-500 text-left md:text-base">
                 The agent is generating the response...
               </span>
             ) : (
@@ -241,7 +241,7 @@ export default function Agent(){
                 onChange={(e) => setInputPrompt(e.target.value)}
                 placeholder="Send a message..."
                 disabled={!isVerified}
-                className="font-['Ubuntu_Mono'] w-full bg-transparent text-gray-800 dark:text-gray-200 focus:outline-none placeholder-gray-400 dark:placeholder-gray-500 md:text-base border-none text-left"
+                className="font-mono w-full bg-transparent text-gray-800 dark:text-gray-200 focus:outline-none placeholder-gray-400 dark:placeholder-gray-500 md:text-base border-none text-left"
               />
             )}
           </div>

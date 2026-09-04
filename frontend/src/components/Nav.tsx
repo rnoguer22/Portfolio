@@ -142,7 +142,11 @@ const Nav: React.FC = () => {
             {section.charAt(0).toUpperCase() + section.slice(1)}
           </button>
         ))}
-        <Link to="/agent" className="block pr-4 pl-3 border-b border-gray-100 text-gray-700 hover:bg-gray-50 font-bold dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:border-0 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-white transition-all duration-300 text-3xl md:text-xl py-2.5">
+        <Link to="/agent"
+            className={`block pr-4 pl-3 border-b border-gray-100 text-gray-700 hover:bg-gray-50 font-bold dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:border-0 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-white transition-all duration-300 text-center ${
+              isScrolled ? 'text-base text-3xl md:text-lg py-2' : 'text-3xl md:text-xl py-2.5'
+            }`}
+        >
           AI Demo
         </Link>
       </Navbar.Collapse>

@@ -1,0 +1,36 @@
+.skills-container {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 10%,
+    black 90%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 10%,
+    black 90%,
+    transparent
+  );
+}
+
+.skills-track {
+  display: flex;
+  width: max-content;
+  animation: skills-scroll 30s linear infinite;
+}
+
+.skills-container:hover .skills-track {
+  animation-play-state: paused;
+}
+
+@keyframes skills-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}

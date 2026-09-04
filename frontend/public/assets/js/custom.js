@@ -14,9 +14,9 @@ export function initializeAnimations() {
 
         const phrases = [
             "Building The Next Generation of AI",
-            "From Machine Learning to Agentic AI Systems",
+            "From ML to Agentic Systems",
             "Turning Data Into Intelligence",
-            "AI Models, RAG & Autonomous Agents"
+            "Of AI Models, RAG & Agentic Systems"
         ];
 
         let phraseIndex = 0;

@@ -47,7 +47,7 @@ export default function Agent(){
 
 
   return (
-    <div className="min-h-screen text-white flex flex-col dark:bg-black">
+    <div className="min-h-screen h-full text-gray-900 dark:text-white flex flex-col bg-white dark:bg-black">
       <div className="relative z-[110]">
           <Nav />
       </div>

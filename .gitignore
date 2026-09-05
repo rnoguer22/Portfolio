@@ -1,5 +1,5 @@
 .*
-db/*
+db/
 __pycache__/
 docs
 ai/rag/temp/

@@ -9,6 +9,7 @@ from ai.rag.code.indexing_file import IndexingFile
 from ai.rag.code.retrieval import Retrieval 
 from ai.rag.code.augmentation_generation import AugmentationGeneration
 from helpers.email_verification import send_email_verification
+from helpers.telegram_alert import send_telegram_alert
 from helpers.sqlite3_db import Sqlite3_Db 
 from config import OPENAI_MODEL, TEMP_DIR, COLLECTION_NAME, EMAIL_PASSWD
 
@@ -34,6 +35,7 @@ db.init_db()
 
 # Local memory storage for the codes
 codes = {}
+MAX_FILE_SIZE = 5 * 1024 * 1024
 
 
 class EmailRequest(BaseModel):
@@ -87,6 +89,10 @@ async def ask_agent(prompt: str = Form(...),
 
     if file:
         print(f"Received file: {file.filename}")
+        # Check the file size
+        if file.size > MAX_FILE_SIZE:
+            return {"error": f"Error: {file.filename} exceeds the maximum file size (5 MB). Please attach a smaller file..."}
+
         # We copy the file in our system so we can read it
         if not os.path.exists(TEMP_DIR):
             os.makedirs(TEMP_DIR, exist_ok=True)
@@ -139,7 +145,6 @@ async def ask_agent(prompt: str = Form(...),
 @router.post("/auth/request-code")
 async def request_code(data: EmailRequest, user_cookie: str = Depends(get_set_user_cookie)):
     email = data.email.strip()
-    
     # Generate the code 
     code = str(random.randint(100000, 999999))
     # Storate it temporarly in memory (we will change this to a database)
@@ -147,9 +152,13 @@ async def request_code(data: EmailRequest, user_cookie: str = Depends(get_set_us
         "email": email,
         "code": code 
     }
+    try:
+        # Finally send the verification code with the funcion defined in email_verification file
+        success = send_email_verification(email, code)
+    except Exception as e:
+        send_telegram_alert(f"Error sending the email verification: {e}")
+        return {"error": "Error sending the code. Please try again..."}
 
-    # Finally send the verification code with the funcion defined in email_verification file
-    success = send_email_verification(email, code)
     if not success:
         return {"error": "Could not send the code verification email. Please check SMTP config"}
     return {"message": "Verification code successfully sent!"}
@@ -159,24 +168,26 @@ async def request_code(data: EmailRequest, user_cookie: str = Depends(get_set_us
 async def verify_code(data: VerifyRequest, user_cookie: str = Depends(get_set_user_cookie)):
     # Get the user"s data 
     user_data = codes.get(user_cookie)
-    print('\n', user_cookie)
-    print(codes)
-    print(user_data, '\n')
     if not user_data:
         return {"error": "There is no verification active request for this session."}
     if data.code.strip() != user_data["code"]:
         return {"error": "Invalid code. Please try again."}
-
-    verified_email = user_data["email"]
-
-    # Add the user_cookie to the database 
-    db.save_verified_cookie(verified_email, user_cookie)
-    del codes[user_cookie]
-
-    return {
-        "success": True,
-        "message": f"{verified_email} verified successfully! Granted access!"
-    }
+    
+    try:
+        verified_email = user_data["email"]
+        # Add the user_cookie to the database 
+        db.save_verified_cookie(verified_email, user_cookie)
+        del codes[user_cookie]
+        # Send a message to the administrator
+        message = f"{verified_email} verified successfully! Granted access!"
+        send_telegram_alert(message)
+        return {
+            "success": True,
+            "message": message
+        }
+    except Exception as e:
+        send_telegram_alert(f"Verification code error: {e}")
+        return {"error": "Unexpected error. Please try again later"}
 
 
 @router.get("/chat/history")
@@ -186,5 +197,7 @@ async def get_chat_history(user_cookie: str = Depends(get_set_user_cookie)):
         return {"messages": []}
     messages = db.get_messages(user_cookie)
     return {"messages": messages}
+
+
 
 app.include_router(router)

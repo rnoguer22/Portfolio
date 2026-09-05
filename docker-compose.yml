@@ -7,7 +7,7 @@ services:
     env_file:
       - .env
     volumes:
-      - ./db:/app/db
+      - db_data:/app/db
     restart: always
 
   frontend:
@@ -18,3 +18,6 @@ services:
     depends_on:
       - backend
     restart: always
+
+volumes:
+  db_data:

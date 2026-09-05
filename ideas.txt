@@ -41,14 +41,20 @@ Despliegue en docker - Ya esta funcionando en toda mi red local. Hay que dar el 
 
 Ajustes de diseño en frontend para que se vea mejor en dispositivos moviles 
 
+Log con bot de telegram para que me vaya avisando de algunas cosas
+
+Sincronizar correos electronicos para que sea la misma conversacion en movil que en desktop
+
+Limite de archivos tamaño
+
+Hacer la pagina de My Projects con: TFG Anomalias, Herramienta RAG de terminal, y Portofolio. Todo muy bien explicado
+
+
+
 CUANDO HAGA EL CV ESTILO HARVARD AÑADIR LA OPCION DE DESCARGARLO
-
-
 
 Añadir un fichero de log para ver lo que esta pasando
 Implementar el tfg para detectar ciberataques
-
-Deploy, primero en mi raspberry pi en mi red local y luego a produccion
 
 
 

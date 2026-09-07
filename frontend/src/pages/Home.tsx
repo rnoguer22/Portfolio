@@ -322,9 +322,9 @@ export default function Home(){
                 My academic and practical background includes building machine learning projects such as neural networks for melanoma detection, stock market prediction models for the IBEX 35 using time series, and predictive systems leveraging Random Forest and XGBoost. This culminated in my final degree project: a real-time network intrusion detection system designed to identify malicious traffic targeting web services using machine learning models. 
               </p>
               <a href="#" className="inline-flex mt-8 items-center justify-center px-5 py-4 text-base font-medium text:3xl text-center text-gray-900 border-4 border-blue-300  hover:bg-blue-100 focus:ring-4 focus:ring-gray-100 dark:text-white dark:border-blue-700 dark:hover:bg-blue-700 dark:focus:ring-gray-800"
-          >
-            Download C.V.
-          </a>
+              >
+                Download C.V.
+              </a>
             </div>
             <div className="grid grid-cols-2 gap-4 mt-8">
             <img
@@ -406,7 +406,7 @@ export default function Home(){
                 I am eager to bring my background in mathematical and computer engineering to a professional role in the AI industry.
               </p>
               <p className="font-light text-gray-500 text-xl lg:text-2xl dark:text-gray-400">
-                Currently, I am seeking for professional opportunities all over thw world! If my profile suits your requirements, let's connect at nogueras.ruben@gmail.com!
+                Currently, I am seeking for professional opportunities all over thw world! If my profile suits your requirements, let's connect at <span className="font-bold text-blue-500">nogueras.ruben@gmail.com</span>!
               </p>
             </div>
           </div>

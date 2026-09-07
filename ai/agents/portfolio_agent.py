@@ -53,7 +53,7 @@ class Portfolio_Agent:
             'Search the web for recent information'
             print(f"\n[🛠️ LangGraph Executing Tavily Tool for: '{query}']")
             try:
-                # Respuesta basica, ya que tenemos limitaciones con el llm de groq que no puede acumular mucho contexto 
+                # Respuesta basica, para evitar acumular mucho contexto y limitar el uso de tokens 
                 response = self.tavily_client.search(
                     query=query,
                     search_depth='basic',
@@ -146,7 +146,8 @@ class Portfolio_Agent:
             "- Si la pregunta requiere noticias recientes o datos externos que no están en los documentos, usa `web_search`.\n"
             "- Para cualquier otra consulta general sobre tus documentos, ejecuta `db_search` para obtener la información y generar tu respuesta en base a ella.\n"
             "- Llama a las herramientas usando el mecanismo de function calling, nunca escribas la llamada como texto plano.\n"
-            "- Si ya tienes la información necesaria en el historial de la conversación (porque ya se ejecutó una búsqueda previa en los mensajes anteriores), responde directamente al usuario sin volver a invocar herramientas."
+            "- Si ya tienes la información necesaria en el historial de la conversación (porque ya se ejecutó una búsqueda previa en los mensajes anteriores), responde directamente al usuario sin volver a invocar herramientas.\n"
+            "- Responde en inglés."
         ))
         try:
             # Inyectamos el prompt del sistema y llamamos al modelo 

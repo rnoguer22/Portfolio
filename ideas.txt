@@ -47,7 +47,12 @@ Sincronizar correos electronicos para que sea la misma conversacion en movil que
 
 Limite de archivos tamaño
 
-Hacer la pagina de My Projects con: TFG Anomalias, Herramienta RAG de terminal, y Portofolio. Todo muy bien explicado
+Seccion Projects, explicando mis proyectos mas recientes. Hay que ir añadiendo mas a medida que vaya haciendo 
+
+
+
+Comprobar que al hacer f5 en projects o en ai demo no de un error 404 de nginx
+Quitar transparencia en imagenes de home
 
 
 

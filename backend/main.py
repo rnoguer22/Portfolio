@@ -19,9 +19,17 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://192.168.1.65:3000",
-                   "http://localhost:3000",
-                   "http://127.0.0.1:3000"], # Cuando estemos en pro, poner dominio (https://moyete.dev)
+    allow_origins=[
+        # "http://192.168.1.65:3000",
+        # "http://localhost:3000",
+        # "http://127.0.0.1:3000",
+        #
+        # PRODUCTION DOMAINS
+        "https://rnoguer.com",
+        "https://www.rnoguer.com",
+        "https://portfolio-production-9271.up.railway.app",
+        "https://www.portfolio-production-9271.up.railway.app"
+    ], 
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

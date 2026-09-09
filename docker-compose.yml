@@ -1,18 +1,20 @@
 services:
   backend:
     build: .
-    container_name: porfolio-backend
+    container_name: portfolio-backend
     ports:
       - "8000:8000"
+    volumes:
+      - .:/app # Synchronize my local code in real time 
+      - db_data:/app/db # Keep the database persistance
+    command: uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload
     env_file:
       - .env
-    volumes:
-      - db_data:/app/db
     restart: always
 
   frontend:
     build: ./frontend
-    container_name: porfolio-frontend
+    container_name: portfolio-frontend
     ports:
       - "3000:80"
     depends_on:

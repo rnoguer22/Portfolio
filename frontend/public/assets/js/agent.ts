@@ -36,7 +36,7 @@ export function useAgentChat() {
 
   // Load the chat history from the database while mounting the component 
   useEffect(() => {
-    fetch("http://192.168.1.65:8000/chat/history", {
+    fetch("/api/chat/history", {
       credentials: "include"
     })
       .then((res) => res.json())
@@ -87,7 +87,7 @@ export function useAgentChat() {
         abortController.abort();
       }, 30000);
 
-      const res = await fetch("http://192.168.1.65:8000/agent", {
+      const res = await fetch("/api/agent", {
         method: "POST",
         body: formData,
         signal: abortController.signal, // Assign the abortController instance to start

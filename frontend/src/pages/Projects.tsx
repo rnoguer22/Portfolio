@@ -15,7 +15,7 @@ export default function Projects(){
       description: [
         "Providing a complete RAG (Retrieval Augmented Generation) System, where documents are chunked, embedded (with HuggingFace sentence-transformers), and stored in a vectorstore (ChromaDB). The Retrieval phase combines a dense and a sparse BM25 retriever, combined applying RRF (Reciprocal Rank Fusion) for better performance",
         "Combined with an AI agent built with LangGraph, the system decides whether to retrieve users documents uploaded previously or search recent information from internet (via Tavily). These web results are correctly indexed back into the vectorstore and the agent loops between reasoning and tool use until it has enough context to answer (ReAct)",
-        "Finally, this agent that implements the RAG system and web search tools is handled though FastAPI backend in this portfolio. As in a production system, per-user cookie-based sessions, email verification, and SQLite requests are managed to access the agent. This is available in AI Demo, handling prompts and file uploads, full chat history persistance, and a alert system sent to the administrator on critical failures, Make sure to check it out!"
+        "Finally, this agent (which also implements the RAG system) is handled though FastAPI backend in this portfolio. As in a production system, per-user cookie-based sessions, email verification, and SQLite requests are managed to access the agent. This is available in AI Demo, handling prompts and file uploads, full chat history persistance and more features, Make sure to check it out!"
       ],
       images: ["./assets/images/ai_chat_demo_dark.png", "./assets/images/ai_chat_code.png"],
       tech: ["Python", "LangChain", "LangGraph", "RAG", "Agentic AI", "FastAPI", "ChromaDB", "MySQL", "TypeScript", "React"],
@@ -25,8 +25,8 @@ export default function Projects(){
     {
       title: "Real-Time Intrusion Detection System IDS",
       description: [
-        "This is one of my undergraduate thesis, where a real-time IDS is developed for web services, combining supervised and unsupervised learning, where an undercomplete Autoencoder, trained exclusively on benign traffic, flags anomalous network flows based on its reconstruction error (MSE), while a Random Forest classifier subsequently categorizes the detected threat (DoS, brute force, SQL injection, among others)",
-        "The model was trained on the CICIDS2017 reference dataset, with careful feature selection guided by correlation analysis and other measurements to remove hardware and environment-dependent variables, improving the real time detection of anomalous traffic. It is based on a LAMP architecture which allows perform real penetration testing evaluations using SQLMap or Hydra, with network flows extracted in real time via NFStream. If you want to learn more, check the project on Github!"
+        "This is one of my undergraduate thesis, where a real-time IDS is developed for web services, combining supervised and unsupervised learning. An undercomplete Autoencoder is exclusively trained on benign traffic, flags anomalous network flows based on its reconstruction error (MSE), while a Random Forest classifier subsequently categorizes the detected threat (DoS, brute force, SQL injection, among others)",
+        "The model was trained on the CICIDS2017 reference dataset, with careful feature selection guided by correlation analysis and other measurements to remove hardware and environment-dependent variables, improving the real time detection of anomalous traffic. It is based on a LAMP architecture which allows perform real penetration testing evaluations using SQLMap or Hydra, with network flows extracted in real time via NFStream. If you want to learn more, check the project on GitHub!"
       ],
       images: ["./assets/images/class_distribution_malign.png", "./assets/images/matriz_correlacion_dark.png", "./assets/images/sqlmap_attack.png"],
       tech: ["Python", "Machine Learning", "Deep Learning", "Cybersecurity", "Scikit-learn", "Pandas", "Numpy", "NFStream", "Linux"],
@@ -157,9 +157,7 @@ export default function Projects(){
                       {project.images.slice(1).map((img, index) => (
                         <img
                           key={index + 1}
-                          className={`w-full rounded-xl shadow-2xl transition-all duration-300 hover:saturate-150 hover:brightness-90 hover:scale-[1.02] hover:rotate-0 hover:z-10 relative ${
-                            index % 2 !== 0 ? "lg:rotate-1 lg:ml-0" : "lg:-rotate-1 lg:ml-6"
-                          }`}
+                          className="w-full rounded-xl shadow-2xl transition-all duration-300 hover:saturate-150 hover:brightness-90 hover:scale-[1.02] hover:rotate-0 hover:z-10 relative"
                           src={img}
                           alt={`${project.title} - ${index + 2}`}
                         />
@@ -170,9 +168,7 @@ export default function Projects(){
                   project.images.map((img, index) => (
                     <img
                       key={index}
-                      className={`w-full rounded-xl shadow-2xl transition-all duration-300 hover:saturate-150 hover:brightness-90 hover:scale-[1.02] hover:rotate-0 hover:z-10 relative ${
-                        index % 2 === 0 ? "lg:rotate-1 lg:ml-0" : "lg:-rotate-1 lg:ml-6"
-                      }`}
+                      className="w-full rounded-xl shadow-2xl transition-all duration-300 hover:saturate-150 hover:brightness-90 hover:scale-[1.02] hover:rotate-0 hover:z-10 relative"
                       src={img}
                       alt={`${project.title} - ${index + 1}`}
                     />

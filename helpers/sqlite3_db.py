@@ -1,11 +1,13 @@
 import sqlite3
-from config import SQLITE_FILE_PATH
+import os 
+from config import DB_PATH, SQLITE_FILE_PATH
 
 
 
 class Sqlite3_Db:
 
     def __init__(self):
+        os.makedirs(DB_PATH, exist_ok=True)
         self.sqlite_file_path = SQLITE_FILE_PATH
         self.users_table = "users"
         self.devices_table = "devices"

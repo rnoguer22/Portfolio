@@ -43,22 +43,30 @@ Ajustes de diseño en frontend para que se vea mejor en dispositivos moviles
 
 Log con bot de telegram para que me vaya avisando de algunas cosas
 
-Sincronizar correos electronicos para que sea la misma conversacion en movil que en desktop
+Sincronizacion correos electronicos para que sea la misma conversacion en movil que en desktop
 
-Limite de archivos tamaño
+Limitacion del tamaño de archivos en /agent, solo se permiten ficheros de menos de 5 Mb
 
 Seccion Projects, explicando mis proyectos mas recientes. Hay que ir añadiendo mas a medida que vaya haciendo 
 
+Implementada configuracion de nginx
+  ---> Soporte SPA con try_files para redirigir automaticamente a mi index.html cuando se hace f5 en algunas paginas que daban error 
+  ---> Proxy inverso con location /api/, desviando cualquier peticion que comience por /api/ hacia el contenedor del backend http://backend:8000
+
+Añadida descarga de mi CV desde el home
 
 
-Comprobar que al hacer f5 en projects o en ai demo no de un error 404 de nginx
+HACER PRUEBA BORRANDO EL DIRECTORIO DE LA BASE DE DATOS Y COMPILAR TODO A VER SI FUNCIONA!!! ANTES DE HACER EL DEPLOY EN RAILWAY
+
+  
+  EN UN FUTURO CAMBIAR LOCALHOST POR EL NOMBRE DE DOMINIO EN NGINX.CONF!!! 
+
+
 Quitar transparencia en imagenes de home
 
 
 
-CUANDO HAGA EL CV ESTILO HARVARD AÑADIR LA OPCION DE DESCARGARLO
 
-Añadir un fichero de log para ver lo que esta pasando
 Implementar el tfg para detectar ciberataques
 
 

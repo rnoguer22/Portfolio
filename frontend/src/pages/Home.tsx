@@ -321,7 +321,10 @@ export default function Home(){
               <p className="text-xl">
                 My academic and practical background includes building machine learning projects such as neural networks for melanoma detection, stock market prediction models for the IBEX 35 using time series, and predictive systems leveraging Random Forest and XGBoost. This culminated in my final degree project: a real-time network intrusion detection system designed to identify malicious traffic targeting web services using machine learning models. 
               </p>
-              <a href="#" className="inline-flex mt-8 items-center justify-center px-5 py-4 text-base font-medium text:3xl text-center text-gray-900 border-4 border-blue-300  hover:bg-blue-100 focus:ring-4 focus:ring-gray-100 dark:text-white dark:border-blue-700 dark:hover:bg-blue-700 dark:focus:ring-gray-800"
+              <a 
+                href="/CV_en_Ruben_Nogueras_Gonzalez.pdf" 
+                download
+                className="inline-flex mt-8 items-center justify-center px-5 py-4 text-base font-medium text:3xl text-center text-gray-900 border-4 border-blue-300  hover:bg-blue-100 focus:ring-4 focus:ring-gray-100 dark:text-white dark:border-blue-700 dark:hover:bg-blue-700 dark:focus:ring-gray-800"
               >
                 Download C.V.
               </a>

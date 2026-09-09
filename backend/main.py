@@ -65,13 +65,13 @@ async def get_set_user_cookie(request: Request, response: Response):
 
 
 # Endpoint to check if the user has verified its email. We can check this with the cookie
-@router.get("/auth/status")
+@router.get("/api/auth/status")
 async def check_auth_status(user_cookie: str = Depends(get_set_user_cookie)):
     is_verified = db.is_cookie_verified(user_cookie)
     return {"verified": is_verified}
 
 
-@router.post("/agent")
+@router.post("/api/agent")
 async def ask_agent(prompt: str = Form(...), 
                     file: UploadFile = File(None), 
                     user_cookie: str = Depends(get_set_user_cookie) # With Depends we inject dependencies in FastAPI
@@ -142,7 +142,7 @@ async def ask_agent(prompt: str = Form(...),
 
 
 # Endpoint to send the verification code to the user 
-@router.post("/auth/request-code")
+@router.post("/api/auth/request-code")
 async def request_code(data: EmailRequest, user_cookie: str = Depends(get_set_user_cookie)):
     email = data.email.strip()
     # Generate the code 
@@ -164,7 +164,7 @@ async def request_code(data: EmailRequest, user_cookie: str = Depends(get_set_us
     return {"message": "Verification code successfully sent!"}
     
 
-@router.post("/auth/verify-code")
+@router.post("/api/auth/verify-code")
 async def verify_code(data: VerifyRequest, user_cookie: str = Depends(get_set_user_cookie)):
     # Get the user"s data 
     user_data = codes.get(user_cookie)
@@ -190,7 +190,7 @@ async def verify_code(data: VerifyRequest, user_cookie: str = Depends(get_set_us
         return {"error": "Unexpected error. Please try again later"}
 
 
-@router.get("/chat/history")
+@router.get("/api/chat/history")
 async def get_chat_history(user_cookie: str = Depends(get_set_user_cookie)):
     # Endpoint to get the chat history from the database 
     if not db.is_cookie_verified(user_cookie):

@@ -36,6 +36,7 @@ EMAIL = "rnoguer.portfolio@gmail.com"
 EMAIL_PASSWD = os.getenv("EMAIL_PASSWD")
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
+DB_PATH = os.path.join(DIR_PATH, os.getenv("DB_PATH"))
 SQLITE_FILE_PATH = os.path.join(DIR_PATH, os.getenv("SQLITE_FILE_PATH"))
 
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")

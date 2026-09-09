@@ -131,7 +131,7 @@ const Nav: React.FC = () => {
         <Navbar.Toggle />
       </div>
       <Navbar.Collapse>
-        {['home', 'about me'].map((section) => (
+        {['home', 'about'].map((section) => (
           <button 
             key={section}
             onClick={() => handleNavClick(section)}

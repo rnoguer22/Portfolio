@@ -36,7 +36,7 @@ class Indexing:
             self.vectorstore_metadata['chroma:hnsw_impl'] = 'flat'
 
         with console.status('[bold cyan]Loading OpenAI embeddings model...\n[/]', spinner='dots'):
-            self.embedding_function = OpenAIEmbeddings(model_name=OPENAI_EMBEDDINGS)
+            self.embedding_function = OpenAIEmbeddings(model=OPENAI_EMBEDDINGS)
 
         self._vectorstore = None 
 

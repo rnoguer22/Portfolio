@@ -1,82 +1,88 @@
 # Rubén Nogueras Portfolio Github Repository 
 
-description of the project
+---
+
+This professional portfolio showcases an interactive full-stack web application integrated with an advanced agentic RAG system and autonomous AI agent. Built using FastAPI, Next.js, LangGraph, and Chroma, the platform highlights my expertise in artificial intelligence, backend engineering, and scalable system design. It features secure user authentication, persistent chat history, and dynamic multi-step reasoning capabilities to deliver an engaging user experience. For more information, visit my website rnoguer.com
 
 ---
 
 ## 💻 Screenshot 
 
-![Image](https://github.com/user-attachments/assets/...)
+<img width="1841" height="730" alt="image" src="https://github.com/user-attachments/assets/fa5a031d-e6b0-494d-b1bb-ba75390b0ad5" />
+
+
+---
 
 ## ✨ Features
 
-- **Responsive Design:** Fully responsive layout that works on all devices
-- **Dark/Light Mode:** System-aware theme that respects user preferences
-- **Modern Stack:** Built with React 18, TypeScript, and Vite
-- **Optimized Build:** Production-ready with static file exports
-- **Component Library:** Leverages Flowbite React for consistent UI
-- **Performance Focused:** Fast page loads and smooth animations
-- **SEO Ready:** Includes meta tags and OpenGraph support
-- **Easy Customization:** Well-organized codebase for easy modifications
+- **Agentic RAG Architecture**: Built using **LangGraph** and **LangChain** to orchestrate multi-step reasoning, dynamic tool usage, and precise context retrieval.
+- **Optimized Vector Retrieval**: Utilizes **Chroma** as a local vectorstore paired with OpenAI's `text-embedding-3-small` for high-speed, cost-effective semantic search while keeping memory overhead minimal.
+- **External Tool Integration**: Integrated with **Groq** for lightning-fast LLM inference and **Tavily Search** for live web retrieval capabilities when required by the agent.
+- **Secure Authentication**: Features custom session cookie management, one-time password (OTP) email authentication, and robust rate-limiting.
+- **Full-Stack Separation**: 
+  - **Backend**: High-performance asynchronous REST API built with **FastAPI**.
+  - **Frontend**: Responsive, modern user interface built with **Next.js** and styled with Tailwind CSS.
+- **Cloud Persistence**: Configured for seamless cloud deployment on **Railway** utilizing persistent volume storage for SQLite and vector database states.
+
+---
 
 ## 🛠️ Tech Stack
 
-- React 18
-- TypeScript
-- Vite
-- Tailwind CSS
-- Flowbite React
-- ESLint & Prettier
+### **Backend**
+- **Language**: Python 3.10+
+- **Framework**: FastAPI, Uvicorn
+- **AI / Orchestration**: LangChain, LangGraph
+- **Vector Database**: Chroma DB
+- **Embeddings & LLMs**: OpenAI Embeddings (`text-embedding-3-small`), Groq API, Tavily Search API
 
-## 📦 Installation
+### **Frontend**
+- **Framework**: Next.js (React)
+- **Styling**: Tailwind CSS
+- **State & Communication**: Axios / Fetch API with custom session handling
 
-## 🏗️ Building for Production (folder dist)
+### **Infrastructure & DevOps**
+- **Database**: SQLite (with Railway Volume persistence)
+- **Hosting**: Railway Container Deployment
 
-Create a production build:
-```bash
-npm run build
-```
-
-Preview the production build:
-```bash
-npm run preview
-```
+---
 
 ## 📁 Project Structure
 
 ```
-hak3r/
-├── public/
-│   └── assets/
-│       ├── css/
-│       ├── images/
-│       └── js/
-├── src/
-│   ├── components/
-│   │   ├── Nav.tsx
-│   │   └── Footer.tsx
-│   ├── App.tsx
-│   └── main.tsx
-├── index.html
-├── package.json
-├── tsconfig.json
-├── vite.config.ts
-└── tailwind.config.js
+Portfolio/
+├── backend/
+│   └── main.py                        # FastAPI application entrypoint
+├── frontend/
+│   ├── public/
+│   │   └── assets/                    # Static resources (CSS, images, JS)
+│   ├── src/
+│   │   ├── components/                # Reusable UI components (Nav, Footer)
+│   │   └── pages/                     # Application views (Home, Agent, Projects)
+│   ├── App.tsx                        # Root React component and routing
+│   ├── index.css                      # Global styles and Tailwind configuration
+│   ├── main.tsx                       # Frontend entry point
+│   ├── index.html                     # HTML root template
+│   ├── package.json                   # Node.js dependencies and scripts
+│   ├── Dockerfile                     # Frontend container build configuration
+│   └── nginx.conf                     # Nginx reverse proxy configuration
+├── ai/
+│   ├── agent/                         # LangGraph ReAct agent definition & tools
+│   └── rag/                           # Indexing, document loaders, and vectorstore logic
+├── helpers/
+│   ├── email_verification.py          # Email verification and OTP utilities
+│   ├── pretty_terminal.py             # Rich console output formatting
+│   ├── sqlite3_db.py                  # SQLite database connection and operations
+│   └── telegram_alert.py              # Telegram notification triggers
+├── Dockerfile                         # Backend container build configuration
+├── docker-compose.yml                 # Local multi-container orchestration setup
+├── requirements.txt                   # Python backend dependencies
+└── README.md                          # Project documentation and guide
 ```
 
-## 🔧 Configuration
-
-### Vite Config
-
-The project uses a custom Vite configuration for optimal production builds:
-- Static file exports
-- Asset optimization
-- Proper path resolution
-- Custom JS handling
-
+---
 
 ## 👨‍💻 Author
 
-**Rubén Nogueras** - [Portfolio](https://rnoguer.dev)
+**Rubén Nogueras** - [Portfolio](https://rnoguer.com)
 
 ---

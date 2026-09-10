@@ -23,7 +23,7 @@ GROQ_MODEL = "qwen3.6-27b"
 
 GOOGLE_MODEL = "gemini-3.5-flash" 
 OPENAI_MODEL = "gpt-5-nano"
-HUGGINGFACE_EMBEDDINGS = "sentence-transformers/all-mpnet-base-v2"
+OPENAI_EMBEDDINGS = "text-embedding-3-small"
 
 # GROQ_MODEL = "openai/gpt-oss-20b"
 # GROQ_MODEL = "openai/gpt-oss-120b"

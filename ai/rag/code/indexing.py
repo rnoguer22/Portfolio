@@ -4,9 +4,9 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.documents import Document 
 from langchain_community.retrievers import BM25Retriever
 from langchain_chroma import Chroma 
-from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_openai import OpenAIEmbeddings 
 from rich.console import Console 
-from config import DIR_PATH, COLLECTION_NAME, CHROMADB_PATH, K, THRESHOLD, HUGGINGFACE_EMBEDDINGS 
+from config import DIR_PATH, COLLECTION_NAME, CHROMADB_PATH, K, THRESHOLD, OPENAI_EMBEDDINGS 
 
 
 
@@ -35,8 +35,8 @@ class Indexing:
             # Esto es util si tenemos pocos chunks 
             self.vectorstore_metadata['chroma:hnsw_impl'] = 'flat'
 
-        with console.status('[bold cyan]Loading embeddings model...\n[/]', spinner='dots'):
-            self.embedding_function = HuggingFaceEmbeddings(model_name=HUGGINGFACE_EMBEDDINGS)
+        with console.status('[bold cyan]Loading OpenAI embeddings model...\n[/]', spinner='dots'):
+            self.embedding_function = OpenAIEmbeddings(model_name=OPENAI_EMBEDDINGS)
 
         self._vectorstore = None 
 

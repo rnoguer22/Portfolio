@@ -31,11 +31,10 @@ HUGGINGFACE_EMBEDDINGS = "sentence-transformers/all-mpnet-base-v2"
 # OPENAI_MODEL = "gpt-4o-mini"
 
 
+# EMAIL = "rnoguer.portfolio@gmail.com"
+RESEND_EMAIL = "noreply@rnoguer.com"
+RESEND_API_KEY = os.getenv("RESEND_API_KEY")
 
-EMAIL = "rnoguer.portfolio@gmail.com"
-EMAIL_PASSWD = os.getenv("EMAIL_PASSWD")
-SMTP_SERVER = "smtp.gmail.com"
-SMTP_PORT = 587
 DB_PATH = os.path.join(DIR_PATH, os.getenv("DB_PATH"))
 SQLITE_FILE_PATH = os.path.join(DIR_PATH, os.getenv("SQLITE_FILE_PATH"))
 

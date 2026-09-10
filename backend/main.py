@@ -11,7 +11,7 @@ from ai.rag.code.augmentation_generation import AugmentationGeneration
 from helpers.email_verification import send_email_verification
 from helpers.telegram_alert import send_telegram_alert
 from helpers.sqlite3_db import Sqlite3_Db 
-from config import OPENAI_MODEL, TEMP_DIR, COLLECTION_NAME, EMAIL_PASSWD
+from config import OPENAI_MODEL, TEMP_DIR, COLLECTION_NAME
 
 
 
@@ -168,7 +168,7 @@ async def request_code(data: EmailRequest, user_cookie: str = Depends(get_set_us
         return {"error": "Error sending the code. Please try again..."}
 
     if not success:
-        return {"error": "Could not send the code verification email. Please check SMTP config"}
+        return {"error": "Could not send the code verification email. Please contact to the administrator"}
     return {"message": "Verification code successfully sent!"}
     
 

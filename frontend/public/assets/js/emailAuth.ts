@@ -20,14 +20,27 @@ export function emailAuth() {
       .then(data => {
         if (data.verified) {
           setIsVerified(true);
-          setIsAuthModalOpen(false);
+          // setIsAuthModalOpen(false);
         } else {
           setIsVerified(false);
-          setIsAuthModalOpen(true);
+          // setIsAuthModalOpen(true);
         }
       })
       .catch(err => console.error("Error checking authentication: ", err));
   }, [])
+
+
+  const openAuthModal = () => {
+    setAuthStep("email");
+    setAuthMessage("");
+    setAuthEmail("");
+    setAuthCode("");
+    setIsAuthModalOpen(true);
+  };
+
+  const closeAuthModal = () => {
+    setIsAuthModalOpen(false);
+  }
 
 
 
@@ -92,6 +105,7 @@ export function emailAuth() {
           setAuthCode("");
           setAuthEmail("");
           setAuthMessage("");
+          window.location.reload() // Reload the page to synchronise with the db
         }, 1200);
       }
     } catch (e) {
@@ -104,6 +118,8 @@ export function emailAuth() {
   return {
     isVerified,
     isAuthModalOpen,
+    openAuthModal,
+    closeAuthModal,
     authStep,
     setAuthStep,
     authEmail,

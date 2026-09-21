@@ -20,15 +20,9 @@ app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        # "http://192.168.1.65:3000",
-        # "http://localhost:3000",
-        # "http://127.0.0.1:3000",
-        #
         # PRODUCTION DOMAINS
         "https://rnoguer.com",
         "https://www.rnoguer.com",
-        "https://portfolio-production-9271.up.railway.app",
-        "https://www.portfolio-production-9271.up.railway.app"
     ], 
     allow_credentials=True,
     allow_methods=["*"],
@@ -67,6 +61,9 @@ async def get_set_user_cookie(request: Request, response: Response):
             httponly=True,
             samesite="lax"
         )
+
+    db.add_guest(user_cookie)
+
     print('User cookie: ', user_cookie)
     return user_cookie
 
@@ -76,7 +73,8 @@ async def get_set_user_cookie(request: Request, response: Response):
 @router.get("/api/auth/status")
 async def check_auth_status(user_cookie: str = Depends(get_set_user_cookie)):
     is_verified = db.is_cookie_verified(user_cookie)
-    return {"verified": is_verified}
+    requests_left = db.get_requests_left(user_cookie)
+    return {"verified": is_verified, "requests_left": requests_left}
 
 
 @router.post("/api/agent")
@@ -84,9 +82,6 @@ async def ask_agent(prompt: str = Form(...),
                     file: UploadFile = File(None), 
                     user_cookie: str = Depends(get_set_user_cookie) # With Depends we inject dependencies in FastAPI
 ):
-    # Addtional verification 
-    if not db.is_cookie_verified(user_cookie):
-        return {"error": "Access denied. Please verify your email to continue. Refresh the page..."}
     # Requests left verification 
     if db.get_requests_left(user_cookie) == 0:
         return {"error": "You have reached the requests limit. Thank you for using rnoguer's Portfolio! Contact Ruben to provide objective feedback about your experience!"}
@@ -205,6 +200,8 @@ async def get_chat_history(user_cookie: str = Depends(get_set_user_cookie)):
         return {"messages": []}
     messages = db.get_messages(user_cookie)
     return {"messages": messages}
+
+
 
 
 

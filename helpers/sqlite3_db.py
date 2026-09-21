@@ -10,6 +10,7 @@ class Sqlite3_Db:
         os.makedirs(DB_PATH, exist_ok=True)
         self.sqlite_file_path = SQLITE_FILE_PATH
         self.users_table = "users"
+        self.guests_table = "guests"
         self.devices_table = "devices"
         self.messages_table = "messages"
 
@@ -22,6 +23,12 @@ class Sqlite3_Db:
             CREATE TABLE IF NOT EXISTS {self.users_table} (
                 email TEXT PRIMARY KEY,
                 requests_left INTEGER DEFAULT 10
+            )
+        """)
+        cursor.execute(f"""
+            CREATE TABLE IF NOT EXISTS {self.guests_table} (
+                cookie TEXT PRIMARY KEY,
+                requests_left INTEGER DEFAULT 3
             )
         """)
         cursor.execute(f"""
@@ -77,6 +84,7 @@ class Sqlite3_Db:
     def add_message(self, cookie: str, sender: str, text: str, file_name: str = None):
         email = self.get_email(cookie)
         if not email:
+            # If the user is not verfied, we do not add the message to the db
             return 
 
         conn = sqlite3.connect(self.sqlite_file_path)
@@ -114,12 +122,13 @@ class Sqlite3_Db:
     # Method to get the number of queries the user can make to the tool
     def get_requests_left(self, cookie: str) -> int:
         email = self.get_email(cookie)
-        if not email:
-            return 
-
         conn = sqlite3.connect(self.sqlite_file_path)
         cursor = conn.cursor()
-        cursor.execute(f"""SELECT requests_left FROM {self.users_table} WHERE email = ?""", (email,))
+        if not email:
+            # If not email, the user is using the app as guest 
+            cursor.execute(f"""SELECT requests_left FROM {self.guests_table} WHERE cookie = ?""", (cookie,))
+        else:
+            cursor.execute(f"""SELECT requests_left FROM {self.users_table} WHERE email = ?""", (email,))
         row = cursor.fetchone()
         conn.close()
         if row:
@@ -130,16 +139,33 @@ class Sqlite3_Db:
     # Method to decrements the available prompts the user can make to the tool 
     def decrement_requests(self, cookie: str) -> bool:
         email = self.get_email(cookie)
-        if not email:
-            return 
-
         conn = sqlite3.connect(self.sqlite_file_path)
         cursor = conn.cursor()
-        cursor.execute(f"""
-            UPDATE {self.users_table}
-            SET requests_left = requests_left - 1
-            WHERE email = ? AND requests_left > 0
-        """, (email,))
+        if not email:
+            cursor.execute(f"""
+                UPDATE {self.guests_table}
+                SET requests_left = requests_left - 1
+                WHERE cookie = ? AND requests_left > 0
+            """, (cookie,))
+        else:
+            cursor.execute(f"""
+                UPDATE {self.users_table}
+                SET requests_left = requests_left - 1
+                WHERE email = ? AND requests_left > 0
+            """, (email,))
         conn.commit()
         conn.close()
         return cursor.rowcount > 0
+
+    # Método to register a new guest in the db
+    def add_guest(self, cookie: str):
+        if self.is_cookie_verified(cookie):
+            return
+        conn = sqlite3.connect(self.sqlite_file_path)
+        cursor = conn.cursor()
+        cursor.execute(f"""
+            INSERT OR IGNORE INTO {self.guests_table} (cookie, requests_left)
+            VALUES (?, 3)
+        """, (cookie,))
+        conn.commit()
+        conn.close()

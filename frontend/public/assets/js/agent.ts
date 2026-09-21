@@ -14,6 +14,7 @@ export function useAgentChat() {
   const [messages, setMessages] = useState<any[]>([]);
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [messagesLeft, setMessagesLeft] = useState(0);
 
   const initText = "Good morning! What's on your mind today?";
 
@@ -36,23 +37,64 @@ export function useAgentChat() {
 
   // Load the chat history from the database while mounting the component 
   useEffect(() => {
-    fetch("/api/chat/history", {
+    fetch("/api/auth/status", {
       credentials: "include"
     })
       .then((res) => res.json())
-      .then((data) => {
-        if (data.messages && data.messages.length > 0) {
-          const formattedMessages = data.messages.map((m: any) => ({
-            sender: m.sender,
-            text: m.text,
-            fileName: m.file_name 
-          }));
-          setMessages(formattedMessages);
-          setHasSubmitted(true);
+      .then((authData) => {
+        setMessagesLeft(authData.requests_left);
+        // Initial check if the user has done the verification process, we load his chat history from the db 
+        if (authData.verified) {
+          fetch("/api/chat/history", {
+            credentials: "include"
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              if (data.messages && data.messages.length > 0) {
+                const formattedMessages = data.messages.map((m: any) => ({
+                  sender: m.sender,
+                  text: m.text,
+                  fileName: m.file_name 
+                }));
+                setMessages(formattedMessages);
+                setHasSubmitted(true);
+              }
+            })
+            .catch((err) => console.error("Error fetching chat history: ", err));
+        } else {
+          // If the user is not verified, we check the local storage from the browser
+          const localMsgs = localStorage.getItem("local_chat_messages");
+          if (localMsgs) {
+            try {
+              const parsedMsgs = JSON.parse(localMsgs);
+              if (parsedMsgs.length > 0) {
+                setMessages(parsedMsgs);
+                setHasSubmitted(true);
+              }
+            } catch (err) {
+              console.error("Error parsing the messages from the local storage: ", err);
+            }
+          }
         }
       })
-      .catch((err) => console.error("Error fetching chat history: ", err));
+      .catch((err) => console.error("Error loading auth status: ", err));
   }, []);
+
+
+
+  // Another useEffect to save messages in the local sotrage if the user is not verified 
+  useEffect(() => {
+    fetch("/api/auth/status", {
+      credentials: "include"
+    })
+      .then((res) => res.json())
+      .then((authData) => {
+        setMessagesLeft(authData.requests_left);
+        if (!authData.verified && messages.length > 0) {
+          localStorage.setItem("local_chat_messages", JSON.stringify(messages));
+        }
+      });
+  }, [messages]);
 
 
 
@@ -121,6 +163,7 @@ export function useAgentChat() {
         errorMessage = "Error: Connection timed out. Please try again later...";
       } else {
         // Generic error 
+        console.log("Generic error: ", error);
         errorMessage = "Error: Connection to the server refused. Please try again later...";
       }
       console.error(errorMessage, error);
@@ -159,6 +202,7 @@ export function useAgentChat() {
     setInputPrompt, 
     selectedFile,
     messages,
+    messagesLeft,
     hasSubmitted,
     isGenerating,
     handleSubmit,

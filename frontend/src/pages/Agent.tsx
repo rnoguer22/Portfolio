@@ -10,12 +10,14 @@ import "/public/assets/css/animation.css";
 
 
 export default function Agent(){
+
   const {
     greetingText,
     inputPrompt,
     setInputPrompt, 
     selectedFile,
     messages,
+    messagesLeft,
     hasSubmitted,
     isGenerating, 
     handleSubmit,
@@ -26,6 +28,8 @@ export default function Agent(){
   const {
     isVerified,
     isAuthModalOpen,
+    openAuthModal,
+    closeAuthModal,
     authStep,
     setAuthStep,
     authEmail,
@@ -52,12 +56,35 @@ export default function Agent(){
           <Nav />
       </div>
 
+      {/* Interfaz para verificar el correo o seguir como invitado, mejorando la experiencia del usuario al no tener que verficar el correo obligatoriamente para usar la herramienta */}
+      <div className="pt-24 px-4 flex justify-end max-w-4xl mx-auto w-full z-20">
+        {!isVerified ? (
+          <button
+            onClick={openAuthModal}
+            className="font-mono text-xs bg-blue-600/10 hover:bg-blue-600/20 text-blue-600 dark:text-blue-400 boder boder-blue-500/30 px-3 py-1.5 rounded-xl transition-all flex items-center gap-2"
+          >
+            <span>Guest Mode ({messagesLeft} prompts)</span>
+            <span className="underline font-bold">Verify email to get 10 prompts</span>
+          </button>
+        ) : (
+          <div className="font-mono text-xs bg-green-600/10 text-green-600 dark:text-green-400 border border-green-500/30 px-3 py-1.5 rounded-xl flex items-center gap-2">
+              <span>Verified user ({messagesLeft} prompts & persistent chat history)</span>
+          </div>
+        )}
+      </div>
+
       {/* Modal de Bloqueo Automático por Correo */}
       {isAuthModalOpen && (
         <div className="font-mono fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-[fadeIn_0.3s_ease-out]">
           <div className="bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-800 rounded-2xl p-6 w-full max-w-md shadow-2xl text-left relative">
+            <button 
+              onClick={closeAuthModal}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-white"
+            >
+              ×
+            </button>
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-              {authStep === "email" ? "Restricted access" : "Verify code"}
+              {authStep === "email" ? "Verify your email" : "Verify code"}
             </h3>
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
               {authStep === "email" 
@@ -240,7 +267,6 @@ export default function Agent(){
                 value={inputPrompt}
                 onChange={(e) => setInputPrompt(e.target.value)}
                 placeholder="Send a message..."
-                disabled={!isVerified}
                 className="font-mono w-full bg-transparent text-gray-800 dark:text-gray-200 focus:outline-none placeholder-gray-400 dark:placeholder-gray-500 md:text-base border-none text-left"
               />
             )}

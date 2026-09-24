@@ -2,6 +2,7 @@ import os
 from typing import Literal
 from langchain_core.tools import tool
 from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
+from langchain_community.document_loaders import PyPDFLoader
 from langchain_groq import ChatGroq
 from langchain_ollama import ChatOllama 
 from langchain_openai import ChatOpenAI 
@@ -15,7 +16,7 @@ from typing_extensions import TypedDict
 import pprint
 
 from ai.rag.code.retrieval import Retrieval
-from config import TAVILY_API_KEY, OLLAMA_MODEL, OPENAI_API_KEY, OPENAI_MODEL, TEMP_DIR, GRAPH_PATH
+from config import TAVILY_API_KEY, OLLAMA_MODEL, OPENAI_API_KEY, OPENAI_MODEL, TEMP_DIR, GRAPH_PATH, DIR_PATH
 
 
 
@@ -109,7 +110,27 @@ class Portfolio_Agent:
 
         self.tools = [db_search, web_search]
         self.llm_with_tools = llm.bind_tools(self.tools)
+        self.cv_text = self.load_cv()
+        print("\n", self.cv_text, "\n")
         
+
+
+    # Metodo para recuperar el texto del CV, para poder asi responder ante dudas sobre mi
+    def load_cv(self):
+        cv_path = os.path.join(DIR_PATH, "frontend/public/CV_en_Ruben_Nogueras_Gonzalez.pdf")
+        if not os.path.exists(cv_path):
+            print("[!] CV de Ruben no encontrado en: ", cv_path)
+            return "CV no disponible"
+        try:
+            loader = PyPDFLoader(cv_path)
+            pages = loader.load()
+        except Exception as e:
+            print("[!] Error al leer el CV: ", e)
+            return "CV no disponible"
+        
+        cv_text = "\n".join([page.page_content for page in pages])
+        return cv_text
+    
 
 
     # A continuacion definimos los nodos del grafo 
@@ -135,19 +156,39 @@ class Portfolio_Agent:
             "- Llama a las herramientas usando el mecanismo de function calling, nunca escribas la llamada como texto plano.\n"
             "- Si ya tienes la información necesaria en el historial de la conversación, responde directamente al usuario sin volver a invocar herramientas."
         ))
-        '''
+
         system_prompt = SystemMessage(content=(
             "Eres un asistente experto y actúas como un agente inteligente con capacidad de razonamiento ReAct. Proporciona respuestas cortas cuando sea posible, respondiendo siempre con la información que se solicita.\n"
             "Tienes acceso a dos herramientas principales:\n"
             "1. `web_search`: Para buscar información actualizada en internet.\n"
             "2. `db_search`: Para buscar y recuperar información dentro de los documentos adjuntos o la base de datos local.\n\n"
             "Instrucciones de comportamiento obligatorias:\n"
-            "- SI el usuario menciona explícitamente archivos suyos previos, DEBES invocar obligatoriamente `db_search` para recuperar ese contenido antes de responder, incluso si crees que puedes redactar una respuesta genérica.\n"
+            "- Si el usuario menciona explícitamente archivos suyos previos, DEBES invocar obligatoriamente `db_search` para recuperar ese contenido antes de responder, incluso si crees que puedes redactar una respuesta genérica.\n"
             "- Si la pregunta requiere noticias recientes o datos externos que no están en los documentos, usa `web_search`.\n"
             "- Para cualquier otra consulta general sobre tus documentos, ejecuta `db_search` para obtener la información y generar tu respuesta en base a ella.\n"
             "- Llama a las herramientas usando el mecanismo de function calling, nunca escribas la llamada como texto plano.\n"
             "- Si ya tienes la información necesaria en el historial de la conversación (porque ya se ejecutó una búsqueda previa en los mensajes anteriores), responde directamente al usuario sin volver a invocar herramientas.\n"
             "- Responde en inglés."
+        ))
+        '''
+        system_prompt = SystemMessage(content=(
+            "Eres un asistente experto y actúas como un agente inteligente con capacidad de razonamiento ReAct en el portfolio de Rubén Nogueras González. "
+            "Proporciona respuestas cortas cuando sea posible, respondiendo siempre con la información que se solicita.\n\n"
+            "Tienes acceso directo a la información del currículum de Rubén para responder sobre su perfil:\n"
+            "==================\n"
+            f"CV DE RUBÉN:\n{self.cv_text}\n"
+            "==================\n\n"
+            "Herramientas disponibles:\n"
+            "1. `web_search`: Para buscar información actualizada en internet.\n"
+            "2. `db_search`: Para buscar y recuperar información dentro de los documentos adjuntos o la base de datos local del usuario.\n\n"
+            "Instrucciones de comportamiento obligatorias:\n"
+            "- Utiliza la información del CV anterior para responder con precisión a cualquier pregunta sobre su formación, experiencia, habilidades o proyectos.\n"
+            "- Si el usuario menciona explícitamente archivos suyos previos, DEBES invocar obligatoriamente `db_search` para recuperar ese contenido antes de responder, incluso si crees que puedes redactar una respuesta genérica.\n"
+            "- Si la pregunta requiere noticias recientes o datos externos que no están en el CV ni en los documentos, usa `web_search`.\n"
+            "- Para cualquier otra consulta general sobre los documentos del usuario, ejecuta `db_search` para obtener la información y generar tu respuesta en base a ella.\n"
+            "- Llama a las herramientas usando el mecanismo de function calling, nunca escribas la llamada como texto plano.\n"
+            "- Si ya tienes la información necesaria en el historial de la conversación (porque ya se ejecutó una búsqueda previa en los mensajes anteriores), responde directamente al usuario sin volver a invocar herramientas.\n"
+            "- Al final de absolutamente todas tus respuestas, añade de manera natural un breve cierre o recordatorio invitando a continuar, por ejemplo: '¿Alguna otra pregunta sobre la trayectoria o proyectos de Rubén?'\n"
         ))
         try:
             # Inyectamos el prompt del sistema y llamamos al modelo 

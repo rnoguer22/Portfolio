@@ -63,12 +63,12 @@ export default function Agent(){
             onClick={openAuthModal}
             className="font-mono text-xs bg-blue-600/10 hover:bg-blue-600/20 text-blue-600 dark:text-blue-400 boder boder-blue-500/30 px-3 py-1.5 rounded-xl transition-all flex items-center gap-2"
           >
-            <span>Guest Mode ({messagesLeft} prompts)</span>
+            <span>Guest Mode ({messagesLeft} prompts left)</span>
             <span className="underline font-bold">Verify email to get 10 prompts</span>
           </button>
         ) : (
           <div className="font-mono text-xs bg-green-600/10 text-green-600 dark:text-green-400 border border-green-500/30 px-3 py-1.5 rounded-xl flex items-center gap-2">
-              <span>Verified user ({messagesLeft} prompts & persistent chat history)</span>
+              <span>Verified user ({messagesLeft} prompts left & persistent chat history)</span>
           </div>
         )}
       </div>

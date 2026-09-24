@@ -20,6 +20,9 @@ app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
+        #"http://192.168.1.65:3000",
+        #"http://localhost:3000",
+        #"http://127.0.0.1:3000",
         # PRODUCTION DOMAINS
         "https://rnoguer.com",
         "https://www.rnoguer.com",
@@ -127,6 +130,7 @@ async def ask_agent(prompt: str = Form(...),
     if "error" in llm_response:
         error = llm_response["error"]
         print("\n[!] Error en el sistema: ", error)
+        send_telegram_alert(f"\n[!] Error en el sistema: {error}")
         return {"error", error}
 
     elif "messages" in llm_response: 
@@ -140,6 +144,7 @@ async def ask_agent(prompt: str = Form(...),
             db.decrement_requests(user_cookie)
             return {"message": agent_response}
     else:
+        send_telegram_alert("[!] Error: Unexpected error...")
         return {"error": "Error: Unexpected error. Please try again later..."}
 
 
@@ -189,7 +194,7 @@ async def verify_code(data: VerifyRequest, user_cookie: str = Depends(get_set_us
             "message": message
         }
     except Exception as e:
-        send_telegram_alert(f"Verification code error: {e}")
+        send_telegram_alert(f"[!] Error: Verification code error: {e}")
         return {"error": "Unexpected error. Please try again later"}
 
 

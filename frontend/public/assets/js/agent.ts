@@ -14,9 +14,9 @@ export function useAgentChat() {
   const [messages, setMessages] = useState<any[]>([]);
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [messagesLeft, setMessagesLeft] = useState(0);
+  const [messagesLeft, setMessagesLeft] = useState(3);
 
-  const initText = "Good morning! What's on your mind today?";
+  const initText = "Hello! What do you want to know about Rubén?";
 
 
 
